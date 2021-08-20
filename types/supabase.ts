@@ -23,7 +23,7 @@ export interface paths {
           /** Notion property. */
           slideshowName?: parameters["rowFilter.room.slideshowName"];
           /** Notion ID. */
-          currentSlideId?: parameters["rowFilter.room.currentSlideId"];
+          currentSlideIndex?: parameters["rowFilter.room.currentSlideIndex"];
           timerState?: parameters["rowFilter.room.timerState"];
           timerStartTime?: parameters["rowFilter.room.timerStartTime"];
           timerEndTime?: parameters["rowFilter.room.timerEndTime"];
@@ -85,7 +85,7 @@ export interface paths {
           /** Notion property. */
           slideshowName?: parameters["rowFilter.room.slideshowName"];
           /** Notion ID. */
-          currentSlideId?: parameters["rowFilter.room.currentSlideId"];
+          currentSlideIndex?: parameters["rowFilter.room.currentSlideIndex"];
           timerState?: parameters["rowFilter.room.timerState"];
           timerStartTime?: parameters["rowFilter.room.timerStartTime"];
           timerEndTime?: parameters["rowFilter.room.timerEndTime"];
@@ -111,7 +111,7 @@ export interface paths {
           /** Notion property. */
           slideshowName?: parameters["rowFilter.room.slideshowName"];
           /** Notion ID. */
-          currentSlideId?: parameters["rowFilter.room.currentSlideId"];
+          currentSlideIndex?: parameters["rowFilter.room.currentSlideIndex"];
           timerState?: parameters["rowFilter.room.timerState"];
           timerStartTime?: parameters["rowFilter.room.timerStartTime"];
           timerEndTime?: parameters["rowFilter.room.timerEndTime"];
@@ -143,7 +143,7 @@ export interface definitions {
     /** Notion property. */
     slideshowName?: string;
     /** Notion ID. */
-    currentSlideId?: string;
+    currentSlideIndex?: number;
     timerState?: string;
     timerStartTime?: string;
     timerEndTime?: string;
@@ -185,7 +185,7 @@ export interface parameters {
   /** Notion property. */
   "rowFilter.room.slideshowName": string;
   /** Notion ID. */
-  "rowFilter.room.currentSlideId": string;
+  "rowFilter.room.currentSlideIndex": string;
   "rowFilter.room.timerState": string;
   "rowFilter.room.timerStartTime": string;
   "rowFilter.room.timerEndTime": string;
