@@ -21,12 +21,12 @@ export interface paths {
           /** URL path to access this room. */
           slug?: parameters["rowFilter.room.slug"];
           /** Notion property. */
-          agenda_id?: parameters["rowFilter.room.agenda_id"];
+          slideshowName?: parameters["rowFilter.room.slideshowName"];
           /** Notion ID. */
-          current_slide_id?: parameters["rowFilter.room.current_slide_id"];
-          timer_state?: parameters["rowFilter.room.timer_state"];
-          timer_start_time?: parameters["rowFilter.room.timer_start_time"];
-          timer_end_time?: parameters["rowFilter.room.timer_end_time"];
+          currentSlideId?: parameters["rowFilter.room.currentSlideId"];
+          timerState?: parameters["rowFilter.room.timerState"];
+          timerStartTime?: parameters["rowFilter.room.timerStartTime"];
+          timerEndTime?: parameters["rowFilter.room.timerEndTime"];
           id?: parameters["rowFilter.room.id"];
           /** Filtering Columns */
           select?: parameters["select"];
@@ -83,12 +83,12 @@ export interface paths {
           /** URL path to access this room. */
           slug?: parameters["rowFilter.room.slug"];
           /** Notion property. */
-          agenda_id?: parameters["rowFilter.room.agenda_id"];
+          slideshowName?: parameters["rowFilter.room.slideshowName"];
           /** Notion ID. */
-          current_slide_id?: parameters["rowFilter.room.current_slide_id"];
-          timer_state?: parameters["rowFilter.room.timer_state"];
-          timer_start_time?: parameters["rowFilter.room.timer_start_time"];
-          timer_end_time?: parameters["rowFilter.room.timer_end_time"];
+          currentSlideId?: parameters["rowFilter.room.currentSlideId"];
+          timerState?: parameters["rowFilter.room.timerState"];
+          timerStartTime?: parameters["rowFilter.room.timerStartTime"];
+          timerEndTime?: parameters["rowFilter.room.timerEndTime"];
           id?: parameters["rowFilter.room.id"];
         };
         header: {
@@ -109,12 +109,12 @@ export interface paths {
           /** URL path to access this room. */
           slug?: parameters["rowFilter.room.slug"];
           /** Notion property. */
-          agenda_id?: parameters["rowFilter.room.agenda_id"];
+          slideshowName?: parameters["rowFilter.room.slideshowName"];
           /** Notion ID. */
-          current_slide_id?: parameters["rowFilter.room.current_slide_id"];
-          timer_state?: parameters["rowFilter.room.timer_state"];
-          timer_start_time?: parameters["rowFilter.room.timer_start_time"];
-          timer_end_time?: parameters["rowFilter.room.timer_end_time"];
+          currentSlideId?: parameters["rowFilter.room.currentSlideId"];
+          timerState?: parameters["rowFilter.room.timerState"];
+          timerStartTime?: parameters["rowFilter.room.timerStartTime"];
+          timerEndTime?: parameters["rowFilter.room.timerEndTime"];
           id?: parameters["rowFilter.room.id"];
         };
         body: {
@@ -141,12 +141,12 @@ export interface definitions {
     /** URL path to access this room. */
     slug?: string;
     /** Notion property. */
-    agenda_id?: string;
+    slideshowName?: string;
     /** Notion ID. */
-    current_slide_id?: string;
-    timer_state?: string;
-    timer_start_time?: string;
-    timer_end_time?: string;
+    currentSlideId?: string;
+    timerState?: string;
+    timerStartTime?: string;
+    timerEndTime?: string;
     /**
      * Note:
      * This is a Primary Key.<pk/>
@@ -183,12 +183,12 @@ export interface parameters {
   /** URL path to access this room. */
   "rowFilter.room.slug": string;
   /** Notion property. */
-  "rowFilter.room.agenda_id": string;
+  "rowFilter.room.slideshowName": string;
   /** Notion ID. */
-  "rowFilter.room.current_slide_id": string;
-  "rowFilter.room.timer_state": string;
-  "rowFilter.room.timer_start_time": string;
-  "rowFilter.room.timer_end_time": string;
+  "rowFilter.room.currentSlideId": string;
+  "rowFilter.room.timerState": string;
+  "rowFilter.room.timerStartTime": string;
+  "rowFilter.room.timerEndTime": string;
   "rowFilter.room.id": string;
 }
 
