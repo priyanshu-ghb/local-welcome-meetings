@@ -4,7 +4,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { getRoomBySlug } from '../data/rooms'
 import styles from '../styles/Home.module.css'
-import { Room } from '../types/database/index';
+import { Room } from '../types/supabase';
 
 type IProps = {
   room: Room | null
