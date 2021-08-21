@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { subscribeToRoomBySlug, updateRoom } from '../data/room';
 import { Room } from '../types/supabase';
 import { markdownToHtml } from '../data/markdown';
+import { useKeyPress, keyToCode } from '../utils/hooks';
 
 export function Slideshow({ slides, room }: {
   slides: Page[],
@@ -33,6 +34,21 @@ export function Slideshow({ slides, room }: {
     const nextIndex = safeSlideIndex(requestedIndex)
     return await updateRoom(room.slug, { currentSlideIndex: nextIndex })
   }
+
+  useKeyPress(keyToCode('left'), () => changeSlide(currentSlideIndex - 1))
+  useKeyPress(keyToCode('right'), () => changeSlide(currentSlideIndex + 1))
+
+  useEffect(() => {
+    document.addEventListener('keydown', (event) => {
+      var keyValue = event.key;
+      var codeValue = event.code;
+     
+      console.log("keyValue: " + keyValue);
+      console.log("codeValue: " + codeValue);
+    }, false);
+
+    return 
+  }, [])
 
   return (
     <>
