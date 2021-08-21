@@ -137,13 +137,13 @@ export interface paths {
 export interface definitions {
   room: {
     /** Human readable name. */
-    name?: string;
+    name: string;
     /** URL path to access this room. */
-    slug?: string;
+    slug: string;
     /** Notion property. */
-    slideshowName?: string;
+    slideshowName: string;
     /** Notion ID. */
-    currentSlideIndex?: number;
+    currentSlideIndex: number;
     timerState?: string;
     timerStartTime?: string;
     timerEndTime?: string;
