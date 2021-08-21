@@ -4,7 +4,6 @@ import { useRouter } from 'next/dist/client/router'
 import Head from 'next/head'
 import { getRoomBySlug } from '../data/room'
 import { getSlides } from '../data/slideshow';
-import styles from '../styles/Home.module.css'
 import { Room } from '../types/supabase-local';
 import { Slideshow } from '../components/Slideshow';
 
@@ -26,18 +25,24 @@ const Home: NextPage<IProps> = ({ room, slides }) => {
   }
 
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>{room?.name || roomSlug}</title>
         <meta name="description" content="Call link for ADHD Together." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1>
-          Welcome to {room?.name ||`/${roomSlug}`}
-        </h1>
-        {slides && <Slideshow slides={slides} room={room} />}
+      <main className='grid md:grid-cols-3 w-screen h-screen overflow-hidden'>
+        <section className='flex justify-center align-middle col-span-2 max-h-screen'>
+          Video call link
+        </section>
+        <section className='max-h-screen'>
+          <header>
+            <h1 className='text-2xl'>{room?.name ||`/${roomSlug}`}</h1>
+            <h2 className='text-base text-gray-400'>ADHD Together session</h2>
+          </header>
+          {slides && <Slideshow slides={slides} room={room} />}
+        </section>
       </main>
     </div>
   )

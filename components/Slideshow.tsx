@@ -6,6 +6,7 @@ import { subscribeToRoomBySlug, updateRoom } from '../data/room';
 import { Room } from '../types/supabase-local';
 import { markdownToHtml } from '../data/markdown';
 import { useKeyPress, keyToCode } from '../utils/hooks';
+import { Navigation } from './Elements';
 
 export function Slideshow({ slides, room }: {
   slides: Page[],
@@ -38,45 +39,33 @@ export function Slideshow({ slides, room }: {
   useKeyPress(keyToCode('left'), () => changeSlide(currentSlideIndex - 1))
   useKeyPress(keyToCode('right'), () => changeSlide(currentSlideIndex + 1))
 
-  useEffect(() => {
-    document.addEventListener('keydown', (event) => {
-      var keyValue = event.key;
-      var codeValue = event.code;
-     
-      console.log("keyValue: " + keyValue);
-      console.log("codeValue: " + codeValue);
-    }, false);
-
-    return 
-  }, [])
-
   return (
-    <>
+    <div className='flex flex-col justify-start h-full'>
       <div>
-        <button onClick={() => changeSlide(currentSlideIndex - 1)}>
-          &larr; Previous
-        </button>
-        <span>
+        <Navigation
+          clickPrevious={() => changeSlide(currentSlideIndex - 1)}
+          clickNext={() => changeSlide(currentSlideIndex + 1)}
+        >
           Slide {currentSlideIndex + 1} of {slides?.length || 0}
-        </span>
-        <button onClick={() => changeSlide(currentSlideIndex + 1)}>
-          Next slide &rarr;
-        </button>
+        </Navigation>
       </div>
-      <div>
-        {/* @ts-ignore */}
-        <h2>{currentSlide.properties["Name"].title!.map(fragment => fragment.plain_text).join()}</h2>
-        <h4>Member notes</h4>
-        {/* @ts-ignore */}
-        {currentSlide.properties["Member notes"].rich_text!.map((fragment, i) =>
-          <p key={i} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.plain_text) }} />
-        )}
-        <h4>Speaker notes</h4>
-        {/* @ts-ignore */}
-        {currentSlide.properties["Speaker notes"].rich_text!.map((fragment, i) =>
-          <p key={i} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.plain_text) }} />
-        )}
+      <div className='prose overflow-y-auto'>
+        <section>
+          {/* @ts-ignore */}
+          <h2>{currentSlide.properties["Name"].title!.map(fragment => fragment.plain_text).join()}</h2>
+          {/* @ts-ignore */}
+          {currentSlide.properties["Member notes"].rich_text!.map((fragment, i) =>
+            <div key={i} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.plain_text) }} />
+          )}
+        </section>
+        <section className='rounded-lg px-4 py-3 bg-yellow-100'>
+          <h4>Speaker notes</h4>
+          {/* @ts-ignore */}
+          {currentSlide.properties["Speaker notes"].rich_text!.map((fragment, i) =>
+            <div key={i} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.plain_text) }} />
+          )}
+        </section>
       </div>
-    </>
+    </div>
   )
 }
