@@ -1,3 +1,3 @@
-import { from } from 'env-var';
+import env from 'env-var';
 
-export const env = from(process.env)
+export { env }

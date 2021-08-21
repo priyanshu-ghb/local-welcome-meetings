@@ -1,9 +1,8 @@
 import { RichText } from '@notionhq/client/build/src/api-types';
-import { RecursiveNotionBlock } from '../data/slideshow';
-import { parseMarkdown } from '../data/markdown';
+import { markdownToHtml } from '../data/markdown';
 //
 
-export const NotionTree = ({ tree }: { tree: RecursiveNotionBlock[] }) => {
+export const NotionTree = ({ tree }: { tree: RecursiveNotionBloc[] }) => {
   return (
     <>
       {tree.map(t => {
@@ -30,7 +29,7 @@ export const NotionTree = ({ tree }: { tree: RecursiveNotionBlock[] }) => {
             </ul>
           )
           default: return (
-            <Text key={t.id} text={parseMarkdown(content.map(snippet => snippet.plain_text).join())} />
+            <Text key={t.id} text={markdownToHtml(content.map(snippet => snippet.plain_text).join())} />
           )
         }
       })}
