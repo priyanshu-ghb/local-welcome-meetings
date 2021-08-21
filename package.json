@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@notionhq/client": "^0.3.0",
     "@supabase/supabase-js": "^1.22.1",
     "env-var": "^7.0.1",
     "next": "11.1.0",
