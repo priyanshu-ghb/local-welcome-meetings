@@ -4,6 +4,9 @@ import { getAllRooms } from '../data/room';
 import { Room } from '../types/supabase-local';
 import Link from 'next/link'
 import RoomList from '../components/Rooms';
+import { useLayoutEffect, useEffect, useState } from 'react';
+import { supabase } from '../data/supabase';
+import Auth from '../components/Auth';
 
 type IProps = {
   rooms: Room[]
@@ -12,6 +15,23 @@ type IProps = {
 type IQuery = {}
 
 const Home: NextPage<IProps> = ({ rooms }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setIsLoggedIn(true)
+      }
+    })
+  }, [])
+
+  useLayoutEffect(() => {
+    const user = supabase.auth.user()
+    if (user) {
+      setIsLoggedIn(true)
+    }
+  }, [])
+
   return (
     <div>
       <Head>
@@ -25,7 +45,12 @@ const Home: NextPage<IProps> = ({ rooms }) => {
           <h1 className='text-2xl'>ADHD Together</h1>
           <h2 className='text-base text-gray-400'>Session manager</h2>
         </header>
-        <RoomList rooms={rooms} />
+        {isLoggedIn ? <RoomList rooms={rooms} /> : (
+          <>
+            <p>You need to be logged in to see the rooms</p>
+            <Auth />
+          </>
+        )}
       </main>
     </div>
   )
