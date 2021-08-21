@@ -9,7 +9,7 @@ export const keyToCode = (key: keyof typeof keyCodeMap) => {
   return keyCodeMap[key]
 }
 
-export function useKeyPress (keyCode: number, callback: (e: any) => void, node: any = document) {
+export function useKeyPress (keyCode: number, callback: (e: any) => void) {
   const keyPressEvent = (e: any) => {
     if (e.keyCode === keyCode) {
       callback(e)
@@ -17,10 +17,10 @@ export function useKeyPress (keyCode: number, callback: (e: any) => void, node: 
   };
 
   useEffect(() => {
-    node.addEventListener("keydown", keyPressEvent);
+    document.addEventListener("keydown", keyPressEvent);
 
     return () => {
-      node.removeEventListener("keydown", keyPressEvent);
+      document.removeEventListener("keydown", keyPressEvent);
     };
   })
 }

@@ -2,6 +2,14 @@ import { supabase } from './supabase';
 import { Room } from '../types/supabase-local';
 import { SupabaseRealtimePayload } from '@supabase/supabase-js';
 
+export async function getAllRooms(): Promise<Room[]> {
+  const rooms = await supabase
+    .from<Room>('room')
+    .select("*")
+
+  return rooms.body || []
+}
+
 export async function getRoomBySlug(slug: string) {
   const rooms = await supabase
     .from<Room>('room')
