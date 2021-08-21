@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useMemo } from 'react';
 import { useEffect, useState } from 'react';
 import { subscribeToRoomBySlug, updateRoom } from '../data/room';
-import { Room } from '../types/supabase';
+import { Room } from '../types/supabase-local';
 import { markdownToHtml } from '../data/markdown';
 import { useKeyPress, keyToCode } from '../utils/hooks';
 

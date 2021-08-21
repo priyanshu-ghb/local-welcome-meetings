@@ -5,7 +5,7 @@ import Head from 'next/head'
 import { getRoomBySlug } from '../data/room'
 import { getSlides } from '../data/slideshow';
 import styles from '../styles/Home.module.css'
-import { Room } from '../types/supabase';
+import { Room } from '../types/supabase-local';
 import { Slideshow } from '../components/Slideshow';
 
 type IProps = {

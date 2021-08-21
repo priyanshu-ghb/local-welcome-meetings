@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Room } from '../types/supabase';
+import { Room } from '../types/supabase-local';
 import { SupabaseRealtimePayload } from '@supabase/supabase-js';
 
 export async function getRoomBySlug(slug: string) {
