@@ -1,5 +1,6 @@
 import { RichText } from '@notionhq/client/build/src/api-types';
 import { RecursiveNotionBlock } from '../data/slideshow';
+import { parseMarkdown } from '../data/markdown';
 //
 
 export const NotionTree = ({ tree }: { tree: RecursiveNotionBlock[] }) => {
@@ -29,7 +30,7 @@ export const NotionTree = ({ tree }: { tree: RecursiveNotionBlock[] }) => {
             </ul>
           )
           default: return (
-            <Text key={t.id} text={content.map(snippet => snippet.plain_text).join()} />
+            <Text key={t.id} text={parseMarkdown(content.map(snippet => snippet.plain_text).join())} />
           )
         }
       })}
@@ -38,5 +39,5 @@ export const NotionTree = ({ tree }: { tree: RecursiveNotionBlock[] }) => {
 }
 
 function Text ({ text }: { text: string }) {
-  return <div>{text}</div>
+  return <div dangerouslySetInnerHTML={{ __html: text }} />
 }

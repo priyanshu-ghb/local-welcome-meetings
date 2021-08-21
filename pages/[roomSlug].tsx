@@ -5,29 +5,30 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { NotionTree } from '../components/Notion'
 import { getRoomBySlug } from '../data/rooms'
-import { getSlideContent, getSlides, RecursiveNotionBlock } from '../data/slideshow';
+import { getChildPagesMetadataForPageId, getSlideContent, getSlides, RecursiveNotionBlock } from '../data/slideshow';
 import styles from '../styles/Home.module.css'
 import { Room } from '../types/supabase';
 
 type IProps = {
   room?: Room | null
-  slides?: Block[]
-  currentSlideMetadata?: Block
+  slides: Block[] | null
   currentSlideIndex: number
-  currentSlideTree?: RecursiveNotionBlock[]
+  // currentSlideTree?: RecursiveNotionBlock[]
 }
 
 type IQuery = {
   roomSlug: string
 }
 
-const Home: NextPage<IProps> = ({ room, currentSlideMetadata, currentSlideTree }) => {
+const Home: NextPage<IProps> = ({ room, slides, currentSlideIndex }) => {
   const router = useRouter()
   const { roomSlug } = router.query
 
   if (!room) {
     return <div>No room found.</div>
   }
+
+  const currentSlide = slides?.[currentSlideIndex]
 
   return (
     <div className={styles.container}>
@@ -41,24 +42,8 @@ const Home: NextPage<IProps> = ({ room, currentSlideMetadata, currentSlideTree }
         <h1>
           Welcome to {room?.name ||`/${roomSlug}`}
         </h1>
-        <div>
-          <h3>{currentSlideMetadata.child_page.title}</h3>
-          {currentSlideTree ? <NotionTree tree={currentSlideTree} /> : "No slide data"}
-        </div>
+        <Slideshow slides={slides} roomId={room.id} />
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
   )
 }
@@ -68,11 +53,12 @@ export const getServerSideProps: GetServerSideProps<IProps, IQuery> = async ({ p
   if (!room) {
     return { props: {} }
   }
-  const slides = await getSlides('Test slideshow') //room.slideshowName)
+  const slides = await getSlides(room.slideshowName)
   const currentSlideIndex: number = room.currentSlideIndex || 0
-  const currentSlideMetadata = slides[currentSlideIndex]
-  const currentSlideTree = await getSlideContent(currentSlideMetadata.id)
-  return { props: { room, slides, currentSlideIndex, currentSlideMetadata, currentSlideTree } }
+  // console.log(room.slideshowName, slides, currentSlideIndex)
+  // const currentSlideMetadata = slides[currentSlideIndex]
+  // const currentSlideTree = await getSlideContent(currentSlideMetadata.id)
+  return { props: { room, currentSlideIndex, slides } }
 }
 
 export default Home
