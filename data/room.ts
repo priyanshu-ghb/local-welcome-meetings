@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Room } from '../types/supabase-local';
+import { Room } from '../types/app';
 import { SupabaseRealtimePayload } from '@supabase/supabase-js';
 
 export async function getAllRooms(): Promise<Room[]> {

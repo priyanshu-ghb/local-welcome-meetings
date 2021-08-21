@@ -4,7 +4,7 @@ import { useRouter } from 'next/dist/client/router'
 import Head from 'next/head'
 import { getRoomBySlug } from '../data/room'
 import { getSlides } from '../data/slideshow';
-import { Room } from '../types/supabase-local';
+import { Room } from '../types/app';
 import { Slideshow } from '../components/Slideshow';
 
 type IProps = {

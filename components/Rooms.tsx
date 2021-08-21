@@ -1,4 +1,4 @@
-import { Room } from '../types/supabase-local';
+import { Room } from '../types/app';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import copy from 'copy-to-clipboard';
