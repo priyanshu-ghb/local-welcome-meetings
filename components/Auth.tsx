@@ -1,17 +1,24 @@
 import { LockClosedIcon } from '@heroicons/react/solid'
 import { supabase } from '../data/supabase';
 
+async function isValidEmail (email: string) {
+  const response = await fetch('/api/auth', { method: 'POST', body: JSON.stringify({ email }) })
+  const result = await response.json()
+  return result.isValid
+}
+
 export default function Auth() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     // @ts-ignore
-    if (event.target.email) {
-      // @ts-ignore
-      const email = event.target.email.value
-      // Send magic link to this email
-      const { user, session, error } = await supabase.auth.signIn({ email })
-      console.log(user, session, error)
-    }
+    if (!event.target.email) return
+    // @ts-ignore
+    const email = event.target.email.value
+    // Validate
+    const isValid = await isValidEmail(email)
+    if (!isValid) return
+    // Send magic link to this email
+    await supabase.auth.signIn({ email })
   }
 
   return (

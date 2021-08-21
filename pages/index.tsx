@@ -19,9 +19,7 @@ const Home: NextPage<IProps> = ({ rooms }) => {
 
   useEffect(() => {
     supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        setIsLoggedIn(true)
-      }
+      setIsLoggedIn(!!session?.user)
     })
   }, [])
 
@@ -45,9 +43,14 @@ const Home: NextPage<IProps> = ({ rooms }) => {
           <h1 className='text-2xl'>ADHD Together</h1>
           <h2 className='text-base text-gray-400'>Session manager</h2>
         </header>
-        {isLoggedIn ? <RoomList rooms={rooms} /> : (
+        {isLoggedIn ? (
           <>
-            <p>You need to be logged in to see the rooms</p>
+            <RoomList rooms={rooms} />
+            <div className='text-center' onClick={() => supabase.auth.signOut()}>Sign out</div>
+          </>
+        ) : (
+          <>
+            <p className='text-center'>You need to be logged in to see the rooms</p>
             <Auth />
           </>
         )}
