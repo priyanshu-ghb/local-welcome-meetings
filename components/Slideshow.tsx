@@ -64,13 +64,15 @@ export function Slideshow({ slides, room }: {
         </button>
       </div>
       <div>
-        {/* <pre>{JSON.stringify(currentSlide, null, 2)}</pre> */}
+        {/* @ts-ignore */}
         <h2>{currentSlide.properties["Name"].title!.map(fragment => fragment.plain_text).join()}</h2>
         <h4>Member notes</h4>
+        {/* @ts-ignore */}
         {currentSlide.properties["Member notes"].rich_text!.map((fragment, i) =>
           <p key={i} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.plain_text) }} />
         )}
         <h4>Speaker notes</h4>
+        {/* @ts-ignore */}
         {currentSlide.properties["Speaker notes"].rich_text!.map((fragment, i) =>
           <p key={i} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.plain_text) }} />
         )}
