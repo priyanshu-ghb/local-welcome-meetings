@@ -12,6 +12,96 @@ export interface paths {
       };
     };
   };
+  "/profile": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.profile.id"];
+          canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["profile"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** profile */
+          profile?: definitions["profile"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.profile.id"];
+          canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.profile.id"];
+          canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
+        };
+        body: {
+          /** profile */
+          profile?: definitions["profile"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/room": {
     get: {
       parameters: {
@@ -150,6 +240,14 @@ export interface paths {
 }
 
 export interface definitions {
+  profile: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    canLeadSessions?: boolean;
+  };
   room: {
     /** Human readable name. */
     name: string;
@@ -196,6 +294,10 @@ export interface parameters {
   offset: string;
   /** Limiting and Pagination */
   limit: string;
+  /** profile */
+  "body.profile": definitions["profile"];
+  "rowFilter.profile.id": string;
+  "rowFilter.profile.canLeadSessions": string;
   /** room */
   "body.room": definitions["room"];
   /** Human readable name. */
