@@ -1,4 +1,4 @@
-import { addSeconds, startOfDay, differenceInMilliseconds } from 'date-fns';
+import { addSeconds, startOfDay, differenceInMilliseconds, differenceInSeconds } from 'date-fns';
 import { format, zonedTimeToUtc } from 'date-fns-tz';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { Room } from '../types/app';
@@ -6,15 +6,25 @@ import { useUser } from '../data/auth';
 import { useRoom } from '../data/room';
 import { theme } from 'twin.macro';
 import * as polished from 'polished'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { usePrevious } from '../utils/hooks';
+import { Transition } from '@headlessui/react'
+import { ShowFor } from './Elements';
 
 const DEFAULT_TIMER_SECONDS = 90
 
 export function Timer ({ room: _room }: { room: Room }) {
-  const [hasPlayed, setHasPlayed] = useState(false)
+  const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
   const [user, isLoggedIn, profile] = useUser()
   const [room, updateRoom] = useRoom(_room.slug, _room)
   const isPlaying = room.timerState === 'playing'
+
+  const previousTimerState = usePrevious(room.timerState)
+  useEffect(() => {
+    if (previousTimerState === 'playing' && room.timerState !== 'playing') {
+      setTimerFinishedDate(new Date())
+    }
+  }, [room.timerState, previousTimerState])
 
   const toggleTimer = () => {
     if (isPlaying) {
@@ -24,11 +34,13 @@ export function Timer ({ room: _room }: { room: Room }) {
     }
   }
 
-  const resetTimer = () => updateRoom({
-    timerState: 'stopped',
-    timerStartTime: zonedTimeToUtc(new Date() as any, 'UTC') as any,
-    timerDuration: DEFAULT_TIMER_SECONDS
-  })
+  const resetTimer = () => {
+    updateRoom({
+      timerState: 'stopped',
+      timerStartTime: zonedTimeToUtc(new Date() as any, 'UTC') as any,
+      timerDuration: DEFAULT_TIMER_SECONDS
+    })
+  }
 
   const startTimer = (timerDuration: number) => updateRoom({
     timerState: 'playing',
@@ -47,7 +59,6 @@ export function Timer ({ room: _room }: { room: Room }) {
 
   function onTimerComplete () {
     resetTimer()
-    setHasPlayed(true)
   }
 
   return (
@@ -78,8 +89,13 @@ export function Timer ({ room: _room }: { room: Room }) {
             )}
           </div>
         ) :
-        hasPlayed ? '✅ time is up'
-        : null}
+        !profile?.canLeadSessions && timerFinishedDate ? (
+          <ShowFor seconds={5}>
+            <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
+              Time Is Up! ✅
+            </div>
+          </ShowFor>
+        ) : null}
         {profile?.canLeadSessions && (
           <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
             {isPlaying ? "Stop early" : "Start timer"}

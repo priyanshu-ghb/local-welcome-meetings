@@ -10,6 +10,7 @@
     "start:local": "PORT=4000 node ./server-local-https.js"
   },
   "dependencies": {
+    "@headlessui/react": "^1.4.0",
     "@heroicons/react": "^1.0.4",
     "@hubspot/api-client": "^4.1.0",
     "@notionhq/client": "^0.3.0",
