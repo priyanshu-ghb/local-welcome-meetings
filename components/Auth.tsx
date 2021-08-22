@@ -1,7 +1,10 @@
 import { LockClosedIcon } from '@heroicons/react/solid'
+import { supabase } from '../data/supabase';
 
-async function sendMagicLink (email: string) {
-  await fetch('/api/auth', { method: 'POST', body: JSON.stringify({ email }) })
+async function isValidEmail (email: string) {
+  const response = await fetch('/api/auth', { method: 'POST', body: JSON.stringify({ email }) })
+  const result = await response.json()
+  return result.isAuthorised
 }
 
 export default function Auth() {
@@ -12,7 +15,10 @@ export default function Auth() {
     // @ts-ignore
     const email = event.target.email.value
     // Validate
-    await sendMagicLink(email)
+    const isValid = await isValidEmail(email)
+    if (!isValid) return
+    // Send magic link to this email
+    await supabase.auth.signIn({ email })
   }
 
   return (

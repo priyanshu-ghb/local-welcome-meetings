@@ -14,10 +14,6 @@ export async function isValidLeaderEmail (email: string): Promise<boolean> {
   return false
 }
 
-export async function sendMagicLink (email: string) {
-  return await supabase.auth.signIn({ email })
-}
-
 export async function getUserFromHTTPRequest(req: NextApiRequest) {
   return supabase.auth.api.getUserByCookie(req)
 }
