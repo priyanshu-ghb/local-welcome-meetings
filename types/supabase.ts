@@ -26,8 +26,8 @@ export interface paths {
           currentSlideIndex?: parameters["rowFilter.room.currentSlideIndex"];
           timerState?: parameters["rowFilter.room.timerState"];
           timerStartTime?: parameters["rowFilter.room.timerStartTime"];
-          timerEndTime?: parameters["rowFilter.room.timerEndTime"];
           id?: parameters["rowFilter.room.id"];
+          timerDuration?: parameters["rowFilter.room.timerDuration"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -88,8 +88,8 @@ export interface paths {
           currentSlideIndex?: parameters["rowFilter.room.currentSlideIndex"];
           timerState?: parameters["rowFilter.room.timerState"];
           timerStartTime?: parameters["rowFilter.room.timerStartTime"];
-          timerEndTime?: parameters["rowFilter.room.timerEndTime"];
           id?: parameters["rowFilter.room.id"];
+          timerDuration?: parameters["rowFilter.room.timerDuration"];
         };
         header: {
           /** Preference */
@@ -114,8 +114,8 @@ export interface paths {
           currentSlideIndex?: parameters["rowFilter.room.currentSlideIndex"];
           timerState?: parameters["rowFilter.room.timerState"];
           timerStartTime?: parameters["rowFilter.room.timerStartTime"];
-          timerEndTime?: parameters["rowFilter.room.timerEndTime"];
           id?: parameters["rowFilter.room.id"];
+          timerDuration?: parameters["rowFilter.room.timerDuration"];
         };
         body: {
           /** room */
@@ -146,12 +146,12 @@ export interface definitions {
     currentSlideIndex: number;
     timerState?: string;
     timerStartTime?: string;
-    timerEndTime?: string;
     /**
      * Note:
      * This is a Primary Key.<pk/>
      */
     id: number;
+    timerDuration: number;
   };
 }
 
@@ -188,8 +188,8 @@ export interface parameters {
   "rowFilter.room.currentSlideIndex": string;
   "rowFilter.room.timerState": string;
   "rowFilter.room.timerStartTime": string;
-  "rowFilter.room.timerEndTime": string;
   "rowFilter.room.id": string;
+  "rowFilter.room.timerDuration": string;
 }
 
 export interface operations {}
