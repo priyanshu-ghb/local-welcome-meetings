@@ -5,8 +5,10 @@ import Head from 'next/head'
 import { getRoomBySlug } from '../data/room'
 import { getSlides } from '../data/slideshow';
 import { Room } from '../types/app';
-import { Slideshow } from '../components/Slideshow';
+import { Slideshow, SlideshowControls } from '../components/Slideshow';
 import { Timer } from '../components/Timer';
+import { VideoCall } from '../components/VideoCall';
+import { useUser } from '../data/auth';
 
 type IProps = {
   room: Room | null
@@ -20,6 +22,7 @@ type IQuery = {
 const Home: NextPage<IProps> = ({ room, slides }) => {
   const router = useRouter()
   const { roomSlug } = router.query
+  const [user, isLoggedIn] = useUser()
 
   if (!room) {
     return <div>No room found.</div>
@@ -35,17 +38,26 @@ const Home: NextPage<IProps> = ({ room, slides }) => {
 
       <main className='grid md:grid-cols-3 w-screen h-screen overflow-hidden'>
         <section className='flex justify-center align-middle col-span-2 max-h-screen'>
-          Video call link
+          <VideoCall room={room} />
         </section>
-        <section className='max-h-screen'>
-          <header>
+        <section className='max-h-screen flex flex-col justify-start overflow-hidden'>
+          <header className='p-4 text-center'>
             <h1 className='text-2xl'>{room?.name ||`/${roomSlug}`}</h1>
             <h2 className='text-base text-gray-400'>ADHD Together session</h2>
           </header>
-          <div className='py-4'>
-            <Timer room={room} />
+          <div className='p-4 text-center pb-4 border-b border-b-gray-400'>
+            <span className='inline-block'>
+              <Timer room={room} />
+            </span>
+            {slides && isLoggedIn && (
+              <SlideshowControls slides={slides} room={room} />
+            )}
           </div>
-          {slides && <Slideshow slides={slides} room={room} />}
+          {slides && (
+            <section className='overflow-y-auto'>
+              <Slideshow slides={slides} room={room} />
+            </section>
+          )}
         </section>
       </main>
     </div>

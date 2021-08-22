@@ -1,5 +1,7 @@
 import { hubspotV1 } from './hubspot';
 import env from 'env-var';
+import { supabase } from './supabase';
+import { NextApiRequest } from 'next';
 
 export async function isValidLeaderEmail (email: string): Promise<boolean> {
   // Env
@@ -10,6 +12,10 @@ export async function isValidLeaderEmail (email: string): Promise<boolean> {
     return true;
   }
   return false
+}
+
+export async function getUserFromHTTPRequest(req: NextApiRequest) {
+  return supabase.auth.api.getUserByCookie(req)
 }
 
 function isEmailInArbitraryList(email: string): boolean {

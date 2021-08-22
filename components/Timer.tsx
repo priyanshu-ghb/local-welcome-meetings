@@ -42,29 +42,27 @@ export function Timer ({ room: _room }: { room: Room }) {
   ) / 1000)
 
   return (
-    <>
-      <CountdownCircleTimer
-        key={JSON.stringify([room.timerState, room.timerStartTime, room.timerDuration])}
-        isPlaying={room.timerState === 'playing'}
-        initialRemainingTime={room.timerState === 'playing' ? remainingSeconds : room.timerDuration}
-        duration={room.timerDuration}
-        colors={[
-          ['#004777', 0.33],
-          ['#F7B801', 0.33],
-          ['#A30000', 0.33],
-          ['#CCCCCC', 0.33],
-        ]}
-        onComplete={() => void resetTimer()}
-        strokeWidth={20}
-      >
-        {({ remainingTime }) => <span className='text-center'>
-          <div className='text-4xl'>{remainingTime}</div>
-          <div className='opacity-50'>seconds</div>
-          {isLoggedIn && <div className='text-xs mt-2 cursor-pointer hover:text-red-600 underline' onClick={toggleTimer}>
-            {room.timerState === 'playing' ? "⏹ End early" : "▶️ Start"}
-          </div>}
-        </span>}
-      </CountdownCircleTimer>
-    </>
+    <CountdownCircleTimer
+      key={JSON.stringify([room.timerState, room.timerStartTime, room.timerDuration])}
+      isPlaying={room.timerState === 'playing'}
+      initialRemainingTime={room.timerState === 'playing' ? remainingSeconds : room.timerDuration}
+      duration={room.timerDuration}
+      colors={[
+        ['#004777', 0.33],
+        ['#F7B801', 0.33],
+        ['#A30000', 0.33],
+        ['#CCCCCC', 0.33],
+      ]}
+      onComplete={() => void resetTimer()}
+      strokeWidth={20}
+    >
+      {({ remainingTime }) => <span className='text-center'>
+        <div className='text-4xl'>{remainingTime}</div>
+        <div className='opacity-50'>seconds</div>
+        {isLoggedIn && <div className='text-xs mt-2 cursor-pointer hover:text-red-600 underline' onClick={toggleTimer}>
+          {room.timerState === 'playing' ? "⏹ End early" : "▶️ Start"}
+        </div>}
+      </span>}
+    </CountdownCircleTimer>
   )
 }
