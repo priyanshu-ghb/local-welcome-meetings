@@ -1,4 +1,3 @@
-import { Filter } from '@hubspot/api-client/lib/codegen/crm/contacts/api';
 import { hubspotV1 } from './hubspot';
 import env from 'env-var';
 
@@ -15,7 +14,6 @@ export async function isValidLeaderEmail (email: string): Promise<boolean> {
 
 function isEmailInArbitraryList(email: string): boolean {
   const AUTHORISED_EMAIL_ADDRESSES = env.get('AUTHORISED_EMAIL_ADDRESSES').default([]).asArray()
-  console.log(AUTHORISED_EMAIL_ADDRESSES, email)
   if (AUTHORISED_EMAIL_ADDRESSES.indexOf(email) > -1) {
     return true
   }
