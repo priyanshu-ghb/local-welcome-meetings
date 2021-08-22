@@ -23,6 +23,10 @@ export async function getUserFromHTTPRequest(req: NextApiRequest) {
   return supabase.auth.api.getUserByCookie(req)
 }
 
+export async function getUserFromSessionToken(token: string) {
+  return await supabase.auth.api.getUser(token)
+}
+
 function isEmailInArbitraryList(email: string): boolean {
   const AUTHORISED_EMAIL_ADDRESSES = env.get('AUTHORISED_EMAIL_ADDRESSES').default([]).asArray()
   if (AUTHORISED_EMAIL_ADDRESSES.indexOf(email) > -1) {
