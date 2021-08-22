@@ -4,11 +4,11 @@ import { useUser } from '../data/auth';
 import { isWithinInterval } from 'date-fns';
 
 export function VideoCall ({ room: _room }: { room: Room }) {
-  const [user, isLoggedIn] = useUser()
+  const [user, isLoggedIn, profile] = useUser()
   const [room, updateRoom] = useRoom(_room.slug, _room)
 
   const startSession = async () => {
-    if (isLoggedIn) {
+    if (profile?.canLeadSessions) {
       await fetch('/api/whereby', {
         method: 'POST',
         body: JSON.stringify({ roomSlug: room.slug })
@@ -34,7 +34,7 @@ export function VideoCall ({ room: _room }: { room: Room }) {
   } else {
     return (
       <div className='flex flex-col justify-center items-center'>
-        {isLoggedIn
+        {profile?.canLeadSessions
           ? <button className='button' onClick={startSession}>Start session</button>
           : <div className='max-w-xs text-center'>Waiting for the session to be started by an ADHD Together leader.</div>
         }

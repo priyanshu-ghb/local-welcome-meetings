@@ -2,6 +2,11 @@ import { hubspotV1 } from './hubspot';
 import env from 'env-var';
 import { supabase } from './supabase';
 import { NextApiRequest } from 'next';
+import { Profile } from '../types/app';
+
+export async function upsertUserProfile (props: Pick<Profile, 'email'> & Partial<Profile>) {
+  return supabase.from<Profile>('profile').insert(props, { upsert: true })
+}
 
 export async function isValidLeaderEmail (email: string): Promise<boolean> {
   // Env

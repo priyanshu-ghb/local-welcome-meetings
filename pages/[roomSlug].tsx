@@ -22,7 +22,7 @@ type IQuery = {
 const Home: NextPage<IProps> = ({ room, slides }) => {
   const router = useRouter()
   const { roomSlug } = router.query
-  const [user, isLoggedIn] = useUser()
+  const [user, isLoggedIn, profile] = useUser()
 
   if (!room) {
     return <div>No room found.</div>
@@ -49,7 +49,7 @@ const Home: NextPage<IProps> = ({ room, slides }) => {
             <span className='inline-block'>
               <Timer room={room} />
             </span>
-            {slides && isLoggedIn && (
+            {slides && profile?.canLeadSessions && (
               <SlideshowControls slides={slides} room={room} />
             )}
           </div>

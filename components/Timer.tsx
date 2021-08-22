@@ -9,7 +9,7 @@ import { Debug } from './Elements';
 const DEFAULT_TIMER_SECONDS = 90
 
 export function Timer ({ room: _room }: { room: Room }) {
-  const [user, isLoggedIn] = useUser()
+  const [user, isLoggedIn, profile] = useUser()
   const [room, updateRoom] = useRoom(_room.slug, _room)
 
   const toggleTimer = () => {
@@ -59,7 +59,7 @@ export function Timer ({ room: _room }: { room: Room }) {
       {({ remainingTime }) => <span className='text-center'>
         <div className='text-4xl'>{remainingTime}</div>
         <div className='opacity-50'>seconds</div>
-        {isLoggedIn && <div className='text-xs mt-2 cursor-pointer hover:text-red-600 underline' onClick={toggleTimer}>
+        {profile?.canLeadSessions && <div className='text-xs mt-2 cursor-pointer hover:text-red-600 underline' onClick={toggleTimer}>
           {room.timerState === 'playing' ? "⏹ End early" : "▶️ Start"}
         </div>}
       </span>}

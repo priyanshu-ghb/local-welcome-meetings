@@ -13,7 +13,7 @@ type IProps = {
 type IQuery = {}
 
 const Home: NextPage<IProps> = ({ rooms }) => {
-  const [user, isLoggedIn] = useUser()
+  const [user, isLoggedIn, profile] = useUser()
 
   return (
     <div>
@@ -28,7 +28,7 @@ const Home: NextPage<IProps> = ({ rooms }) => {
           <h1 className='text-2xl'>ADHD Together</h1>
           <h2 className='text-base text-gray-400'>Session manager</h2>
         </header>
-        {isLoggedIn ? (
+        {profile?.canLeadSessions ? (
           <>
             <RoomList rooms={rooms} />
             <div className='text-center' onClick={() => signOut()}>Sign out</div>

@@ -13,7 +13,7 @@ export function Slideshow({ slides, room: _room }: {
   slides: Page[],
   room: Room
 }) {
-  const [user, isLoggedIn] = useUser()
+  const [user, isLoggedIn, profile] = useUser()
   const [room, updateRoom] = useRoom(_room.slug, _room)
 
   const safeSlideIndex = useCallback((index: number) => {
@@ -34,7 +34,7 @@ export function Slideshow({ slides, room: _room }: {
           <div key={i} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.plain_text) }} />
         )}
       </section>
-      {isLoggedIn && <section className='rounded-lg p-4 mx-4 bg-yellow-100'>
+      {profile?.canLeadSessions && <section className='rounded-lg p-4 mx-4 bg-yellow-100'>
         <h4 className='!mt-0'>Speaker notes</h4>
         {/* @ts-ignore */}
         {currentSlide.properties["Speaker notes"].rich_text!.map((fragment, i) =>
@@ -50,7 +50,7 @@ export function SlideshowControls({ slides, room: _room }: {
   slides: Page[],
   room: Room
 }) {
-  const [user, isLoggedIn] = useUser()
+  const [user, isLoggedIn, profile] = useUser()
   const [room, updateRoom] = useRoom(_room.slug, _room)
 
   const safeSlideIndex = useCallback((index: number) => {
@@ -65,7 +65,7 @@ export function SlideshowControls({ slides, room: _room }: {
   useKeyPress(keyToCode('left'), () => changeSlide(room.currentSlideIndex - 1))
   useKeyPress(keyToCode('right'), () => changeSlide(room.currentSlideIndex + 1))
 
-  return isLoggedIn ? <div>
+  return profile?.canLeadSessions ? <div>
     <Navigation
       clickPrevious={() => changeSlide(room.currentSlideIndex - 1)}
       clickNext={() => changeSlide(room.currentSlideIndex + 1)}
