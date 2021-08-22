@@ -23,3 +23,5 @@ export const Navigation = ({ clickPrevious, clickNext, children }: {
     </span>
   </nav>
 )
+
+export const Debug = (o: any) => <pre>{JSON.stringify(o, null, 2)}</pre>

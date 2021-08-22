@@ -6,6 +6,7 @@ import { getRoomBySlug } from '../data/room'
 import { getSlides } from '../data/slideshow';
 import { Room } from '../types/app';
 import { Slideshow } from '../components/Slideshow';
+import { Timer } from '../components/Timer';
 
 type IProps = {
   room: Room | null
@@ -41,6 +42,9 @@ const Home: NextPage<IProps> = ({ room, slides }) => {
             <h1 className='text-2xl'>{room?.name ||`/${roomSlug}`}</h1>
             <h2 className='text-base text-gray-400'>ADHD Together session</h2>
           </header>
+          <div className='py-4'>
+            <Timer room={room} />
+          </div>
           {slides && <Slideshow slides={slides} room={room} />}
         </section>
       </main>
