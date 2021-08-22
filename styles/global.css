@@ -7,6 +7,33 @@ body {
   @apply min-h-screen min-w-full;
 }
 
+.prose {
+  @apply text-adhdBlue;
+
+  p, h1, h2, h3, h4, h5 {
+    @apply text-adhdBlue;
+  }
+
+  .dark-prose {
+    p, h1, h2, h3, h4, h5 {
+      @apply text-adhdPurple;
+    }
+  }
+
+  blockquote, p {
+    @apply my-2;
+  }
+
+  blockquote {
+    @apply bg-adhdDarkPurple text-adhdBlue px-4 py-4 leading-tight rounded-lg text-2xl border-none not-italic font-semibold;
+
+    p {
+      @apply p-0 m-0;
+      &:before { display: none; }
+      &:after { display: none; }
+    }
+  }
+}
 
 @layer utilities {}
 

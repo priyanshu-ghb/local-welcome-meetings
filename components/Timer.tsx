@@ -1,19 +1,23 @@
-import { addSeconds, differenceInMilliseconds} from 'date-fns';
-import { format, zonedTimeToUtc, utcToZonedTime } from 'date-fns-tz';
+import { addSeconds, startOfDay, differenceInMilliseconds } from 'date-fns';
+import { format, zonedTimeToUtc } from 'date-fns-tz';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { Room } from '../types/app';
 import { useUser } from '../data/auth';
 import { useRoom } from '../data/room';
-import { Debug } from './Elements';
+import { theme } from 'twin.macro';
+import * as polished from 'polished'
+import { useState } from 'react';
 
 const DEFAULT_TIMER_SECONDS = 90
 
 export function Timer ({ room: _room }: { room: Room }) {
+  const [hasPlayed, setHasPlayed] = useState(false)
   const [user, isLoggedIn, profile] = useUser()
   const [room, updateRoom] = useRoom(_room.slug, _room)
+  const isPlaying = room.timerState === 'playing'
 
   const toggleTimer = () => {
-    if (room.timerState === 'playing') {
+    if (isPlaying) {
       resetTimer()
     } else {
       startTimer(DEFAULT_TIMER_SECONDS)
@@ -41,27 +45,46 @@ export function Timer ({ room: _room }: { room: Room }) {
     endDate,
   ) / 1000)
 
+  function onTimerComplete () {
+    resetTimer()
+    setHasPlayed(true)
+  }
+
   return (
     <CountdownCircleTimer
       key={JSON.stringify([room.timerState, room.timerStartTime, room.timerDuration])}
-      isPlaying={room.timerState === 'playing'}
-      initialRemainingTime={room.timerState === 'playing' ? remainingSeconds : room.timerDuration}
+      isPlaying={isPlaying}
+      initialRemainingTime={isPlaying ? remainingSeconds : room.timerDuration}
       duration={room.timerDuration}
       colors={[
-        ['#004777', 0.33],
-        ['#F7B801', 0.33],
-        ['#A30000', 0.33],
-        ['#CCCCCC', 0.33],
+        [theme`colors.adhdDarkPurple`, 0.01],
+        [theme`colors.adhdBlue`, 0.5],
+        [theme`colors.adhdBlue`, 0.5],
+        [theme`colors.red.600`, 0.15],
       ]}
-      onComplete={() => void resetTimer()}
+      trailColor={theme`colors.adhdDarkPurple`}
+      onComplete={onTimerComplete}
       strokeWidth={20}
     >
-      {({ remainingTime }) => <span className='text-center'>
-        <div className='text-4xl'>{remainingTime}</div>
-        <div className='opacity-50'>seconds</div>
-        {profile?.canLeadSessions && <div className='text-xs mt-2 cursor-pointer hover:text-red-600 underline' onClick={toggleTimer}>
-          {room.timerState === 'playing' ? "⏹ End early" : "▶️ Start"}
-        </div>}
+      {({ remainingTime, elapsedTime }) => <span className='text-center'>
+        {!!remainingTime && !!elapsedTime ? (
+          <div className='text-4xl'>
+            {format(
+              addSeconds(
+                startOfDay(new Date()),
+                remainingTime
+              ),
+              'm:ss'
+            )}
+          </div>
+        ) :
+        hasPlayed ? '✅ time is up'
+        : null}
+        {profile?.canLeadSessions && (
+          <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
+            {isPlaying ? "Stop early" : "Start timer"}
+          </div>
+        )}
       </span>}
     </CountdownCircleTimer>
   )

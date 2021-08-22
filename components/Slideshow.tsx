@@ -34,8 +34,8 @@ export function Slideshow({ slides, room: _room }: {
           <div key={i} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.plain_text) }} />
         )}
       </section>
-      {profile?.canLeadSessions && <section className='rounded-lg p-4 mx-4 bg-yellow-100'>
-        <h4 className='!mt-0'>Speaker notes</h4>
+      {profile?.canLeadSessions && <section className='dark-prose rounded-lg p-4 mx-4 bg-white text-adhdPurple'>
+        <h4 className='!mt-0 uppercase text-sm font-semibold'>Leader notes</h4>
         {/* @ts-ignore */}
         {currentSlide.properties["Speaker notes"].rich_text!.map((fragment, i) =>
           <div key={i} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.plain_text) }} />
@@ -70,7 +70,7 @@ export function SlideshowControls({ slides, room: _room }: {
       clickPrevious={() => changeSlide(room.currentSlideIndex - 1)}
       clickNext={() => changeSlide(room.currentSlideIndex + 1)}
     >
-      Slide {room.currentSlideIndex + 1} of {slides?.length || 0}
+      {room.currentSlideIndex + 1} of {slides?.length || 0}
     </Navigation>
   </div> : null
 }

@@ -9,6 +9,7 @@ import { Slideshow, SlideshowControls } from '../components/Slideshow';
 import { Timer } from '../components/Timer';
 import { VideoCall } from '../components/VideoCall';
 import { useUser } from '../data/auth';
+import { Logo } from '../components/Branding';
 
 type IProps = {
   room: Room | null
@@ -36,22 +37,26 @@ const Home: NextPage<IProps> = ({ room, slides }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className='grid md:grid-cols-3 w-screen h-screen overflow-hidden'>
-        <section className='flex justify-center align-middle col-span-2 max-h-screen'>
+      <main className='grid md:grid-cols-3 w-screen h-screen overflow-hidden bg-adhdPurple text-adhdBlue'>
+        <section className='flex justify-center align-middle col-span-2 max-h-screen bg-adhdDarkPurple'>
           <VideoCall room={room} />
         </section>
-        <section className='max-h-screen flex flex-col justify-start overflow-hidden'>
-          <header className='p-4 text-center'>
-            <h1 className='text-2xl'>{room?.name ||`/${roomSlug}`}</h1>
-            <h2 className='text-base text-gray-400'>ADHD Together session</h2>
-          </header>
-          <div className='p-4 text-center pb-4 border-b border-b-gray-400'>
-            <span className='inline-block'>
-              <Timer room={room} />
-            </span>
-            {slides && profile?.canLeadSessions && (
-              <SlideshowControls slides={slides} room={room} />
-            )}
+        <section className='max-h-screen flex flex-col justify-start overflow-hidden border-l-2 border-l-adhdDarkPurple'>
+          <div className='border-b-2 border-b-adhdDarkPurple'>
+            <div className='p-4 text-center flex flex-row items-center align-middle justify-around'>
+              <div className='inline-block'>
+                <Timer room={room} />
+              </div>
+              <header className='text-center flex flex-col justify-around items-center'>
+                <Logo />
+                <h1 className='text-2xl'>{room?.name ||`/${roomSlug}`}</h1>
+                {slides && profile?.canLeadSessions && (
+                  <div className='text-center py-2'>
+                    <SlideshowControls slides={slides} room={room} />
+                  </div>
+                )}
+              </header>
+            </div>
           </div>
           {slides && (
             <section className='overflow-y-auto'>

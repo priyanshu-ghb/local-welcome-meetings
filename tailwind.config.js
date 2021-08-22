@@ -48,18 +48,14 @@ module.exports = {
     },
     extend: {
       colors: {
-        inherit: 'inherit'
+        inherit: 'inherit',
+        adhdBlue: '#BFD7EA',
+        adhdDarkPurple: '#20061A',
+        adhdPurple: '#2F0927',
       },
       maxWidth: {
         full: "100%"
       },
-      typography: theme => ({
-        DEFAULT: {
-          css: {
-            color: 'inherit',
-          }
-        },
-      })
     },
   },
   variants: {

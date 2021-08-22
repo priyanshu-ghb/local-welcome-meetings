@@ -94,17 +94,20 @@ export async function addWherebyCallToRoom(roomSlug: string, callProps: Partial<
 
   const result = await response.json()
 
-  console.log(result)
+  try {
+    const wherebyRoom = WherebyEmbeddableRoom.parse(result)
 
-  const wherebyRoom = WherebyEmbeddableRoom.parse(result)
+    await updateRoom(roomSlug, {
+      wherebyMeetingId: wherebyRoom.meetingId,
+      wherebyStartDate: wherebyRoom.startDate as any,
+      wherebyEndDate: wherebyRoom.endDate as any,
+      wherebyRoomUrl: wherebyRoom.roomUrl,
+      wherebyHostRoomUrl: wherebyRoom.hostRoomUrl,
+    })
 
-  await updateRoom(roomSlug, {
-    wherebyMeetingId: wherebyRoom.meetingId,
-    wherebyStartDate: wherebyRoom.startDate as any,
-    wherebyEndDate: wherebyRoom.endDate as any,
-    wherebyRoomUrl: wherebyRoom.roomUrl,
-    wherebyHostRoomUrl: wherebyRoom.hostRoomUrl,
-  })
-
-  return wherebyRoom
+    return wherebyRoom
+  } catch (e) {
+    console.error(e)
+    throw e
+  }
 }
