@@ -145,7 +145,7 @@ export interface definitions {
     /** Notion ID. */
     currentSlideIndex: number;
     timerState?: string;
-    timerStartTime?: string;
+    timerStartTime: string;
     /**
      * Note:
      * This is a Primary Key.<pk/>
