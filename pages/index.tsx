@@ -5,6 +5,7 @@ import { Room } from '../types/app';
 import RoomList from '../components/Rooms';
 import Auth from '../components/Auth';
 import { useUser, signOut } from '../data/auth';
+import { Logo } from '../components/Branding';
 
 type IProps = {
   rooms: Room[]
@@ -16,7 +17,7 @@ const Home: NextPage<IProps> = ({ rooms }) => {
   const [user, isLoggedIn, profile] = useUser()
 
   return (
-    <div>
+    <div className='bg-adhdPurple min-h-screen text-adhdBlue'>
       <Head>
         <title>ADHD Together</title>
         <meta name="description" content="Session rooms for ADHD Together" />
@@ -25,13 +26,15 @@ const Home: NextPage<IProps> = ({ rooms }) => {
 
       <main className='max-w-5xl mx-auto p-5 space-y-4 py-7'>
         <header className='text-center'>
-          <h1 className='text-2xl'>ADHD Together</h1>
-          <h2 className='text-base text-gray-400'>Session manager</h2>
+          <span className='inline-block'><Logo /></span>
+          <h2 className='text-xl font-semibold'>Sessions</h2>
         </header>
         {profile?.canLeadSessions ? (
           <>
             <RoomList rooms={rooms} />
-            <div className='text-center' onClick={() => signOut()}>Sign out</div>
+            <div className='text-center'>
+              <span className='bg-adhdDarkPurple hover:bg-adhdPurple p-2 px-3 rounded-lg cursor-pointer inline-block' onClick={() => signOut()}>Sign out</span>
+            </div>
           </>
         ) : (
           <>
