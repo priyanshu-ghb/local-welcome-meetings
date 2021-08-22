@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "start:local": "PORT=4000 node ./server-local-https.js"
   },
   "dependencies": {
     "@heroicons/react": "^1.0.4",
