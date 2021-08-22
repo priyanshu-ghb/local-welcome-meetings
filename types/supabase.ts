@@ -28,6 +28,11 @@ export interface paths {
           timerStartTime?: parameters["rowFilter.room.timerStartTime"];
           id?: parameters["rowFilter.room.id"];
           timerDuration?: parameters["rowFilter.room.timerDuration"];
+          wherebyMeetingId?: parameters["rowFilter.room.wherebyMeetingId"];
+          wherebyStartDate?: parameters["rowFilter.room.wherebyStartDate"];
+          wherebyEndDate?: parameters["rowFilter.room.wherebyEndDate"];
+          wherebyRoomUrl?: parameters["rowFilter.room.wherebyRoomUrl"];
+          wherebyHostRoomUrl?: parameters["rowFilter.room.wherebyHostRoomUrl"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -90,6 +95,11 @@ export interface paths {
           timerStartTime?: parameters["rowFilter.room.timerStartTime"];
           id?: parameters["rowFilter.room.id"];
           timerDuration?: parameters["rowFilter.room.timerDuration"];
+          wherebyMeetingId?: parameters["rowFilter.room.wherebyMeetingId"];
+          wherebyStartDate?: parameters["rowFilter.room.wherebyStartDate"];
+          wherebyEndDate?: parameters["rowFilter.room.wherebyEndDate"];
+          wherebyRoomUrl?: parameters["rowFilter.room.wherebyRoomUrl"];
+          wherebyHostRoomUrl?: parameters["rowFilter.room.wherebyHostRoomUrl"];
         };
         header: {
           /** Preference */
@@ -116,6 +126,11 @@ export interface paths {
           timerStartTime?: parameters["rowFilter.room.timerStartTime"];
           id?: parameters["rowFilter.room.id"];
           timerDuration?: parameters["rowFilter.room.timerDuration"];
+          wherebyMeetingId?: parameters["rowFilter.room.wherebyMeetingId"];
+          wherebyStartDate?: parameters["rowFilter.room.wherebyStartDate"];
+          wherebyEndDate?: parameters["rowFilter.room.wherebyEndDate"];
+          wherebyRoomUrl?: parameters["rowFilter.room.wherebyRoomUrl"];
+          wherebyHostRoomUrl?: parameters["rowFilter.room.wherebyHostRoomUrl"];
         };
         body: {
           /** room */
@@ -152,6 +167,11 @@ export interface definitions {
      */
     id: number;
     timerDuration: number;
+    wherebyMeetingId?: string;
+    wherebyStartDate?: string;
+    wherebyEndDate?: string;
+    wherebyRoomUrl?: string;
+    wherebyHostRoomUrl?: string;
   };
 }
 
@@ -190,6 +210,11 @@ export interface parameters {
   "rowFilter.room.timerStartTime": string;
   "rowFilter.room.id": string;
   "rowFilter.room.timerDuration": string;
+  "rowFilter.room.wherebyMeetingId": string;
+  "rowFilter.room.wherebyStartDate": string;
+  "rowFilter.room.wherebyEndDate": string;
+  "rowFilter.room.wherebyRoomUrl": string;
+  "rowFilter.room.wherebyHostRoomUrl": string;
 }
 
 export interface operations {}
