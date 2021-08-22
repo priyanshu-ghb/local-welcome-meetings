@@ -24,7 +24,9 @@ export async function getUserFromHTTPRequest(req: NextApiRequest) {
 
 function isEmailInArbitraryList(email: string): boolean {
   const AUTHORISED_EMAIL_ADDRESSES = env.get('AUTHORISED_EMAIL_ADDRESSES').default([]).asArray()
+  console.log(AUTHORISED_EMAIL_ADDRESSES)
   if (AUTHORISED_EMAIL_ADDRESSES.indexOf(email) > -1) {
+    console.log(email + ' is in the list')
     return true
   }
   return false
@@ -33,11 +35,13 @@ function isEmailInArbitraryList(email: string): boolean {
 async function isEmailInHubspotList (email: string): Promise<boolean> {
   const HUBSPOT_LEADER_LIST_ID = env.get('HUBSPOT_LEADER_LIST_ID').default(6234).asInt()
   const { contacts } = await hubspotV1(`/lists/${HUBSPOT_LEADER_LIST_ID}/contacts/all`)
+  console.log(contacts.length)
   if (contacts.some((contact: any) =>
       contact['identity-profiles'].some((profile: any) =>
         profile.identities.some((identity: any) =>
           identity.type === 'EMAIL' && identity.value === email
   )))) {
+    console.log(email + ' is in Hubspot')
     return true
   }
   return false
