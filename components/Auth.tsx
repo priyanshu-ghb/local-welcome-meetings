@@ -4,7 +4,7 @@ import { supabase } from '../data/supabase';
 async function isValidEmail (email: string) {
   const response = await fetch('/api/auth', { method: 'POST', body: JSON.stringify({ email }) })
   const result = await response.json()
-  return result.isValid
+  return result.isAuthorised
 }
 
 export default function Auth() {
