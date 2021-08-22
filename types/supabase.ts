@@ -16,7 +16,9 @@ export interface paths {
     get: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.profile.id"];
+          inserted_at?: parameters["rowFilter.profile.inserted_at"];
+          updated_at?: parameters["rowFilter.profile.updated_at"];
+          email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
           /** Filtering Columns */
           select?: parameters["select"];
@@ -68,7 +70,9 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.profile.id"];
+          inserted_at?: parameters["rowFilter.profile.inserted_at"];
+          updated_at?: parameters["rowFilter.profile.updated_at"];
+          email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
         };
         header: {
@@ -84,7 +88,9 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          id?: parameters["rowFilter.profile.id"];
+          inserted_at?: parameters["rowFilter.profile.inserted_at"];
+          updated_at?: parameters["rowFilter.profile.updated_at"];
+          email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
         };
         body: {
@@ -241,12 +247,14 @@ export interface paths {
 
 export interface definitions {
   profile: {
+    inserted_at: string;
+    updated_at: string;
     /**
      * Note:
      * This is a Primary Key.<pk/>
      */
-    id: string;
-    canLeadSessions?: boolean;
+    email: string;
+    canLeadSessions: boolean;
   };
   room: {
     /** Human readable name. */
@@ -296,7 +304,9 @@ export interface parameters {
   limit: string;
   /** profile */
   "body.profile": definitions["profile"];
-  "rowFilter.profile.id": string;
+  "rowFilter.profile.inserted_at": string;
+  "rowFilter.profile.updated_at": string;
+  "rowFilter.profile.email": string;
   "rowFilter.profile.canLeadSessions": string;
   /** room */
   "body.room": definitions["room"];
