@@ -12,6 +12,102 @@ export interface paths {
       };
     };
   };
+  "/profile": {
+    get: {
+      parameters: {
+        query: {
+          inserted_at?: parameters["rowFilter.profile.inserted_at"];
+          updated_at?: parameters["rowFilter.profile.updated_at"];
+          email?: parameters["rowFilter.profile.email"];
+          canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["profile"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** profile */
+          profile?: definitions["profile"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          inserted_at?: parameters["rowFilter.profile.inserted_at"];
+          updated_at?: parameters["rowFilter.profile.updated_at"];
+          email?: parameters["rowFilter.profile.email"];
+          canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          inserted_at?: parameters["rowFilter.profile.inserted_at"];
+          updated_at?: parameters["rowFilter.profile.updated_at"];
+          email?: parameters["rowFilter.profile.email"];
+          canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
+        };
+        body: {
+          /** profile */
+          profile?: definitions["profile"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/room": {
     get: {
       parameters: {
@@ -150,6 +246,16 @@ export interface paths {
 }
 
 export interface definitions {
+  profile: {
+    inserted_at: string;
+    updated_at: string;
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    email: string;
+    canLeadSessions: boolean;
+  };
   room: {
     /** Human readable name. */
     name: string;
@@ -196,6 +302,12 @@ export interface parameters {
   offset: string;
   /** Limiting and Pagination */
   limit: string;
+  /** profile */
+  "body.profile": definitions["profile"];
+  "rowFilter.profile.inserted_at": string;
+  "rowFilter.profile.updated_at": string;
+  "rowFilter.profile.email": string;
+  "rowFilter.profile.canLeadSessions": string;
   /** room */
   "body.room": definitions["room"];
   /** Human readable name. */
