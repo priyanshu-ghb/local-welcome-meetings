@@ -2,6 +2,7 @@ import { Room } from '../types/app';
 import { useRoom } from '../data/room';
 import { useUser } from '../data/auth';
 import { isWithinInterval } from 'date-fns';
+import qs from 'query-string';
 
 export function VideoCall ({ room: _room }: { room: Room }) {
   const [user, isLoggedIn, profile] = useUser()
@@ -27,7 +28,15 @@ export function VideoCall ({ room: _room }: { room: Room }) {
     })
   ) {
     return <iframe
-      src={isLoggedIn ? room.wherebyHostRoomUrl : room.wherebyRoomUrl}
+      src={qs.stringifyUrl({
+        url: profile?.canLeadSessions ? room.wherebyHostRoomUrl : room.wherebyRoomUrl,
+        query: {
+          logo: 'off',
+          precallReview: 'on',
+          personality: 'on',
+          background: 'off'
+        }
+      })}
       allow="camera; microphone; fullscreen; speaker; display-capture"
       className='w-full h-full'
     ></iframe>
