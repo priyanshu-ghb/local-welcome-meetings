@@ -38,7 +38,7 @@ const Home: NextPage<IProps> = ({ room, slides }) => {
       </Head>
 
       <main className='md:grid md:grid-cols-3 w-screen md:h-screen md:overflow-hidden bg-adhdPurple text-adhdBlue'>
-        <section className='relative md:col-span-2 bg-adhdDarkPurple min-h-[55vh]'>
+        <section className='flex justify-center items-center relative md:col-span-2 bg-adhdDarkPurple min-h-[55vh]'>
           <VideoCall room={room} />
         </section>
         <section className='max-h-screen md:flex flex-col justify-start md:overflow-hidden border-l-2 border-l-adhdDarkPurple'>
