@@ -4,9 +4,10 @@ import { VideoCall } from '../components/VideoCall';
 import { Logo } from '../components/Branding';
 import { useUser } from '../data/auth';
 import { useRoom } from '../data/room';
+import Link from 'next/link';
 
 export const Meeting = (props: any) => {
-  const { profile } = useUser()
+  const { profile, isLoggedIn } = useUser()
   const { room } = useRoom()
 
   if (!room) return <div>Loading room...</div>
@@ -23,9 +24,14 @@ export const Meeting = (props: any) => {
               <div className='inline-block'>
                 <Timer />
               </div>
-              <header className='md:flex flex-col text-center'>
+              <header className='md:flex flex-col'>
                 <span className='mx-[-6px]'><Logo /></span>
                 <h1 className='text-lg'>{room.name}</h1>
+                {!isLoggedIn && <div className='mt-2'>
+                  <Link href='/user' passHref>
+                    <span className='text-sm font-semibold cursor-pointer hover:bg-red-800 bg-adhdDarkPurple px-2 py-1 rounded-lg'>Leader sign in</span>
+                  </Link>
+                </div>}
               </header>
             </div>
           </div>

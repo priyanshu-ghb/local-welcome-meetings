@@ -1,4 +1,4 @@
-import { addSeconds, startOfDay, differenceInMilliseconds, differenceInSeconds } from 'date-fns';
+import { addSeconds, startOfDay, differenceInMilliseconds } from 'date-fns';
 import { format, zonedTimeToUtc } from 'date-fns-tz';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { useUser } from '../data/auth';
