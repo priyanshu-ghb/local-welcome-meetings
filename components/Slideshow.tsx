@@ -18,7 +18,7 @@ export function Slideshow() {
   }, [slides])
 
   const currentSlide = useMemo(() => {
-    if (!room?.currentSlideIndex) return null
+    if (typeof room?.currentSlideIndex !== 'number') return null
     return slides[safeSlideIndex(room.currentSlideIndex)] as Page | null
   }, [slides, room?.currentSlideIndex, safeSlideIndex])
 
