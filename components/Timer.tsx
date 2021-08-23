@@ -11,7 +11,7 @@ import { usePrevious } from '../utils/hooks';
 import { Transition } from '@headlessui/react'
 import { ShowFor } from './Elements';
 
-const DEFAULT_TIMER_SECONDS = 90
+const DEFAULT_TIMER_SECONDS = 20
 
 export function Timer ({ room: _room }: { room: Room }) {
   const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
@@ -61,6 +61,10 @@ export function Timer ({ room: _room }: { room: Room }) {
     resetTimer()
   }
 
+  function sd (seconds: number, duration: number) {
+    return seconds / duration
+  }
+
   return (
     <CountdownCircleTimer
       key={JSON.stringify([room.timerState, room.timerStartTime, room.timerDuration])}
@@ -68,10 +72,30 @@ export function Timer ({ room: _room }: { room: Room }) {
       initialRemainingTime={isPlaying ? remainingSeconds : room.timerDuration}
       duration={room.timerDuration}
       colors={[
-        [theme`colors.adhdDarkPurple`, 0.01],
-        [theme`colors.adhdBlue`, 0.5],
-        [theme`colors.adhdBlue`, 0.5],
-        [theme`colors.red.600`, 0.15],
+        [theme`colors.adhdDarkPurple`, sd(0.5, room.timerDuration)],
+        [theme`colors.adhdBlue`, sd(room.timerDuration - 11, room.timerDuration)],
+        [theme`colors.adhdBlue`, sd(0.5, room.timerDuration)],
+        // 10 second countdown
+        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+        ['#FFFFFF', sd(0.5, room.timerDuration)],
+        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+        ['#FFFFFF', sd(0.5, room.timerDuration)],
+        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+        ['#FFFFFF', sd(0.5, room.timerDuration)],
+        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+        ['#FFFFFF', sd(0.5, room.timerDuration)],
+        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+        ['#FFFFFF', sd(0.5, room.timerDuration)],
+        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+        ['#FFFFFF', sd(0.5, room.timerDuration)],
+        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+        ['#FFFFFF', sd(0.5, room.timerDuration)],
+        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+        ['#FFFFFF', sd(0.5, room.timerDuration)],
+        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+        ['#FFFFFF', sd(0.5, room.timerDuration)],
+        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+        ['#FFFFFF', sd(0.5, room.timerDuration)],
       ]}
       trailColor={theme`colors.adhdDarkPurple`}
       onComplete={onTimerComplete}
