@@ -36,7 +36,7 @@ function isEmailInArbitraryList(email: string): boolean {
 }
 
 async function isEmailInHubspotList (email: string): Promise<boolean> {
-  const HUBSPOT_LEADER_LIST_ID = env.get('HUBSPOT_LEADER_LIST_ID').default(6234).asInt()
+  const HUBSPOT_LEADER_LIST_ID = env.get('HUBSPOT_LEADER_LIST_ID').required().asInt()
   const { contacts } = await hubspotV1(`/lists/${HUBSPOT_LEADER_LIST_ID}/contacts/all`)
   if (contacts.some((contact: any) =>
       contact['identity-profiles'].some((profile: any) =>

@@ -55,6 +55,16 @@ export function useUser () {
     getUserData()
   }, [])
 
+  useEffect(() => {
+    if (user?.email) {
+      // @ts-ignore
+      posthog?.people.set({
+        $email: user.email,
+        is_localwelcome_leader: !!userProfile?.canLeadSessions
+      })
+    }
+  }, [user, userProfile])
+
   return [user, !!user, userProfile, session] as const
 }
 
