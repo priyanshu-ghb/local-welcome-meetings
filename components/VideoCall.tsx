@@ -43,7 +43,7 @@ export function VideoCall ({ room: _room }: { room: Room }) {
         }
       })}
       allow="camera; microphone; fullscreen; speaker; display-capture"
-      className='w-full'
+      className='w-full h-full absolute top-0 left-0'
     ></iframe>
   } else {
     return (

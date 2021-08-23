@@ -37,17 +37,17 @@ const Home: NextPage<IProps> = ({ room, slides }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className='grid md:grid-cols-3 w-screen h-screen overflow-hidden bg-adhdPurple text-adhdBlue'>
-        <section className='flex justify-center align-middle col-span-2 max-h-screen bg-adhdDarkPurple min-h-[55vh]'>
+      <main className='md:grid md:grid-cols-3 w-screen md:h-screen md:overflow-hidden bg-adhdPurple text-adhdBlue'>
+        <section className='relative md:col-span-2 bg-adhdDarkPurple min-h-[55vh]'>
           <VideoCall room={room} />
         </section>
-        <section className='max-h-screen flex flex-col justify-start overflow-hidden border-l-2 border-l-adhdDarkPurple'>
+        <section className='max-h-screen md:flex flex-col justify-start md:overflow-hidden border-l-2 border-l-adhdDarkPurple'>
           <div className='border-b-2 border-b-adhdDarkPurple'>
             <div className='p-4 text-center flex flex-row items-center align-middle justify-around'>
               <div className='inline-block'>
                 <Timer room={room} />
               </div>
-              <header className='text-center flex flex-col justify-around items-center'>
+              <header className='text-center md:flex flex-col justify-around items-center'>
                 <Logo />
                 <h1 className='text-2xl'>{room?.name ||`/${roomSlug}`}</h1>
                 {slides && profile?.canLeadSessions && (
