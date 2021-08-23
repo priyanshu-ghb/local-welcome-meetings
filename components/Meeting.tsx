@@ -15,7 +15,7 @@ export const Meeting = (props: any) => {
     <>
       <main className='md:grid md:grid-cols-3 w-screen md:h-screen md:overflow-hidden bg-adhdPurple text-adhdBlue'>
         <section className='relative md:col-span-2 bg-adhdDarkPurple h-[550px] max-h-[66vh] md:h-full md:max-h-full'>
-          <VideoCall />
+          <VideoCall key={room.wherebyMeetingId} />
         </section>
         <section className='md:max-h-screen md:flex flex-col justify-start md:overflow-hidden border-l-2 border-l-adhdDarkPurple'>
           <div className='border-b-2 border-b-adhdDarkPurple'>

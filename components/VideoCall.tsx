@@ -1,7 +1,7 @@
 import { Room } from '../types/app';
 import { useRoom } from '../data/room';
 import { useUser } from '../data/auth';
-import { isWithinInterval } from 'date-fns';
+import { isWithinInterval, addSeconds } from 'date-fns';
 import qs from 'query-string';
 import { Debug } from './Elements';
 
@@ -24,11 +24,12 @@ export function VideoCall () {
   }
 
   if (
+    room.wherebyMeetingId &&
     room.wherebyHostRoomUrl &&
     room.wherebyRoomUrl &&
     room.wherebyStartDate && 
     room.wherebyEndDate &&
-    isWithinInterval(new Date, {
+    isWithinInterval(addSeconds(new Date(), 30), {
       start: new Date(room.wherebyStartDate),
       end: new Date(room.wherebyEndDate)
     })
@@ -49,7 +50,7 @@ export function VideoCall () {
     ></iframe>
   } else {
     return (
-      <div className='flex flex-col justify-center items-center'>
+      <div className='flex flex-col justify-center items-center w-full h-full'>
         {profile?.canLeadSessions
           ? <button data-attr='video-start' className='button' onClick={startSession}>Start session</button>
           : <div className='max-w-xs text-center'>Waiting for the session to be started by an ADHD Together leader.</div>
