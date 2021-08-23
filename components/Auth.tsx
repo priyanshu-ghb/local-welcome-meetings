@@ -1,7 +1,11 @@
 import { LockClosedIcon } from '@heroicons/react/solid'
 import { sendMagicLink, updateUserPermissions } from '../data/auth';
+import { useState } from 'react';
+import { ShowFor } from './Elements';
 
 export default function Auth() {
+  const [hasSent, setHasSent] = useState(false);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     // @ts-ignore
@@ -10,6 +14,7 @@ export default function Auth() {
     const email = event.target.email.value
     await sendMagicLink(email)
     await updateUserPermissions(email)
+    setHasSent(true)
   }
 
   return (
@@ -49,6 +54,11 @@ export default function Auth() {
               </span>
               Send magic link to your email address
             </button>
+            {hasSent && (
+              <ShowFor seconds={5}>
+                <div className='text-center text-adhdPurple py-4'>Magic link was emailed to you ✅</div>
+              </ShowFor>
+            )}
           </div>
         </form>
       </div>
