@@ -1,15 +1,13 @@
 import { addSeconds, startOfDay, differenceInMilliseconds, differenceInSeconds } from 'date-fns';
 import { format, zonedTimeToUtc } from 'date-fns-tz';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
-import { Room } from '../types/app';
 import { useUser } from '../data/auth';
 import { useRoom } from '../data/room';
 import { theme } from 'twin.macro';
 import { useState, useEffect } from 'react';
 import { usePrevious } from '../utils/hooks';
 import { ShowFor } from './Elements';
-
-const DEFAULT_TIMER_SECONDS = 90
+import { useMediaQuery, down } from '../styles/screens';
 
 export function Timer () {
   const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
@@ -23,6 +21,8 @@ export function Timer () {
       setTimerFinishedDate(new Date())
     }
   }, [room?.timerState, previousTimerState])
+
+  const isMobile = useMediaQuery(down('md'))
 
   if (!room) return <div />
 
@@ -70,6 +70,7 @@ export function Timer () {
         isPlaying={isPlaying}
         initialRemainingTime={isPlaying ? remainingSeconds : room.timerDuration}
         duration={room.timerDuration}
+        size={isMobile ? 160 : 175}
         colors={[
           [theme`colors.adhdDarkPurple`, sd(0.5, room.timerDuration)],
           [theme`colors.adhdBlue`, sd(room.timerDuration - 11, room.timerDuration)],
