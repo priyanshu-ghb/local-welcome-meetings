@@ -23,7 +23,7 @@ type IQuery = {
 const Home: NextPage<IProps> = ({ room, slides }) => {
   const router = useRouter()
   const { roomSlug } = router.query
-  const [user, isLoggedIn, profile] = useUser()
+  const { profile } = useUser()
 
   if (!room) {
     return <div>No room found.</div>

@@ -1,13 +1,28 @@
 import { Session, User } from '@supabase/supabase-js';
-import { useState, useEffect, useLayoutEffect } from 'react';
+import { useState, useEffect, useLayoutEffect, createContext } from 'react';
 import { supabase } from './supabase';
 import { Profile } from '../types/app';
 import { debounce } from 'lodash-es'
+import { useContext } from 'react';
 
-export function useUser () {
+interface IUserContext {
+  user: User | null;
+  isLoggedIn: boolean;
+  session: Session | null;
+  profile: Profile | null;
+}
+
+export const UserContext = createContext<IUserContext>({
+  user: null,
+  isLoggedIn: false,
+  session: null,
+  profile: null,
+})
+
+export function UserContextProvider (props: any) {
   const [session, setSession] = useState<Session | null>(supabase.auth.session())
-  const [userProfile, setUserProfile] = useState<Profile | null | undefined>(null);
-  const [user, setUser] = useState<User | null | undefined>(null)
+  const [userProfile, setUserProfile] = useState<Profile | null>(null);
+  const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
     const profileSub = supabase
@@ -16,7 +31,7 @@ export function useUser () {
       .subscribe()
 
     const authSub = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user)
+      setUser(session?.user || null)
       setSession(session)
       // Send session to /api/auth route to set the auth cookie.
       // NOTE: this is only needed if you're doing SSR (getServerSideProps)!
@@ -47,7 +62,7 @@ export function useUser () {
         .from<Profile>('profile')
         .select('*')
         .eq('email', user.email)
-      setUserProfile(profile.body?.[0])
+      setUserProfile(profile.body?.[0] || null)
     }
   }
 
@@ -65,7 +80,19 @@ export function useUser () {
     }
   }, [user, userProfile])
 
-  return [user, !!user, userProfile, session] as const
+  return <UserContext.Provider
+    value={{
+      user,
+      isLoggedIn: !!user,
+      profile: userProfile,
+      session
+    }}
+    {...props}
+  />
+}
+
+export function useUser () {
+  return useContext(UserContext)
 }
 
 export async function sendMagicLink (email: string) {

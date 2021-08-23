@@ -13,7 +13,7 @@ export function Slideshow({ slides, room: _room }: {
   slides: Page[],
   room: Room
 }) {
-  const [user, isLoggedIn, profile] = useUser()
+  const { profile } = useUser()
   const [room, updateRoom] = useRoom(_room.slug, _room)
 
   const safeSlideIndex = useCallback((index: number) => {
@@ -75,7 +75,7 @@ export function SlideshowControls({ slides, room: _room }: {
   slides: Page[],
   room: Room
 }) {
-  const [user, isLoggedIn, profile] = useUser()
+  const { profile } = useUser()
   const [room, updateRoom] = useRoom(_room.slug, _room)
 
   const safeSlideIndex = useCallback((index: number) => {

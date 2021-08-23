@@ -14,7 +14,7 @@ type IProps = {
 type IQuery = {}
 
 const Home: NextPage<IProps> = ({ rooms }) => {
-  const [user, isLoggedIn, profile] = useUser()
+  const { profile } = useUser()
 
   return (
     <div className='bg-adhdPurple min-h-screen text-adhdBlue'>

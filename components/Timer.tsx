@@ -13,7 +13,7 @@ const DEFAULT_TIMER_SECONDS = 90
 
 export function Timer ({ room: _room }: { room: Room }) {
   const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
-  const [user, isLoggedIn, profile] = useUser()
+  const { profile } = useUser()
   const [room, updateRoom] = useRoom(_room.slug, _room)
   const isPlaying = room.timerState === 'playing'
 

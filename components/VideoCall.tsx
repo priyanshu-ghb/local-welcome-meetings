@@ -6,7 +6,7 @@ import qs from 'query-string';
 import { Debug } from './Elements';
 
 export function VideoCall ({ room: _room }: { room: Room }) {
-  const [user, isLoggedIn, profile, session] = useUser()
+  const { user, isLoggedIn, profile, session } = useUser()
   const [room, updateRoom] = useRoom(_room.slug, _room)
 
   const startSession = async () => {
