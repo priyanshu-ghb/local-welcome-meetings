@@ -30,23 +30,37 @@ export const Navigation = ({ clickPrevious, clickNext, children }: {
 
 export const Debug = (o: any) => <pre>{JSON.stringify(o, null, 2)}</pre>
 
-export const ShowFor = ({ seconds, children }: { seconds: number, children: any }) => {
+export const ShowFor = ({ seconds, children, then }: { seconds: number, children: any, then?: any }) => {
   const [startTime, setStartTime] = useState(new Date())
   const endTime = addSeconds(startTime, seconds)
   const time = useTime()
 
   return (
-    <Transition
-      appear={true}
-      show={time < endTime}
-      enter="transition-opacity duration-75"
-      enterFrom="opacity-0"
-      enterTo="opacity-100"
-      leave="transition-opacity duration-300"
-      leaveFrom="opacity-100"
-      leaveTo="opacity-0"
-    >
-      {children}
-    </Transition>
+    <>
+      <Transition
+        appear={true}
+        show={time <= endTime}
+        enter="transition-opacity duration-75"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-opacity duration-300"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        {children}
+      </Transition>
+      {!!then && <Transition
+        appear={true}
+        show={time > endTime}
+        enter="transition-opacity duration-75"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-opacity duration-300"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        {then}
+      </Transition>}
+    </>
   )
 }

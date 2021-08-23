@@ -99,25 +99,19 @@ export function Timer ({ room: _room }: { room: Room }) {
         strokeWidth={20}
       >
         {({ remainingTime, elapsedTime }) => <span className='text-center'>
-          {!!remainingTime && !!elapsedTime ? (
-            <div className='text-4xl'>
-              {format(
-                addSeconds(
-                  startOfDay(new Date()),
-                  remainingTime
-                ),
-                'm:ss'
-              )}
-            </div>
-          ) :
-          !profile?.canLeadSessions && timerFinishedDate ? (
-            <ShowFor seconds={5}>
-              <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
-                Time Is Up! ✅
-              </div>
-            </ShowFor>
-          ) : null}
-          {profile?.canLeadSessions && (
+          {!profile?.canLeadSessions ? (
+            // Member views of timer
+            !!remainingTime && !!elapsedTime ? ( 
+              <CurrentTime startDate={startOfDay(new Date())} remainingTime={room.timerDuration} />
+            ) : !!timerFinishedDate ? (
+              <ShowFor seconds={5} then={<CurrentTime startDate={startOfDay(new Date())} remainingTime={room.timerDuration} />}>
+                <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
+                  Time Is Up! ✅
+                </div>
+              </ShowFor>
+            ) : null
+          ) : (
+            // Leader views of timer
           <>  
               {isPlaying && (
                 <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
@@ -144,3 +138,15 @@ export function Timer ({ room: _room }: { room: Room }) {
     </>
   )
 }
+
+const CurrentTime = ({ startDate, remainingTime }: { startDate: Date, remainingTime: number }) => (
+  <div className='text-4xl'>
+    {format(
+      addSeconds(
+        startOfDay(new Date()),
+        remainingTime
+      ),
+      'm:ss'
+    )}
+  </div>
+)
