@@ -26,7 +26,8 @@ const Home: NextPage<IProps> = ({ room, slides }) => {
   const { profile } = useUser()
 
   if (!room) {
-    return <div>No room found.</div>
+    router.push('/')
+    return <div />
   }
 
   return (
