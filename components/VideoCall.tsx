@@ -51,7 +51,7 @@ export function VideoCall () {
     return (
       <div className='flex flex-col justify-center items-center'>
         {profile?.canLeadSessions
-          ? <button className='button' onClick={startSession}>Start session</button>
+          ? <button data-attr='video-start' className='button' onClick={startSession}>Start session</button>
           : <div className='max-w-xs text-center'>Waiting for the session to be started by an ADHD Together leader.</div>
         }
       </div>

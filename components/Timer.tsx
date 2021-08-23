@@ -125,7 +125,7 @@ export function Timer () {
               {isPlaying && !!remainingTime && !!elapsedTime && (
                 <>
                   <CurrentTime startDate={startOfDay(new Date())} remainingTime={remainingTime} />
-                  <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
+                  <div data-attr='timer-stop-early' className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
                     Stop early
                   </div>
                 </>
@@ -137,7 +137,7 @@ export function Timer () {
                   { duration: 90, label: '1:30', className: 'text-base font-bold' },
                   { duration: 30, label: '30 secs', className: 'text-xs text-opacity-80' }
                 ].map(({ duration, label, className }) => (
-                  <div key={label} onClick={() => startTimer(duration)} className={`${className} uppercase font-semibold cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1`}>
+                  <div data-attr={`timer-start-${duration}`} key={label} onClick={() => startTimer(duration)} className={`${className} uppercase font-semibold cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1`}>
                     {label}
                   </div>
                 ))}
