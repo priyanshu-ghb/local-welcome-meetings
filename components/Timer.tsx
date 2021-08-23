@@ -104,21 +104,31 @@ export function Timer () {
           {!profile?.canLeadSessions ? (
             // Member views of timer
             !!remainingTime && !!elapsedTime ? ( 
-              <CurrentTime startDate={startOfDay(new Date())} remainingTime={room.timerDuration} />
+              <CurrentTime startDate={startOfDay(new Date())} remainingTime={remainingTime} />
             ) : !!timerFinishedDate ? (
-              <ShowFor seconds={5} then={<CurrentTime startDate={startOfDay(new Date())} remainingTime={room.timerDuration} />}>
-                <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
-                  Time Is Up! ✅
-                </div>
-              </ShowFor>
+              <ShowFor seconds={5}
+                // @ts-ignore
+                // eslint-disable-next-line
+                children={
+                  <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
+                    Time Is Up! ✅
+                  </div>
+                }
+                then={
+                  <CurrentTime startDate={startOfDay(new Date())} remainingTime={room.timerDuration} />
+                }
+              />
             ) : null
           ) : (
             // Leader views of timer
           <>  
               {isPlaying && (
-                <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
-                  Stop early
-                </div>
+                <>
+                  <CurrentTime startDate={startOfDay(new Date())} remainingTime={remainingTime} />
+                  <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
+                    Stop early
+                  </div>
+                </>
               )}
               {!isPlaying && (
                 <div className='space-y-1'>
