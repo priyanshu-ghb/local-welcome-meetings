@@ -33,6 +33,10 @@ body {
       &:after { display: none; }
     }
   }
+
+  .dictates-colour * {
+    color: inherit !important;
+  }
 }
 
 @layer utilities {}
