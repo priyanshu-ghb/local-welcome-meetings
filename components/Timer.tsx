@@ -11,18 +11,20 @@ import { ShowFor } from './Elements';
 
 const DEFAULT_TIMER_SECONDS = 90
 
-export function Timer ({ room: _room }: { room: Room }) {
+export function Timer () {
   const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
   const { profile } = useUser()
-  const [room, updateRoom] = useRoom(_room.slug, _room)
-  const isPlaying = room.timerState === 'playing'
+  const { room, updateRoom } = useRoom()
+  const isPlaying = room?.timerState === 'playing'
 
-  const previousTimerState = usePrevious(room.timerState)
+  const previousTimerState = usePrevious(room?.timerState)
   useEffect(() => {
-    if (previousTimerState === 'playing' && room.timerState !== 'playing') {
+    if (previousTimerState === 'playing' && room?.timerState !== 'playing') {
       setTimerFinishedDate(new Date())
     }
-  }, [room.timerState, previousTimerState])
+  }, [room?.timerState, previousTimerState])
+
+  if (!room) return <div />
 
   const toggleTimer = () => {
     if (isPlaying) {

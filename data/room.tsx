@@ -1,7 +1,8 @@
 import { supabase } from './supabase';
 import { Room } from '../types/app';
 import { SupabaseRealtimePayload } from '@supabase/supabase-js';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, createContext, useContext } from 'react';
+import { Page } from '@notionhq/client/build/src/api-types';
 
 export async function getAllRooms(): Promise<Room[]> {
   const rooms = await supabase
@@ -40,8 +41,24 @@ export function updateRoom (roomSlug: string, room: Partial<Room>) {
     .eq('slug', roomSlug)
 }
 
-export function useRoom(slug: string, initialData: Room) {
-  const [room, setRoom] = useState<Room>(initialData)
+interface IRoomContext {
+  room: Room | null,
+  slides: Page[],
+  updateRoom: (room: Partial<Room>) => void
+}
+
+export const RoomContext = createContext<IRoomContext>({
+  room: null,
+  slides: [],
+  updateRoom(room) {}
+})
+
+export function RoomContextProvider ({
+  slug,
+  initialData,
+  children
+}: { slug: string, initialData?: { room?: Room, slides?: Page[] }, children: any }) {
+  const [room, setRoom] = useState<Room | null>(initialData?.room || null)
 
   useEffect(function listenForRoomChanges() {
     const unsubscribe = subscribeToRoomBySlug(slug, function onChange(payload) {
@@ -58,5 +75,15 @@ export function useRoom(slug: string, initialData: Room) {
     }
   }
 
-  return [room, _updateRoom] as const
+  return <RoomContext.Provider
+    value={{
+      room,
+      slides: initialData?.slides || [],
+      updateRoom: _updateRoom
+    }}
+  >{children}</RoomContext.Provider>
+}
+
+export function useRoom() {
+  return useContext(RoomContext)
 }

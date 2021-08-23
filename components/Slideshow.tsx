@@ -9,20 +9,18 @@ import { useKeyPress, keyToCode } from '../utils/hooks';
 import { Navigation } from './Elements';
 import { useUser } from '../data/auth';
 
-export function Slideshow({ slides, room: _room }: {
-  slides: Page[],
-  room: Room
-}) {
+export function Slideshow() {
   const { profile } = useUser()
-  const [room, updateRoom] = useRoom(_room.slug, _room)
+  const { room, slides } = useRoom()
 
   const safeSlideIndex = useCallback((index: number) => {
     return Math.max(0, Math.min(slides.length - 1, index))
   }, [slides])
 
   const currentSlide = useMemo(() => {
+    if (!room?.currentSlideIndex) return null
     return slides[safeSlideIndex(room.currentSlideIndex)] as Page | null
-  }, [slides, room.currentSlideIndex, safeSlideIndex])
+  }, [slides, room?.currentSlideIndex, safeSlideIndex])
 
   return (
     <div className='prose'>
@@ -71,24 +69,23 @@ export const convertNotionToTailwindColour = (color: string) => {
   }
 }
 
-export function SlideshowControls({ slides, room: _room }: {
-  slides: Page[],
-  room: Room
-}) {
+export function SlideshowControls() {
   const { profile } = useUser()
-  const [room, updateRoom] = useRoom(_room.slug, _room)
+  const { room, updateRoom, slides } = useRoom()
 
   const safeSlideIndex = useCallback((index: number) => {
-    return Math.max(0, Math.min(slides.length - 1, index))
+    return Math.max(0, Math.min(slides?.length - 1, index))
   }, [slides])
 
   const changeSlide = async (requestedIndex: number) => {
     const nextIndex = safeSlideIndex(requestedIndex)
-    return await updateRoom({ currentSlideIndex: nextIndex })
+    return updateRoom({ currentSlideIndex: nextIndex })
   }
 
-  useKeyPress(keyToCode('left'), () => changeSlide(room.currentSlideIndex - 1))
-  useKeyPress(keyToCode('right'), () => changeSlide(room.currentSlideIndex + 1))
+  useKeyPress(keyToCode('left'), () => room && changeSlide(room.currentSlideIndex - 1))
+  useKeyPress(keyToCode('right'), () => room && changeSlide(room.currentSlideIndex + 1))
+
+  if (!room) return <div />
 
   return profile?.canLeadSessions ? <div>
     <Navigation

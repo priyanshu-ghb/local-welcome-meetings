@@ -5,9 +5,11 @@ import { isWithinInterval } from 'date-fns';
 import qs from 'query-string';
 import { Debug } from './Elements';
 
-export function VideoCall ({ room: _room }: { room: Room }) {
+export function VideoCall () {
   const { user, isLoggedIn, profile, session } = useUser()
-  const [room, updateRoom] = useRoom(_room.slug, _room)
+  const { room } = useRoom()
+
+  if (!room) return <div />
 
   const startSession = async () => {
     if (user && isLoggedIn && profile?.canLeadSessions) {

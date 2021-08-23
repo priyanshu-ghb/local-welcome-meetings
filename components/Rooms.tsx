@@ -1,12 +1,9 @@
 import { Room } from '../types/app';
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 import copy from 'copy-to-clipboard';
 import { ClipboardCopyIcon } from '@heroicons/react/solid'
 
 export default function RoomList({ rooms }: { rooms: Room[] }) {
-  const router = useRouter()
-
   return (
     <div className="flex flex-col">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
