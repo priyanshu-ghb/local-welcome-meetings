@@ -122,7 +122,7 @@ export function Timer () {
           ) : (
             // Leader views of timer
           <>  
-              {isPlaying && (
+              {isPlaying && !!remainingTime && !!elapsedTime && (
                 <>
                   <CurrentTime startDate={startOfDay(new Date())} remainingTime={remainingTime} />
                   <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
