@@ -21,23 +21,23 @@ export function Slideshow({ slides, room: _room }: {
   }, [slides])
 
   const currentSlide = useMemo(() => {
-    return slides[safeSlideIndex(room.currentSlideIndex)]
+    return slides[safeSlideIndex(room.currentSlideIndex)] as Page | null
   }, [slides, room.currentSlideIndex, safeSlideIndex])
 
   return (
     <div className='prose'>
       <section className='p-4'>
         {/* @ts-ignore */}
-        <h2 className='!mt-0'>{currentSlide.properties["Name"].title!.map(fragment => fragment.plain_text).join()}</h2>
+        <h2 className='!mt-0'>{currentSlide?.properties["Name"].title!.map(fragment => fragment.plain_text).join()}</h2>
         {/* @ts-ignore */}
-        {currentSlide.properties["Member notes"].rich_text!.map((fragment, i) =>
+        {currentSlide?.properties["Member notes"].rich_text!.map((fragment, i) =>
           <div key={i} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.plain_text) }} />
         )}
       </section>
       {profile?.canLeadSessions && <section className='dark-prose rounded-lg p-4 mx-4 bg-white text-adhdPurple'>
         <h4 className='!mt-0 uppercase text-sm font-semibold'>Leader notes</h4>
         {/* @ts-ignore */}
-        {currentSlide.properties["Speaker notes"].rich_text!.map((fragment, i) =>
+        {currentSlide?.properties["Speaker notes"].rich_text!.map((fragment, i) =>
           <div key={i} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.plain_text) }} />
         )}
       </section>}
