@@ -5,13 +5,11 @@ import { Room } from '../types/app';
 import { useUser } from '../data/auth';
 import { useRoom } from '../data/room';
 import { theme } from 'twin.macro';
-import * as polished from 'polished'
 import { useState, useEffect } from 'react';
 import { usePrevious } from '../utils/hooks';
-import { Transition } from '@headlessui/react'
 import { ShowFor } from './Elements';
 
-const DEFAULT_TIMER_SECONDS = 20
+const DEFAULT_TIMER_SECONDS = 90
 
 export function Timer ({ room: _room }: { room: Room }) {
   const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
@@ -30,7 +28,7 @@ export function Timer ({ room: _room }: { room: Room }) {
     if (isPlaying) {
       resetTimer()
     } else {
-      startTimer(DEFAULT_TIMER_SECONDS)
+      startTimer()
     }
   }
 
@@ -38,17 +36,15 @@ export function Timer ({ room: _room }: { room: Room }) {
     updateRoom({
       timerState: 'stopped',
       timerStartTime: zonedTimeToUtc(new Date() as any, 'UTC') as any,
-      timerDuration: DEFAULT_TIMER_SECONDS
     })
   }
 
-  const startTimer = (timerDuration: number) => updateRoom({
+  const startTimer = (timerDuration?: number) => updateRoom({
     timerState: 'playing',
     timerStartTime: zonedTimeToUtc(new Date() as any, 'UTC') as any,
     timerDuration
   })
 
-  const t = (d: Date) => format(d, 'hh:mm:ss', { timeZone: 'UTC' })
   const startDate = new Date(room.timerStartTime)
   const now = new Date()
   const endDate = addSeconds(startDate, room.timerDuration)
@@ -66,66 +62,85 @@ export function Timer ({ room: _room }: { room: Room }) {
   }
 
   return (
-    <CountdownCircleTimer
-      key={JSON.stringify([room.timerState, room.timerStartTime, room.timerDuration])}
-      isPlaying={isPlaying}
-      initialRemainingTime={isPlaying ? remainingSeconds : room.timerDuration}
-      duration={room.timerDuration}
-      colors={[
-        [theme`colors.adhdDarkPurple`, sd(0.5, room.timerDuration)],
-        [theme`colors.adhdBlue`, sd(room.timerDuration - 11, room.timerDuration)],
-        [theme`colors.adhdBlue`, sd(0.5, room.timerDuration)],
-        // 10 second countdown
-        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
-        ['#FFFFFF', sd(0.5, room.timerDuration)],
-        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
-        ['#FFFFFF', sd(0.5, room.timerDuration)],
-        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
-        ['#FFFFFF', sd(0.5, room.timerDuration)],
-        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
-        ['#FFFFFF', sd(0.5, room.timerDuration)],
-        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
-        ['#FFFFFF', sd(0.5, room.timerDuration)],
-        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
-        ['#FFFFFF', sd(0.5, room.timerDuration)],
-        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
-        ['#FFFFFF', sd(0.5, room.timerDuration)],
-        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
-        ['#FFFFFF', sd(0.5, room.timerDuration)],
-        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
-        ['#FFFFFF', sd(0.5, room.timerDuration)],
-        [theme`colors.red.600`, sd(0.5, room.timerDuration)],
-        ['#FFFFFF', sd(0.5, room.timerDuration)],
-      ]}
-      trailColor={theme`colors.adhdDarkPurple`}
-      onComplete={onTimerComplete}
-      strokeWidth={20}
-    >
-      {({ remainingTime, elapsedTime }) => <span className='text-center'>
-        {!!remainingTime && !!elapsedTime ? (
-          <div className='text-4xl'>
-            {format(
-              addSeconds(
-                startOfDay(new Date()),
-                remainingTime
-              ),
-              'm:ss'
-            )}
-          </div>
-        ) :
-        !profile?.canLeadSessions && timerFinishedDate ? (
-          <ShowFor seconds={5}>
-            <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
-              Time Is Up! ✅
+    <>
+      <CountdownCircleTimer
+        key={JSON.stringify([room.timerState, room.timerStartTime, room.timerDuration])}
+        isPlaying={isPlaying}
+        initialRemainingTime={isPlaying ? remainingSeconds : room.timerDuration}
+        duration={room.timerDuration}
+        colors={[
+          [theme`colors.adhdDarkPurple`, sd(0.5, room.timerDuration)],
+          [theme`colors.adhdBlue`, sd(room.timerDuration - 11, room.timerDuration)],
+          [theme`colors.adhdBlue`, sd(0.5, room.timerDuration)],
+          // 10 second countdown
+          [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+          ['#FFFFFF', sd(0.5, room.timerDuration)],
+          [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+          ['#FFFFFF', sd(0.5, room.timerDuration)],
+          [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+          ['#FFFFFF', sd(0.5, room.timerDuration)],
+          [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+          ['#FFFFFF', sd(0.5, room.timerDuration)],
+          [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+          ['#FFFFFF', sd(0.5, room.timerDuration)],
+          [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+          ['#FFFFFF', sd(0.5, room.timerDuration)],
+          [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+          ['#FFFFFF', sd(0.5, room.timerDuration)],
+          [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+          ['#FFFFFF', sd(0.5, room.timerDuration)],
+          [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+          ['#FFFFFF', sd(0.5, room.timerDuration)],
+          [theme`colors.red.600`, sd(0.5, room.timerDuration)],
+          ['#FFFFFF', sd(0.5, room.timerDuration)],
+        ]}
+        trailColor={theme`colors.adhdDarkPurple`}
+        onComplete={onTimerComplete}
+        strokeWidth={20}
+      >
+        {({ remainingTime, elapsedTime }) => <span className='text-center'>
+          {!!remainingTime && !!elapsedTime ? (
+            <div className='text-4xl'>
+              {format(
+                addSeconds(
+                  startOfDay(new Date()),
+                  remainingTime
+                ),
+                'm:ss'
+              )}
             </div>
-          </ShowFor>
-        ) : null}
-        {profile?.canLeadSessions && (
-          <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
-            {isPlaying ? "Stop early" : "Start timer"}
-          </div>
-        )}
-      </span>}
-    </CountdownCircleTimer>
+          ) :
+          !profile?.canLeadSessions && timerFinishedDate ? (
+            <ShowFor seconds={5}>
+              <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
+                Time Is Up! ✅
+              </div>
+            </ShowFor>
+          ) : null}
+          {profile?.canLeadSessions && (
+          <>  
+              {isPlaying && (
+                <div className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
+                  Stop early
+                </div>
+              )}
+              {!isPlaying && (
+                <div className='space-y-1'>
+                {[
+                  { duration: 60, label: '1 min', className: 'text-xs text-opacity-80' },
+                  { duration: 90, label: '1:30', className: 'text-base font-bold' },
+                  { duration: 30, label: '30 secs', className: 'text-xs text-opacity-80' }
+                ].map(({ duration, label, className }) => (
+                  <div key={label} onClick={() => startTimer(duration)} className={`${className} uppercase font-semibold cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1`}>
+                    {label}
+                  </div>
+                ))}
+                </div>
+              )}
+            </>
+          )}
+        </span>}
+      </CountdownCircleTimer>
+    </>
   )
 }
