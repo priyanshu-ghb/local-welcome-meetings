@@ -1,20 +1,29 @@
-import { LockClosedIcon } from '@heroicons/react/solid'
+import { CheckCircleIcon, ClockIcon, LockClosedIcon } from '@heroicons/react/solid'
 import { sendMagicLink, updateUserPermissions, useUser, signOut } from '../data/auth';
 import { useState } from 'react';
 import { ShowFor } from './Elements';
 
 export default function Auth() {
   const [hasSent, setHasSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     // @ts-ignore
     if (!event.target.email) return
-    // @ts-ignore
-    const email = event.target.email.value
-    await sendMagicLink(email)
-    await updateUserPermissions(email)
-    setHasSent(true)
+    try {
+      setHasSent(false)
+      setIsLoading(true)
+      // @ts-ignore
+      const email = event.target.email.value
+      await sendMagicLink(email)
+      await updateUserPermissions(email)
+      setHasSent(true)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const { isLoggedIn } = useUser()
@@ -32,7 +41,7 @@ export default function Auth() {
       <div className="max-w-md w-full space-y-5">
         <header className='text-center max-w-sm space-y-2'>
           <h2 className="text-2xl font-extrabold text-gray-900 leading-tight">
-            Sign in via email<br />to access Leader tools
+            Sign in to access leader-only session features
           </h2>
           {/* <p className='text-gray-600'>Use the address that ADHD Together sends reminder emails to.</p> */}
         </header>
@@ -57,18 +66,25 @@ export default function Auth() {
 
           <div>
             <button
+              disabled={isLoading}
               data-attr='auth-sign-in' 
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                <LockClosedIcon className="h-4 w-4 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
+                {hasSent ? <LockClosedIcon className="h-4 w-4 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
+                : isLoading ? <ClockIcon className="h-4 w-4 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
+                : <LockClosedIcon className="h-4 w-4 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />}
               </span>
-              Send me login details
+              {hasSent ? "Send again"
+              : isLoading ? "Sending..."
+              : "Email me a temporary sign in link"}
             </button>
-            {hasSent && (
-              <ShowFor seconds={5}>
-                <div className='text-center text-adhdPurple bg-green-100 px-4 py-2 mt-2 rounded-lg'>Login details sent ✅ Go check your inbox.</div>
+            {hasSent && !isLoading && (
+              <ShowFor seconds={10000000}>
+                <div className='text-center text-adhdPurple bg-green-100 px-4 py-2 mt-2 rounded-lg'>
+                  ✅ Sent! Check your inbox (link expires in 1 hour)
+                </div>
               </ShowFor>
             )}
           </div>
