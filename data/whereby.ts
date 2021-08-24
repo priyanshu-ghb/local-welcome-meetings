@@ -1,4 +1,4 @@
-import { addHours, addSeconds } from 'date-fns';
+import { addHours, addMinutes, addSeconds } from 'date-fns';
 import env from 'env-var';
 import { z } from 'zod'
 import { updateRoom } from './room';
@@ -75,7 +75,7 @@ export async function addWherebyCallToRoom(roomSlug: string, callProps: Partial<
     isLocked: true,
     roomMode: 'group',
     startDate: addSeconds(new Date(), 5),
-    endDate: addHours(new Date(), 4),
+    endDate: addMinutes(addHours(new Date(), 2), 30),
     fields: ["hostRoomUrl"],
     roomNamePrefix: roomSlug + '-',
     roomNamePattern: 'human-short',
