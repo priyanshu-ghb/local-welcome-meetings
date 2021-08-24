@@ -72,8 +72,8 @@ export function Timer () {
         duration={room.timerDuration}
         size={isMobile ? 160 : 175}
         colors={[
-          [theme`colors.adhdDarkPurple`, sd(0.5, room.timerDuration)],
-          [theme`colors.adhdBlue`, sd(room.timerDuration - 11, room.timerDuration)],
+          // [theme`colors.adhdDarkPurple`, sd(0.5, room.timerDuration)],
+          [theme`colors.adhdBlue`, sd(room.timerDuration - 10.5, room.timerDuration)],
           [theme`colors.adhdBlue`, sd(0.5, room.timerDuration)],
           // 10 second countdown
           [theme`colors.red.600`, sd(0.5, room.timerDuration)],
