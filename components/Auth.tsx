@@ -39,8 +39,8 @@ export default function Auth() {
   return (
     <section className="flex items-center justify-center bg-white rounded-lg py-12 py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-5">
-        <header className='text-center max-w-sm space-y-2'>
-          <h2 className="text-2xl font-extrabold text-gray-900 leading-tight">
+        <header className='text-center space-y-2'>
+          <h2 className="max-w-sm mx-auto text-2xl font-extrabold text-gray-900 leading-tight">
             Sign in to access leader-only session features
           </h2>
           {/* <p className='text-gray-600'>Use the address that ADHD Together sends reminder emails to.</p> */}
