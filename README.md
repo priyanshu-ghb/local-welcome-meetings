@@ -4,13 +4,13 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ### Session call view
 
-![Session call view]('./public/Screenshot 2021-08-25 at 10.46.19.png')
+![Session call view](public/screenshots/call.png)
 
 ### Rooms directory
-![Session call view]('./public/Screenshot 2021-08-25 at 10.46.33.png')
+![Session call view](public/screenshots/directory.png')
 
 ### Magic link sign-in
-![Session call view]('./public/Screenshot 2021-08-25 at 10.46.43.png')
+![Session call view](public/screenshots/signin.png)
 
 ## Getting Started
 
