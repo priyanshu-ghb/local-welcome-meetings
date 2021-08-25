@@ -105,6 +105,7 @@ export function UserContextProvider (props: any) {
       // @ts-ignore
       posthog?.people?.set?.({
         supabase_user_id: user.id,
+        email: user.email,
         $email: user.email,
         is_localwelcome_leader: !!userProfile?.canLeadSessions
       })
