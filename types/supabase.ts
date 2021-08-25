@@ -20,6 +20,7 @@ export interface paths {
           updated_at?: parameters["rowFilter.profile.updated_at"];
           email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
+          user_id?: parameters["rowFilter.profile.user_id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -74,6 +75,7 @@ export interface paths {
           updated_at?: parameters["rowFilter.profile.updated_at"];
           email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
+          user_id?: parameters["rowFilter.profile.user_id"];
         };
         header: {
           /** Preference */
@@ -92,6 +94,7 @@ export interface paths {
           updated_at?: parameters["rowFilter.profile.updated_at"];
           email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
+          user_id?: parameters["rowFilter.profile.user_id"];
         };
         body: {
           /** profile */
@@ -255,6 +258,7 @@ export interface definitions {
      */
     email: string;
     canLeadSessions: boolean;
+    user_id?: string;
   };
   room: {
     /** Human readable name. */
@@ -308,6 +312,7 @@ export interface parameters {
   "rowFilter.profile.updated_at": string;
   "rowFilter.profile.email": string;
   "rowFilter.profile.canLeadSessions": string;
+  "rowFilter.profile.user_id": string;
   /** room */
   "body.room": definitions["room"];
   /** Human readable name. */
