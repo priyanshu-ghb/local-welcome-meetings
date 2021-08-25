@@ -1,5 +1,5 @@
 import { addSeconds, startOfDay, differenceInMilliseconds } from 'date-fns';
-import { format, zonedTimeToUtc } from 'date-fns-tz';
+import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { useUser } from '../data/auth';
 import { useRoom } from '../data/room';
@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { usePrevious } from '../utils/hooks';
 import { ShowFor } from './Elements';
 import { useMediaQuery, down } from '../styles/screens';
+import jstz from 'jstz';
 
 export function Timer () {
   const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
@@ -34,20 +35,22 @@ export function Timer () {
     }
   }
 
+  const timezone = jstz.determine().name()
+
   const resetTimer = () => {
     updateRoom({
       timerState: 'stopped',
-      timerStartTime: zonedTimeToUtc(new Date() as any, 'UTC') as any,
+      timerStartTime: zonedTimeToUtc(new Date() as any, timezone) as any,
     })
   }
 
   const startTimer = (timerDuration?: number) => updateRoom({
     timerState: 'playing',
-    timerStartTime: zonedTimeToUtc(new Date() as any, 'UTC') as any,
+    timerStartTime: zonedTimeToUtc(new Date() as any, timezone) as any,
     timerDuration
   })
 
-  const startDate = new Date(room.timerStartTime)
+  const startDate = utcToZonedTime(new Date(room.timerStartTime), timezone)
   const now = new Date()
   const endDate = addSeconds(startDate, room.timerDuration)
   const remainingSeconds = Math.abs(differenceInMilliseconds(
