@@ -12,6 +12,8 @@ import { getUserFromHTTPRequest } from '../../data/leader';
 import { getUserProfile, useUser } from '../../data/auth';
 import { strict as assert } from 'assert';
 import { CreateShiftPattern, RotaContextProvider, ShiftPatterns } from '../../components/ShiftPatterns';
+import { ExternalLinkIcon } from '@heroicons/react/solid';
+import { Header } from '../../components/Layout';
 
 type IProps = {
   room: Room
@@ -32,24 +34,38 @@ const Route: NextPage<IProps> = ({ room }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className='bg-white min-h-screen w-screen'>
-        <main className='max-w-5xl mx-auto p-5 space-y-4 py-7'>
-          <header className='text-center'>
-            <span className='inline-block'><Logo /></span>
-            <div>{room.name}</div>
-          </header>
-          <Link href={`/${room.slug}`} passHref>
-            <div className='cursor-pointer text-xl font-semibold bg-green-100 hover:bg-green-200 transition active:bg-green-400 rounded-lg p-4 text-center border-2 border-green-400'>
-              Go to meeting room &rarr;
-            </div>
-          </Link>
-          <RotaContextProvider>
-            <ShiftPatterns />
-            {profile?.canManageShifts && <CreateShiftPattern />}
-          </RotaContextProvider>
+        <Header />
+        <main className='max-w-lg mx-auto p-5 space-y-4 py-7'>
+          <section>
+            <h2 className='text-2xl font-bold text-adhdPurple mb-2'>Meeting room</h2>
+            <RoomLink room={room} />
+          </section>
+          <section>
+            <header className='mb-5'>
+              <h2 className='text-2xl font-bold text-adhdPurple mb-2'>Rota</h2>
+              <p>A rota of who will be hosting each session. We use this to send out confirmation emails to leaders and members.</p>
+            </header>
+            <RotaContextProvider>
+              <ShiftPatterns />
+              {profile?.canManageShifts && <CreateShiftPattern />}
+            </RotaContextProvider>
+          </section>
         </main>
       </div>
     </RoomContextProvider>
   )
+}
+
+export function RoomLink ({ room }: { room: Room }) {
+  return <Link href={`/${room.slug}`} passHref>
+    <div className='flex flex-row justify-between text-adhdBlue cursor-pointer bg-adhdPurple hover:bg-adhdDarkPurple transition rounded-lg p-3'>
+      <div>
+        <div className='text-lg font-semibold'>ADHD Together {room.name}</div>
+        <div className='underline opacity-80 text-sm'>session.adhdtogether.org.uk/{room.slug}</div>
+      </div>
+      <ExternalLinkIcon className='w-5 h-5' />
+    </div>
+  </Link>
 }
 
 export const getServerSideProps: GetServerSideProps<IProps, IQuery> = async ({ req, params }) => {

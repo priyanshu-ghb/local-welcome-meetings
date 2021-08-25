@@ -66,11 +66,11 @@ export function ShiftPatterns () {
   }
 
   return (
-    <div>
+    <div className='space-y-4'>
       {rota.shiftPatterns?.map((shiftPattern, index) => {
         return (
-          <div key={shiftPattern.id} className='grid grid-flow-col auto-cols-auto justify-between'>
-            {shiftPattern.name}
+          <div key={shiftPattern.id} className=''>
+            <h3 className='text-lg font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
             {profile?.canManageShifts && <div className='button' onClick={() => del(shiftPattern.id)}>Delete</div>}
           </div>
         )
@@ -99,8 +99,8 @@ export function CreateShiftPattern () {
     <form onSubmit={handleSubmit}>
       <div className="shadow overflow-hidden sm:rounded-md">
         <div className="p-4 sm:p-5 bg-white">
-          <h3 className='text-2xl mb-5 text-left'>Add a shift pattern</h3>
-          <div className="grid grid-cols-6 gap-6">
+          <h3 className='text-2xl mb-4 text-left'>Add a shift pattern</h3>
+          <div className="grid grid-flow-row gap-2">
             <div className="col-span-6 sm:col-span-3">
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name of shift pattern</label>
               <input required type="text" name="name" id="name" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
@@ -112,7 +112,7 @@ export function CreateShiftPattern () {
             </div>
           </div>
         </div>
-        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+        <div className="px-4 py-3 bg-gray-50 text-right sm:px-5">
           <button type="submit" className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
             Create shift pattern
           </button>
