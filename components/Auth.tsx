@@ -17,7 +17,7 @@ export default function Auth() {
       // @ts-ignore
       const email = event.target.email.value
       await sendMagicLink(email)
-      await updateUserPermissions(email)
+      await updateUserPermissions()
       setHasSent(true)
     } catch (e) {
       console.error(e)

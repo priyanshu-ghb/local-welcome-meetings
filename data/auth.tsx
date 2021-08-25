@@ -21,6 +21,16 @@ export const UserContext = createContext<IUserContext>({
   signOut: () => {}
 })
 
+
+export async function getUserProfile (user_id: string): Promise<Profile | null> {
+  const res = await supabase
+        .from<Profile>('profile')
+        .select('*')
+        .eq('user_id', user_id)
+
+  return res.data?.[0] || null
+}
+
 export async function getUserProfileForEmail (email: string): Promise<Profile | null> {
   const res = await supabase
         .from<Profile>('profile')
@@ -46,7 +56,7 @@ export function UserContextProvider (props: any) {
 
   useEffect(function setupSubscriptions() {
     const profileSub = supabase
-      .from(`profile:email=eq.${user?.email}`)
+      .from(`profile:user_id=eq.${user?.id}`)
       .on('*', (e) => void setUserProfile(e.new))
       .subscribe()
 
@@ -67,7 +77,7 @@ export function UserContextProvider (props: any) {
         console.error("Unsub from user", e)
       }
     }
-  }, [user?.email])
+  }, [user?.id])
 
   async function getUserSessionData() {
     const session = supabase.auth.session()
@@ -76,11 +86,13 @@ export function UserContextProvider (props: any) {
     const user = supabase.auth.user()
     setUser(user)
 
-    if (user?.email) {
+    if (user) {
       await getAuthCookie('SIGNED_IN', session)
       await updateUserPermissions()
-      const profile = await getUserProfileForEmail(user.email)
+      const profile = await getUserProfile(user.id)
       setUserProfile(profile)
+    } else {
+      await getAuthCookie('SIGNED_OUT', session)
     }
   }
 

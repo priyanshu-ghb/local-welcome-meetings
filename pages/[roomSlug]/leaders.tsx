@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { Logo } from '../../components/Branding';
 import { isClient } from '../../styles/screens';
 import { getUserFromHTTPRequest } from '../../data/leader';
-import { getUserProfileForEmail } from '../../data/auth';
+import { getUserProfile } from '../../data/auth';
 import { strict as assert } from 'assert';
 
 type IProps = {
@@ -51,7 +51,7 @@ export const getServerSideProps: GetServerSideProps<IProps, IQuery> = async ({ r
     assert(!!room, 'No room found for the slug')
     const { user } = await getUserFromHTTPRequest(req)
     assert(!!user, 'No user found in request')
-    const profile = await getUserProfileForEmail(user.email!)
+    const profile = await getUserProfile(user.id)
     assert(!!profile, 'No profile found for this user')
     return { props: { room } }
   } catch (e) {
