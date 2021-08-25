@@ -101,6 +101,11 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
         <span>{justRight ? <EmojiHappyIcon className='w-[25px] h-[25px]' /> : <EmojiSadIcon className='w-[25px] h-[25px]' />}</span>
       </div>
       <div className='space-y-2 my-2'>
+        {allocatedSlots.map((shiftAllocation, i) => (
+          <div key={i} className='shadow-sm rounded-lg p-3 hover:bg-gray-50 transition'>
+            {shiftAllocation.userId}
+          </div>
+        ))}
         {new Array(unfilledSlots).fill(0).map((_, i) => (
           <div key={i} className='border border-dashed border-gray-400 rounded-lg p-3 hover:bg-gray-50 transition'>
             Fill vacant slot {allocatedSlots.length + i + 1}
