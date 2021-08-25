@@ -1,5 +1,5 @@
-import { CheckCircleIcon, ClockIcon, LockClosedIcon } from '@heroicons/react/solid'
-import { sendMagicLink, updateUserPermissions, useUser, signOut } from '../data/auth';
+import { ClockIcon, LockClosedIcon } from '@heroicons/react/solid'
+import { sendMagicLink, updateUserPermissions, useUser } from '../data/auth';
 import { useState } from 'react';
 import { ShowFor } from './Elements';
 
@@ -26,7 +26,7 @@ export default function Auth() {
     }
   }
 
-  const { isLoggedIn } = useUser()
+  const { isLoggedIn, signOut } = useUser()
 
   if (isLoggedIn) {
     return (

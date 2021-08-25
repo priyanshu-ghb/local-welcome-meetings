@@ -1,4 +1,4 @@
-import { Session, User } from '@supabase/supabase-js';
+import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
 import { useState, useEffect, useLayoutEffect, createContext } from 'react';
 import { supabase } from './supabase';
 import { Profile } from '../types/app';
@@ -10,6 +10,7 @@ interface IUserContext {
   isLoggedIn: boolean;
   session: Session | null;
   profile: Profile | null;
+  signOut: () => void;
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -17,14 +18,33 @@ export const UserContext = createContext<IUserContext>({
   isLoggedIn: false,
   session: null,
   profile: null,
+  signOut: () => {}
 })
+
+export async function getUserProfileForEmail (email: string): Promise<Profile | null> {
+  const res = await supabase
+        .from<Profile>('profile')
+        .select('*')
+        .eq('email', email)
+
+  return res.data?.[0] || null
+}
+
+export function getAuthCookie(event: AuthChangeEvent, session: Session | null) {
+  return fetch('/api/auth', {
+    method: 'POST',
+    headers: new Headers({ 'Content-Type': 'application/json' }),
+    credentials: 'same-origin',
+    body: JSON.stringify({ event, session }),
+  }).then((res) => res.json())
+}
 
 export function UserContextProvider (props: any) {
   const [session, setSession] = useState<Session | null>(supabase.auth.session())
   const [userProfile, setUserProfile] = useState<Profile | null>(null);
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User | null>(supabase.auth.user())
 
-  useEffect(() => {
+  useEffect(function setupSubscriptions() {
     const profileSub = supabase
       .from(`profile:email=eq.${user?.email}`)
       .on('*', (e) => void setUserProfile(e.new))
@@ -35,12 +55,7 @@ export function UserContextProvider (props: any) {
       setSession(session)
       // Send session to /api/auth route to set the auth cookie.
       // NOTE: this is only needed if you're doing SSR (getServerSideProps)!
-      fetch('/api/auth', {
-        method: 'POST',
-        headers: new Headers({ 'Content-Type': 'application/json' }),
-        credentials: 'same-origin',
-        body: JSON.stringify({ event, session }),
-      }).then((res) => res.json())
+      getAuthCookie(event, session)
     })
 
     return () => {
@@ -48,27 +63,30 @@ export function UserContextProvider (props: any) {
       try {
         // @ts-ignore
         supabase.removeSubscription(authSub)
-      } catch (e) {}
+      } catch (e) {
+        console.error("Unsub from user", e)
+      }
     }
   }, [user?.email])
 
-  async function getUserData() {
-    const user = await supabase.auth.user()
+  async function getUserSessionData() {
+    const session = supabase.auth.session()
+    setSession(session)
+
+    const user = supabase.auth.user()
     setUser(user)
 
     if (user?.email) {
-      updateUserPermissions(user.email)
-      const profile = await supabase
-        .from<Profile>('profile')
-        .select('*')
-        .eq('email', user.email)
-      setUserProfile(profile.body?.[0] || null)
+      await getAuthCookie('SIGNED_IN', session)
+      await updateUserPermissions()
+      const profile = await getUserProfileForEmail(user.email)
+      setUserProfile(profile)
     }
   }
 
   useLayoutEffect(() => {
-    getUserData()
-  }, [])
+    getUserSessionData()
+  }, [session, user?.id])
 
   useEffect(() => {
     if (user?.email) {
@@ -80,12 +98,20 @@ export function UserContextProvider (props: any) {
     }
   }, [user, userProfile])
 
+  function signOut () {
+    supabase.auth.signOut()
+    setUser(null)
+    setSession(null)
+    setUserProfile(null)
+  }
+
   return <UserContext.Provider
     value={{
       user,
       isLoggedIn: !!user,
       profile: userProfile,
-      session
+      session,
+      signOut
     }}
     {...props}
   />
@@ -99,12 +125,8 @@ export async function sendMagicLink (email: string) {
   return supabase.auth.signIn({ email })
 }
 
-async function _updateUserPermissions (email: string) {
-  await fetch('/api/updateUserProfile', { method: 'POST', body: JSON.stringify({ email }) })
+async function _updateUserPermissions () {
+  await fetch('/api/updateUserProfile', { method: 'POST' })
 }
 
 export const updateUserPermissions = debounce(_updateUserPermissions, 10000, { leading: true })
-
-export function signOut () {
-  return supabase.auth.signOut()
-}

@@ -31,7 +31,6 @@ const Home: NextPage<IProps> = ({ room, slides }) => {
 
 export const getServerSideProps: GetServerSideProps<IProps, IQuery> = async ({ params }) => {
   const room = await getRoomBySlug(params!.roomSlug as string)
-  console.log({ room })
   if (!room) {
     return { props: { room: null as any, slides: [] }, redirect: { destination: '/', permanent: false } }
   }

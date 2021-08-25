@@ -1,8 +1,8 @@
 import { hubspotV1 } from './hubspot';
 import env from 'env-var';
 import { supabase } from './supabase';
-import { NextApiRequest } from 'next';
 import { Profile } from '../types/app';
+import { NextApiRequestCookies } from 'next/dist/server/api-utils';
 
 export async function upsertUserProfile (props: Pick<Profile, 'email'> & Partial<Profile>) {
   return supabase.from<Profile>('profile').insert(props, { upsert: true })
@@ -19,7 +19,7 @@ export async function isValidLeaderEmail (email: string): Promise<boolean> {
   return false
 }
 
-export async function getUserFromHTTPRequest(req: NextApiRequest) {
+export async function getUserFromHTTPRequest(req: { cookies: NextApiRequestCookies }) {
   return supabase.auth.api.getUserByCookie(req)
 }
 
