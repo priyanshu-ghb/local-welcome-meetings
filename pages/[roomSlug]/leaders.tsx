@@ -9,8 +9,9 @@ import Link from 'next/link';
 import { Logo } from '../../components/Branding';
 import { isClient } from '../../styles/screens';
 import { getUserFromHTTPRequest } from '../../data/leader';
-import { getUserProfile } from '../../data/auth';
+import { getUserProfile, useUser } from '../../data/auth';
 import { strict as assert } from 'assert';
+import { CreateShiftPattern, RotaContextProvider, ShiftPatterns } from '../../components/ShiftPatterns';
 
 type IProps = {
   room: Room
@@ -21,6 +22,8 @@ type IQuery = {
 }
 
 const Route: NextPage<IProps> = ({ room }) => {
+  const { profile } = useUser()
+
   return (
     <RoomContextProvider slug={room.slug} initialData={{ room }}>
       <Head>
@@ -39,6 +42,10 @@ const Route: NextPage<IProps> = ({ room }) => {
               Go to meeting room &rarr;
             </div>
           </Link>
+          <RotaContextProvider>
+            <ShiftPatterns />
+            {profile?.canManageShifts && <CreateShiftPattern />}
+          </RotaContextProvider>
         </main>
       </div>
     </RoomContextProvider>
