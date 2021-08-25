@@ -21,6 +21,8 @@ export interface paths {
           email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
           user_id?: parameters["rowFilter.profile.user_id"];
+          firstname?: parameters["rowFilter.profile.firstname"];
+          lastname?: parameters["rowFilter.profile.lastname"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -76,6 +78,8 @@ export interface paths {
           email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
           user_id?: parameters["rowFilter.profile.user_id"];
+          firstname?: parameters["rowFilter.profile.firstname"];
+          lastname?: parameters["rowFilter.profile.lastname"];
         };
         header: {
           /** Preference */
@@ -95,6 +99,8 @@ export interface paths {
           email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
           user_id?: parameters["rowFilter.profile.user_id"];
+          firstname?: parameters["rowFilter.profile.firstname"];
+          lastname?: parameters["rowFilter.profile.lastname"];
         };
         body: {
           /** profile */
@@ -125,13 +131,13 @@ export interface paths {
           currentSlideIndex?: parameters["rowFilter.room.currentSlideIndex"];
           timerState?: parameters["rowFilter.room.timerState"];
           timerStartTime?: parameters["rowFilter.room.timerStartTime"];
-          id?: parameters["rowFilter.room.id"];
           timerDuration?: parameters["rowFilter.room.timerDuration"];
           wherebyMeetingId?: parameters["rowFilter.room.wherebyMeetingId"];
           wherebyStartDate?: parameters["rowFilter.room.wherebyStartDate"];
           wherebyEndDate?: parameters["rowFilter.room.wherebyEndDate"];
           wherebyRoomUrl?: parameters["rowFilter.room.wherebyRoomUrl"];
           wherebyHostRoomUrl?: parameters["rowFilter.room.wherebyHostRoomUrl"];
+          id?: parameters["rowFilter.room.id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -192,13 +198,13 @@ export interface paths {
           currentSlideIndex?: parameters["rowFilter.room.currentSlideIndex"];
           timerState?: parameters["rowFilter.room.timerState"];
           timerStartTime?: parameters["rowFilter.room.timerStartTime"];
-          id?: parameters["rowFilter.room.id"];
           timerDuration?: parameters["rowFilter.room.timerDuration"];
           wherebyMeetingId?: parameters["rowFilter.room.wherebyMeetingId"];
           wherebyStartDate?: parameters["rowFilter.room.wherebyStartDate"];
           wherebyEndDate?: parameters["rowFilter.room.wherebyEndDate"];
           wherebyRoomUrl?: parameters["rowFilter.room.wherebyRoomUrl"];
           wherebyHostRoomUrl?: parameters["rowFilter.room.wherebyHostRoomUrl"];
+          id?: parameters["rowFilter.room.id"];
         };
         header: {
           /** Preference */
@@ -223,17 +229,113 @@ export interface paths {
           currentSlideIndex?: parameters["rowFilter.room.currentSlideIndex"];
           timerState?: parameters["rowFilter.room.timerState"];
           timerStartTime?: parameters["rowFilter.room.timerStartTime"];
-          id?: parameters["rowFilter.room.id"];
           timerDuration?: parameters["rowFilter.room.timerDuration"];
           wherebyMeetingId?: parameters["rowFilter.room.wherebyMeetingId"];
           wherebyStartDate?: parameters["rowFilter.room.wherebyStartDate"];
           wherebyEndDate?: parameters["rowFilter.room.wherebyEndDate"];
           wherebyRoomUrl?: parameters["rowFilter.room.wherebyRoomUrl"];
           wherebyHostRoomUrl?: parameters["rowFilter.room.wherebyHostRoomUrl"];
+          id?: parameters["rowFilter.room.id"];
         };
         body: {
           /** room */
           room?: definitions["room"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/shiftpattern": {
+    get: {
+      parameters: {
+        query: {
+          name?: parameters["rowFilter.shiftpattern.name"];
+          required_people?: parameters["rowFilter.shiftpattern.required_people"];
+          room_id?: parameters["rowFilter.shiftpattern.room_id"];
+          id?: parameters["rowFilter.shiftpattern.id"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["shiftpattern"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** shiftpattern */
+          shiftpattern?: definitions["shiftpattern"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          name?: parameters["rowFilter.shiftpattern.name"];
+          required_people?: parameters["rowFilter.shiftpattern.required_people"];
+          room_id?: parameters["rowFilter.shiftpattern.room_id"];
+          id?: parameters["rowFilter.shiftpattern.id"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          name?: parameters["rowFilter.shiftpattern.name"];
+          required_people?: parameters["rowFilter.shiftpattern.required_people"];
+          room_id?: parameters["rowFilter.shiftpattern.room_id"];
+          id?: parameters["rowFilter.shiftpattern.id"];
+        };
+        body: {
+          /** shiftpattern */
+          shiftpattern?: definitions["shiftpattern"];
         };
         header: {
           /** Preference */
@@ -259,6 +361,8 @@ export interface definitions {
     email: string;
     canLeadSessions: boolean;
     user_id?: string;
+    firstname?: string;
+    lastname?: string;
   };
   room: {
     /** Human readable name. */
@@ -271,17 +375,31 @@ export interface definitions {
     currentSlideIndex: number;
     timerState?: string;
     timerStartTime: string;
-    /**
-     * Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
     timerDuration: number;
     wherebyMeetingId?: string;
     wherebyStartDate?: string;
     wherebyEndDate?: string;
     wherebyRoomUrl?: string;
     wherebyHostRoomUrl?: string;
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+  };
+  shiftpattern: {
+    name: string;
+    required_people: number;
+    /**
+     * Note:
+     * This is a Foreign Key to `room.id`.<fk table='room' column='id'/>
+     */
+    room_id?: string;
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
   };
 }
 
@@ -313,6 +431,8 @@ export interface parameters {
   "rowFilter.profile.email": string;
   "rowFilter.profile.canLeadSessions": string;
   "rowFilter.profile.user_id": string;
+  "rowFilter.profile.firstname": string;
+  "rowFilter.profile.lastname": string;
   /** room */
   "body.room": definitions["room"];
   /** Human readable name. */
@@ -325,13 +445,19 @@ export interface parameters {
   "rowFilter.room.currentSlideIndex": string;
   "rowFilter.room.timerState": string;
   "rowFilter.room.timerStartTime": string;
-  "rowFilter.room.id": string;
   "rowFilter.room.timerDuration": string;
   "rowFilter.room.wherebyMeetingId": string;
   "rowFilter.room.wherebyStartDate": string;
   "rowFilter.room.wherebyEndDate": string;
   "rowFilter.room.wherebyRoomUrl": string;
   "rowFilter.room.wherebyHostRoomUrl": string;
+  "rowFilter.room.id": string;
+  /** shiftpattern */
+  "body.shiftpattern": definitions["shiftpattern"];
+  "rowFilter.shiftpattern.name": string;
+  "rowFilter.shiftpattern.required_people": string;
+  "rowFilter.shiftpattern.room_id": string;
+  "rowFilter.shiftpattern.id": string;
 }
 
 export interface operations {}
