@@ -103,7 +103,7 @@ export function UserContextProvider (props: any) {
   useEffect(() => {
     if (user?.email) {
       // @ts-ignore
-      posthog?.people.set({
+      posthog?.people?.set({
         supabase_user_id: user.id,
         $email: user.email,
         is_localwelcome_leader: !!userProfile?.canLeadSessions
