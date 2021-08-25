@@ -6,7 +6,7 @@ import { useUser } from '../data/auth';
 import { useRoom } from '../data/room';
 import Link from 'next/link';
 
-export const Meeting = (props: any) => {
+export const Meeting = () => {
   const { profile, isLoggedIn } = useUser()
   const { room } = useRoom()
 
