@@ -8,23 +8,21 @@ import { Room } from '../../types/app';
 import Link from 'next/link';
 import { Logo } from '../../components/Branding';
 import { isClient } from '../../styles/screens';
+import { getUserFromHTTPRequest } from '../../data/leader';
+import { getUserProfileForEmail } from '../../data/auth';
+import { strict as assert } from 'assert';
 
 type IProps = {
-  room: Room | null
-  slides: Page[]
+  room: Room
 }
 
 type IQuery = {
   roomSlug: string
 }
 
-const Route: NextPage<IProps> = ({ room, slides }) => {
-  if (!room) {
-    return <div />
-  }
-
+const Route: NextPage<IProps> = ({ room }) => {
   return (
-    <RoomContextProvider slug={room.slug} initialData={{ room, slides }}>
+    <RoomContextProvider slug={room.slug} initialData={{ room }}>
       <Head>
         <title>{room.name}</title>
         <meta name="description" content="Call link for ADHD Together." />
@@ -47,11 +45,19 @@ const Route: NextPage<IProps> = ({ room, slides }) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<IProps, IQuery> = async ({ params }) => {
-  const room = await getRoomBySlug(params!.roomSlug as string)
-  if (!room) return { props: { room: null, slides: [] } }
-  const slides = await getSlides(room.slideshowName)
-  return { props: { room, slides: slides || [] } }
+export const getServerSideProps: GetServerSideProps<IProps, IQuery> = async ({ req, params }) => {
+  try {
+    const room = await getRoomBySlug(params!.roomSlug as string)
+    assert(!!room, 'No room found for the slug')
+    const { user } = await getUserFromHTTPRequest(req)
+    assert(!!user, 'No user found in request')
+    const profile = await getUserProfileForEmail(user.email!)
+    assert(!!profile, 'No profile found for this user')
+    return { props: { room } }
+  } catch (e) {
+    console.error(e)
+    return { props: {}, redirect: { destination: '/', permanent: false } }
+  }
 }
 
 export default Route
