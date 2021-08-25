@@ -7,7 +7,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
   const { user } = await getUserFromHTTPRequest(req)
   assert(!!user, 'User not found')
   const newProfileData = {
-    user_id: user.id,
+    userId: user.id,
     email: user.email!,
     canLeadSessions: await isValidLeaderEmail(user.email!)
   }

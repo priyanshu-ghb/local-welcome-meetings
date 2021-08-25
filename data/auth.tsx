@@ -22,11 +22,11 @@ export const UserContext = createContext<IUserContext>({
 })
 
 
-export async function getUserProfile (user_id: string): Promise<Profile | null> {
+export async function getUserProfile (userId: string): Promise<Profile | null> {
   const res = await supabase
         .from<Profile>('profile')
         .select('*')
-        .eq('user_id', user_id)
+        .eq('userId', userId)
 
   return res.data?.[0] || null
 }
@@ -56,7 +56,7 @@ export function UserContextProvider (props: any) {
 
   useEffect(function setupSubscriptions() {
     const profileSub = supabase
-      .from(`profile:user_id=eq.${user?.id}`)
+      .from(`profile:userId=eq.${user?.id}`)
       .on('*', (e) => void setUserProfile(e.new))
       .subscribe()
 
