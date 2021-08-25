@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps<IProps, IQuery> = async ({ r
     const { user } = await getUserFromHTTPRequest(req)
     assert(!!user, 'No user found in request')
     const profile = await getUserProfile(user.id)
-    assert(!!profile, 'No profile found for this user')
+    assert(!!profile?.canLeadSessions, 'User is not a leader')
     return { props: { room } }
   } catch (e) {
     console.error(e)
