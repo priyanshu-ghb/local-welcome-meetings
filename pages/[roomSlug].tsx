@@ -8,7 +8,7 @@ import { Room } from '../types/app';
 import { Meeting } from '../components/Meeting';
 
 type IProps = {
-  room: Room | null
+  room: Room
   slides: Page[]
 }
 
@@ -17,10 +17,6 @@ type IQuery = {
 }
 
 const Home: NextPage<IProps> = ({ room, slides }) => {
-  if (!room) {
-    return <div />
-  }
-
   return (
     <RoomContextProvider slug={room.slug} initialData={{ room, slides }}>
       <Head>
@@ -35,7 +31,10 @@ const Home: NextPage<IProps> = ({ room, slides }) => {
 
 export const getServerSideProps: GetServerSideProps<IProps, IQuery> = async ({ params }) => {
   const room = await getRoomBySlug(params!.roomSlug as string)
-  if (!room) return { props: { room: null, slides: [] } }
+  console.log({ room })
+  if (!room) {
+    return { props: { room: null as any, slides: [] }, redirect: { destination: '/', permanent: false } }
+  }
   const slides = await getSlides(room.slideshowName)
   return { props: { room, slides: slides || [] } }
 }
