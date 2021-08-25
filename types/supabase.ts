@@ -394,7 +394,7 @@ export interface definitions {
      * Note:
      * This is a Foreign Key to `room.id`.<fk table='room' column='id'/>
      */
-    room_id?: string;
+    room_id: string;
     /**
      * Note:
      * This is a Primary Key.<pk/>
