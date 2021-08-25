@@ -16,13 +16,14 @@ export interface paths {
     get: {
       parameters: {
         query: {
-          inserted_at?: parameters["rowFilter.profile.inserted_at"];
-          updated_at?: parameters["rowFilter.profile.updated_at"];
+          insertedAt?: parameters["rowFilter.profile.insertedAt"];
+          updatedAt?: parameters["rowFilter.profile.updatedAt"];
           email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
-          user_id?: parameters["rowFilter.profile.user_id"];
-          firstname?: parameters["rowFilter.profile.firstname"];
-          lastname?: parameters["rowFilter.profile.lastname"];
+          firstName?: parameters["rowFilter.profile.firstName"];
+          lastName?: parameters["rowFilter.profile.lastName"];
+          userId?: parameters["rowFilter.profile.userId"];
+          canManageShifts?: parameters["rowFilter.profile.canManageShifts"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -73,13 +74,14 @@ export interface paths {
     delete: {
       parameters: {
         query: {
-          inserted_at?: parameters["rowFilter.profile.inserted_at"];
-          updated_at?: parameters["rowFilter.profile.updated_at"];
+          insertedAt?: parameters["rowFilter.profile.insertedAt"];
+          updatedAt?: parameters["rowFilter.profile.updatedAt"];
           email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
-          user_id?: parameters["rowFilter.profile.user_id"];
-          firstname?: parameters["rowFilter.profile.firstname"];
-          lastname?: parameters["rowFilter.profile.lastname"];
+          firstName?: parameters["rowFilter.profile.firstName"];
+          lastName?: parameters["rowFilter.profile.lastName"];
+          userId?: parameters["rowFilter.profile.userId"];
+          canManageShifts?: parameters["rowFilter.profile.canManageShifts"];
         };
         header: {
           /** Preference */
@@ -94,13 +96,14 @@ export interface paths {
     patch: {
       parameters: {
         query: {
-          inserted_at?: parameters["rowFilter.profile.inserted_at"];
-          updated_at?: parameters["rowFilter.profile.updated_at"];
+          insertedAt?: parameters["rowFilter.profile.insertedAt"];
+          updatedAt?: parameters["rowFilter.profile.updatedAt"];
           email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
-          user_id?: parameters["rowFilter.profile.user_id"];
-          firstname?: parameters["rowFilter.profile.firstname"];
-          lastname?: parameters["rowFilter.profile.lastname"];
+          firstName?: parameters["rowFilter.profile.firstName"];
+          lastName?: parameters["rowFilter.profile.lastName"];
+          userId?: parameters["rowFilter.profile.userId"];
+          canManageShifts?: parameters["rowFilter.profile.canManageShifts"];
         };
         body: {
           /** profile */
@@ -258,8 +261,8 @@ export interface paths {
         query: {
           name?: parameters["rowFilter.shiftpattern.name"];
           required_people?: parameters["rowFilter.shiftpattern.required_people"];
-          room_id?: parameters["rowFilter.shiftpattern.room_id"];
           id?: parameters["rowFilter.shiftpattern.id"];
+          roomId?: parameters["rowFilter.shiftpattern.roomId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -312,8 +315,8 @@ export interface paths {
         query: {
           name?: parameters["rowFilter.shiftpattern.name"];
           required_people?: parameters["rowFilter.shiftpattern.required_people"];
-          room_id?: parameters["rowFilter.shiftpattern.room_id"];
           id?: parameters["rowFilter.shiftpattern.id"];
+          roomId?: parameters["rowFilter.shiftpattern.roomId"];
         };
         header: {
           /** Preference */
@@ -330,8 +333,8 @@ export interface paths {
         query: {
           name?: parameters["rowFilter.shiftpattern.name"];
           required_people?: parameters["rowFilter.shiftpattern.required_people"];
-          room_id?: parameters["rowFilter.shiftpattern.room_id"];
           id?: parameters["rowFilter.shiftpattern.id"];
+          roomId?: parameters["rowFilter.shiftpattern.roomId"];
         };
         body: {
           /** shiftpattern */
@@ -352,17 +355,18 @@ export interface paths {
 
 export interface definitions {
   profile: {
-    inserted_at: string;
-    updated_at: string;
+    insertedAt: string;
+    updatedAt: string;
     /**
      * Note:
      * This is a Primary Key.<pk/>
      */
     email: string;
     canLeadSessions: boolean;
-    user_id?: string;
-    firstname?: string;
-    lastname?: string;
+    firstName?: string;
+    lastName?: string;
+    userId?: string;
+    canManageShifts: boolean;
   };
   room: {
     /** Human readable name. */
@@ -392,14 +396,14 @@ export interface definitions {
     required_people: number;
     /**
      * Note:
-     * This is a Foreign Key to `room.id`.<fk table='room' column='id'/>
-     */
-    room_id: string;
-    /**
-     * Note:
      * This is a Primary Key.<pk/>
      */
     id: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `room.id`.<fk table='room' column='id'/>
+     */
+    roomId: string;
   };
 }
 
@@ -426,13 +430,14 @@ export interface parameters {
   limit: string;
   /** profile */
   "body.profile": definitions["profile"];
-  "rowFilter.profile.inserted_at": string;
-  "rowFilter.profile.updated_at": string;
+  "rowFilter.profile.insertedAt": string;
+  "rowFilter.profile.updatedAt": string;
   "rowFilter.profile.email": string;
   "rowFilter.profile.canLeadSessions": string;
-  "rowFilter.profile.user_id": string;
-  "rowFilter.profile.firstname": string;
-  "rowFilter.profile.lastname": string;
+  "rowFilter.profile.firstName": string;
+  "rowFilter.profile.lastName": string;
+  "rowFilter.profile.userId": string;
+  "rowFilter.profile.canManageShifts": string;
   /** room */
   "body.room": definitions["room"];
   /** Human readable name. */
@@ -456,8 +461,8 @@ export interface parameters {
   "body.shiftpattern": definitions["shiftpattern"];
   "rowFilter.shiftpattern.name": string;
   "rowFilter.shiftpattern.required_people": string;
-  "rowFilter.shiftpattern.room_id": string;
   "rowFilter.shiftpattern.id": string;
+  "rowFilter.shiftpattern.roomId": string;
 }
 
 export interface operations {}
