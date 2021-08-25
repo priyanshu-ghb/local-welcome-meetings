@@ -7,3 +7,5 @@ export type Room = definitions['room'] & {
 export type Profile = definitions['profile']
 
 export type ShiftPattern = definitions['shiftpattern']
+
+export type ShiftAllocation = definitions['shiftallocation']

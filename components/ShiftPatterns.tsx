@@ -1,28 +1,35 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { ShiftPattern } from '../types/app';
+import { ShiftPattern, ShiftAllocation } from '../types/app';
 import { useRoom } from '../data/room';
-import { supabase } from '../data/supabase';
-import { deleteShiftPattern, getShiftPatterns } from '../data/shiftpattern';
-import type { RealtimeSubscription } from '@supabase/realtime-js'
+import { deleteShiftPattern, getShiftPatterns } from '../data/rota';
 import { useUser } from '../data/auth';
+import { onShiftPatternChange, onShiftAllocationChange, getShiftAllocations, createShiftPattern, createShiftAllocation } from '../data/rota';
 
 interface IRotaContext {
   shiftPatterns: ShiftPattern[]
+  shiftAllocations: ShiftAllocation[],
   createShiftPattern: (sp: Omit<ShiftPattern, 'id'>) => void
+  createShiftAllocation: (sp: Omit<ShiftAllocation, 'id'>) => void
 }
 
 export const RotaContext = createContext<IRotaContext>({
   shiftPatterns: [],
-  createShiftPattern: () => {}
+  shiftAllocations: [],
+  createShiftPattern: () => {},
+  createShiftAllocation: () => {}
 })
 
 export const RotaContextProvider = (props: any) => {
   const { room } = useRoom()
   const [shiftPatterns, setShiftPatterns] = useState<ShiftPattern[]>([]);
+  const [shiftAllocations, setShiftAllocations] = useState<ShiftAllocation[]>([]);
 
   async function updateShiftPatterns (roomId: string) {
-    console.log("Reloading")
     setShiftPatterns(await getShiftPatterns(roomId))
+  }
+
+  async function updateShiftAllocations (roomId: string) {
+    setShiftAllocations(await getShiftAllocations(roomId))
   }
 
   useEffect(() => {
@@ -32,25 +39,26 @@ export const RotaContextProvider = (props: any) => {
   }, [room])
 
   useEffect(function () {
-    let shiftSub: RealtimeSubscription
+    let shiftUnsubscribe: () => void
+    let allocationUnsubscribe: () => void
 
     if (room) {
-      shiftSub = supabase
-        .from<ShiftPattern>('shiftpattern')
-        .on('*', (event) => {
-          updateShiftPatterns(room.id)
-        })
-        .subscribe()
+      shiftUnsubscribe = onShiftPatternChange(() => updateShiftPatterns(room.id))
+      allocationUnsubscribe = onShiftAllocationChange(() => updateShiftAllocations(room.id))
     }
 
-    return () => !!shiftSub && void supabase.removeSubscription(shiftSub)
+    return () => {
+      if (shiftUnsubscribe) shiftUnsubscribe()
+      if (allocationUnsubscribe) allocationUnsubscribe()
+    }
   }, [room])
 
-  const createShiftPattern: IRotaContext['createShiftPattern'] = async (sp) => {
-    return await supabase.from<ShiftPattern>('shiftpattern').insert(sp)
-  }
-
-  return <RotaContext.Provider value={{ shiftPatterns, createShiftPattern }} {...props} />
+  return <RotaContext.Provider value={{
+    shiftPatterns,
+    createShiftPattern: (sp) => room && createShiftPattern({ ...sp, roomId: room.id }),
+    shiftAllocations,
+    createShiftAllocation: (sp) => room && createShiftAllocation(sp),
+  }} {...props} />
 }
 
 export const useRota = () => {
