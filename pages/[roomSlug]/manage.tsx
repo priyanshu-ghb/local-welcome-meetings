@@ -35,7 +35,7 @@ const Route: NextPage<IProps> = ({ room }) => {
       </Head>
       <div className='bg-white min-h-screen w-screen'>
         <Header />
-        <main className='max-w-lg mx-auto p-5 space-y-4 py-7'>
+        <main className='max-w-lg mx-auto p-5 space-y-5 py-5'>
           <section>
             <h2 className='text-2xl font-bold text-adhdPurple mb-2'>Meeting room</h2>
             <RoomLink room={room} />
