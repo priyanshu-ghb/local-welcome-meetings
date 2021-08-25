@@ -255,6 +255,99 @@ export interface paths {
       };
     };
   };
+  "/shiftallocation": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.shiftallocation.id"];
+          userId?: parameters["rowFilter.shiftallocation.userId"];
+          shiftPatternId?: parameters["rowFilter.shiftallocation.shiftPatternId"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["shiftallocation"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** shiftallocation */
+          shiftallocation?: definitions["shiftallocation"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.shiftallocation.id"];
+          userId?: parameters["rowFilter.shiftallocation.userId"];
+          shiftPatternId?: parameters["rowFilter.shiftallocation.shiftPatternId"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.shiftallocation.id"];
+          userId?: parameters["rowFilter.shiftallocation.userId"];
+          shiftPatternId?: parameters["rowFilter.shiftallocation.shiftPatternId"];
+        };
+        body: {
+          /** shiftallocation */
+          shiftallocation?: definitions["shiftallocation"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/shiftpattern": {
     get: {
       parameters: {
@@ -391,6 +484,19 @@ export interface definitions {
      */
     id: string;
   };
+  shiftallocation: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    userId?: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `shiftpattern.id`.<fk table='shiftpattern' column='id'/>
+     */
+    shiftPatternId: string;
+  };
   shiftpattern: {
     name: string;
     required_people: number;
@@ -457,6 +563,11 @@ export interface parameters {
   "rowFilter.room.wherebyRoomUrl": string;
   "rowFilter.room.wherebyHostRoomUrl": string;
   "rowFilter.room.id": string;
+  /** shiftallocation */
+  "body.shiftallocation": definitions["shiftallocation"];
+  "rowFilter.shiftallocation.id": string;
+  "rowFilter.shiftallocation.userId": string;
+  "rowFilter.shiftallocation.shiftPatternId": string;
   /** shiftpattern */
   "body.shiftpattern": definitions["shiftpattern"];
   "rowFilter.shiftpattern.name": string;
