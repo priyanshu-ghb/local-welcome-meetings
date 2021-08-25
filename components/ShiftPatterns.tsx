@@ -4,6 +4,7 @@ import { useRoom } from '../data/room';
 import { deleteShiftPattern, getShiftPatterns } from '../data/rota';
 import { useUser } from '../data/auth';
 import { onShiftPatternChange, onShiftAllocationChange, getShiftAllocations, createShiftPattern, createShiftAllocation } from '../data/rota';
+import { EmojiHappyIcon, EmojiSadIcon } from '@heroicons/react/outline';
 
 interface IRotaContext {
   shiftPatterns: ShiftPattern[]
@@ -67,22 +68,46 @@ export const useRota = () => {
 
 export function ShiftPatterns () {
   const rota = useRota()
-  const { profile } = useUser()
-
-  function del (id: string) {
-    deleteShiftPattern(id)
-  }
 
   return (
     <div className='space-y-4'>
       {rota.shiftPatterns?.map((shiftPattern, index) => {
         return (
-          <div key={shiftPattern.id} className=''>
-            <h3 className='text-lg font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
-            {profile?.canManageShifts && <div className='button' onClick={() => del(shiftPattern.id)}>Delete</div>}
-          </div>
+          <ShiftPatternAllocations key={shiftPattern.id} shiftPattern={shiftPattern} />
         )
       })}
+    </div>
+  )
+}
+
+export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: ShiftPattern }) {
+  const { profile } = useUser()
+  const rota = useRota()
+
+  const allocatedSlots = rota.shiftAllocations.filter(({ shiftPatternId }) => shiftPatternId === shiftPattern.id)
+  const unfilledSlots = shiftPattern.required_people - allocatedSlots.length
+
+  const notEnough = unfilledSlots > 0
+  const justRight = unfilledSlots === 0
+  const tooMany = unfilledSlots < 0
+
+  return (
+    <div key={shiftPattern.id} className=''>
+      <h3 className='text-lg font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
+      <div className={`font-bold text-sm uppercase flex justify-between w-full ${
+        notEnough ? 'text-red-500' : tooMany ? 'text-yellow-600' : 'text-green-500'
+      }`}>
+        <span>{allocatedSlots.length} / {unfilledSlots} leader slot{unfilledSlots > 1 && 's'} filled</span>
+        <span>{justRight ? <EmojiHappyIcon className='w-[25px] h-[25px]' /> : <EmojiSadIcon className='w-[25px] h-[25px]' />}</span>
+      </div>
+      <div className='space-y-2 my-2'>
+        {new Array(unfilledSlots).fill(0).map((_, i) => (
+          <div key={i} className='border border-dashed border-gray-400 rounded-lg p-3 hover:bg-gray-50 transition'>
+            Fill vacant slot {allocatedSlots.length + i + 1}
+          </div>
+        ))}
+      </div>
+      {profile?.canManageShifts && <div className='button' onClick={() => deleteShiftPattern(shiftPattern.id)}>Delete</div>}
     </div>
   )
 }
