@@ -3,14 +3,14 @@ import { useUser } from '../data/auth';
 import { useRoom } from '../data/room';
 import { useRouter } from 'next/dist/client/router';
 
-export function Header () {
+export function Header ({ isNarrow }: { isNarrow?: boolean }) {
   const { room } = useRoom()
   const { isLoggedIn, signOut } = useUser()
   const router = useRouter()
 
   return (
     <header className='bg-adhdPurple p-3 sm:p-4 text-adhdBlue'>
-      <div className='flex flex-row justify-between items-start max-w-md mx-auto'>
+      <div className={`flex flex-row justify-between items-center ${isNarrow ? 'max-w-md' : 'max-w-3xl'} mx-auto`}>
         <span className='inline-block'><Logo /></span>
         <div className='space-x-4 text-right'>
           {room && <span className='font-semibold text-lg'>{room.name}</span>}
