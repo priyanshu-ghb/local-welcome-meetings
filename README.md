@@ -1,8 +1,22 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Screenshots
+
+### Session call view
+
+![Session call view]('./public/Screenshot 2021-08-25 at 10.46.19.png')
+
+### Rooms directory
+![Session call view]('./public/Screenshot 2021-08-25 at 10.46.33.png')
+
+### Magic link sign-in
+![Session call view]('./public/Screenshot 2021-08-25 at 10.46.43.png')
+
 ## Getting Started
 
-First, run the development server:
+First, copy the `.env.template` file to `.env.local`, and fill in the gaps.
+
+Then, run the development server:
 
 ```bash
 npm run dev
