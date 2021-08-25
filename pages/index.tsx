@@ -6,6 +6,7 @@ import RoomList from '../components/Rooms';
 import Auth from '../components/Auth';
 import { Logo } from '../components/Branding';
 import { useUser } from '../data/auth';
+import { Debug } from '../components/Elements';
 
 type IProps = {
   rooms: Room[]

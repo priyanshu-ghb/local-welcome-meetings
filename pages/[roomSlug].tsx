@@ -17,10 +17,7 @@ type IQuery = {
 }
 
 const Home: NextPage<IProps> = ({ room, slides }) => {
-  const router = useRouter()
-
   if (!room) {
-    router.push('/')
     return <div />
   }
 
