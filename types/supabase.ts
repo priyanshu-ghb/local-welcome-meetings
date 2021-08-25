@@ -261,6 +261,7 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.shiftallocation.id"];
           userId?: parameters["rowFilter.shiftallocation.userId"];
+          shiftPatternId?: parameters["rowFilter.shiftallocation.shiftPatternId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -313,6 +314,7 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.shiftallocation.id"];
           userId?: parameters["rowFilter.shiftallocation.userId"];
+          shiftPatternId?: parameters["rowFilter.shiftallocation.shiftPatternId"];
         };
         header: {
           /** Preference */
@@ -329,6 +331,7 @@ export interface paths {
         query: {
           id?: parameters["rowFilter.shiftallocation.id"];
           userId?: parameters["rowFilter.shiftallocation.userId"];
+          shiftPatternId?: parameters["rowFilter.shiftallocation.shiftPatternId"];
         };
         body: {
           /** shiftallocation */
@@ -488,6 +491,11 @@ export interface definitions {
      */
     id: string;
     userId?: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `shiftpattern.id`.<fk table='shiftpattern' column='id'/>
+     */
+    shiftPatternId: string;
   };
   shiftpattern: {
     name: string;
@@ -559,6 +567,7 @@ export interface parameters {
   "body.shiftallocation": definitions["shiftallocation"];
   "rowFilter.shiftallocation.id": string;
   "rowFilter.shiftallocation.userId": string;
+  "rowFilter.shiftallocation.shiftPatternId": string;
   /** shiftpattern */
   "body.shiftpattern": definitions["shiftpattern"];
   "rowFilter.shiftpattern.name": string;
