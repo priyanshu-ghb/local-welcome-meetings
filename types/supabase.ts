@@ -272,11 +272,11 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.roompermission.id"];
-          roomId?: parameters["rowFilter.roompermission.roomId"];
-          profileId?: parameters["rowFilter.roompermission.profileId"];
           /** member | leader | manager */
           type?: parameters["rowFilter.roompermission.type"];
           updatedAt?: parameters["rowFilter.roompermission.updatedAt"];
+          profileId?: parameters["rowFilter.roompermission.profileId"];
+          roomId?: parameters["rowFilter.roompermission.roomId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -328,11 +328,11 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.roompermission.id"];
-          roomId?: parameters["rowFilter.roompermission.roomId"];
-          profileId?: parameters["rowFilter.roompermission.profileId"];
           /** member | leader | manager */
           type?: parameters["rowFilter.roompermission.type"];
           updatedAt?: parameters["rowFilter.roompermission.updatedAt"];
+          profileId?: parameters["rowFilter.roompermission.profileId"];
+          roomId?: parameters["rowFilter.roompermission.roomId"];
         };
         header: {
           /** Preference */
@@ -348,11 +348,11 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.roompermission.id"];
-          roomId?: parameters["rowFilter.roompermission.roomId"];
-          profileId?: parameters["rowFilter.roompermission.profileId"];
           /** member | leader | manager */
           type?: parameters["rowFilter.roompermission.type"];
           updatedAt?: parameters["rowFilter.roompermission.updatedAt"];
+          profileId?: parameters["rowFilter.roompermission.profileId"];
+          roomId?: parameters["rowFilter.roompermission.roomId"];
         };
         body: {
           /** roompermission */
@@ -614,19 +614,19 @@ export interface definitions {
      * This is a Primary Key.<pk/>
      */
     id: string;
-    /**
-     * Note:
-     * This is a Foreign Key to `room.id`.<fk table='room' column='id'/>
-     */
-    roomId: string;
+    /** member | leader | manager */
+    type: string;
+    updatedAt: string;
     /**
      * Note:
      * This is a Foreign Key to `profile.id`.<fk table='profile' column='id'/>
      */
     profileId: string;
-    /** member | leader | manager */
-    type: string;
-    updatedAt: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `room.id`.<fk table='room' column='id'/>
+     */
+    roomId: string;
   };
   shiftallocation: {
     /**
@@ -720,11 +720,11 @@ export interface parameters {
   /** roompermission */
   "body.roompermission": definitions["roompermission"];
   "rowFilter.roompermission.id": string;
-  "rowFilter.roompermission.roomId": string;
-  "rowFilter.roompermission.profileId": string;
   /** member | leader | manager */
   "rowFilter.roompermission.type": string;
   "rowFilter.roompermission.updatedAt": string;
+  "rowFilter.roompermission.profileId": string;
+  "rowFilter.roompermission.roomId": string;
   /** shiftallocation */
   "body.shiftallocation": definitions["shiftallocation"];
   "rowFilter.shiftallocation.id": string;
