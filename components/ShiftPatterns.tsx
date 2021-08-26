@@ -154,22 +154,33 @@ function ShiftAllocationEditor(
   { shiftPattern, options, shiftAllocation }:
   { shiftPattern: ShiftPattern, options: Profile[], shiftAllocation?: ShiftAllocation }
 ) {
+  const rota = useRota()
   const [inputItems, setInputItems] = useState<Profile[]>(options)
   const [savedDataState, setDataState] = useState<null | 'loading' | 'saved' | 'error'>(null)
-  const rota = useRota()
 
+  const initialSelectedItem = options.find(o => o.id === shiftAllocation?.profileId)
   const itemToString = (o: Profile | null) => o ? o.firstName ? `${o.firstName?.trim()} ${o.lastName?.trim() || ''}` : o.email : "Vacant slot"
+
   const comboProps: UseComboboxProps<Profile> = {
-    initialSelectedItem: options.find(o => o.id === shiftAllocation?.profileId),
+    initialSelectedItem,
     items: inputItems,
     itemToString,
     onInputValueChange: ({ inputValue }) => {
       setInputItems(
-        options.filter(profile => (
-          profile.email?.startsWith(inputValue?.toLowerCase() || '') ||
-          profile.firstName?.startsWith(inputValue?.toLowerCase() || '') ||
-          profile.lastName?.startsWith(inputValue?.toLowerCase() || '')
-        )),
+        options
+          .filter(profile => {
+            const inShiftPatternAlready = !!rota.shiftAllocations.find(sa =>
+              sa.shiftPatternId === shiftPattern.id &&
+              sa.profileId === profile.id
+            )
+            if (inShiftPatternAlready) return false
+            const matchesInputValue = (
+              profile.email?.toLowerCase().startsWith(inputValue?.toLowerCase() || '') ||
+              profile.firstName?.toLowerCase().startsWith(inputValue?.toLowerCase() || '') ||
+              profile.lastName?.toLowerCase().startsWith(inputValue?.toLowerCase() || '')
+            )
+            return matchesInputValue
+          }),
       )
     },
     onSelectedItemChange: async ({ selectedItem: profile }) => {
