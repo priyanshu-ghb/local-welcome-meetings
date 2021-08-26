@@ -55,5 +55,5 @@ export const createShiftAllocation = async (sp: Omit<ShiftAllocation, 'id'>) => 
 }
 
 export async function deleteShiftAllocation (id: string) {
-  return await supabase.from<ShiftPattern>(`shiftpattern`).delete().eq('id', id);
+  return await supabase.from<ShiftPattern>(`shiftallocation`).delete().eq('id', id);
 }
