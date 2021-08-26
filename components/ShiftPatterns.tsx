@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import { ShiftPattern, ShiftAllocation, Profile } from '../types/app';
 import { useRoom } from '../data/room';
-import { deleteShiftAllocation, deleteShiftPattern, getShiftPatterns } from '../data/rota';
+import { deleteShiftAllocation, deleteShiftPattern, getRoomLeaders, getShiftPatterns, onRoomLeadersChange } from '../data/rota';
 import { useUser } from '../data/auth';
 import { onShiftPatternChange, onShiftAllocationChange, getShiftAllocations, createShiftPattern, createShiftAllocation } from '../data/rota';
 import { EmojiHappyIcon, EmojiSadIcon } from '@heroicons/react/outline';
@@ -10,6 +10,7 @@ import { Transition } from '@headlessui/react';
 import { ShowFor } from './Elements';
 
 interface IRotaContext {
+  roomLeaders: Profile[];
   shiftPatterns: ShiftPattern[]
   shiftAllocations: ShiftAllocation[],
   createShiftPattern: (sp: Omit<ShiftPattern, 'id'>) => void
@@ -17,6 +18,7 @@ interface IRotaContext {
 }
 
 export const RotaContext = createContext<IRotaContext>({
+  roomLeaders: [],
   shiftPatterns: [],
   shiftAllocations: [],
   createShiftPattern: () => {},
@@ -27,6 +29,7 @@ export const RotaContextProvider = (props: any) => {
   const { room } = useRoom()
   const [shiftPatterns, setShiftPatterns] = useState<ShiftPattern[]>([]);
   const [shiftAllocations, setShiftAllocations] = useState<ShiftAllocation[]>([]);
+  const [roomLeaders, setRoomLeaders] = useState<Profile[]>([]);
 
   async function updateShiftPatterns (roomId: string) {
     setShiftPatterns(await getShiftPatterns(roomId))
@@ -36,32 +39,41 @@ export const RotaContextProvider = (props: any) => {
     setShiftAllocations(await getShiftAllocations(roomId))
   }
 
+  async function _getRoomLeaders (roomId: string) {
+    await fetch('/api/updateProfilesForRooms');
+    const leaders = await getRoomLeaders(roomId);
+    setRoomLeaders(leaders.data?.map(leader => leader.profile) || [])
+  }
+
   useEffect(() => {
     // On page view, update the list of leaders in the database
-    fetch('/api/updateProfilesForRooms')
-
     if (room) {
       updateShiftPatterns(room.id)
       updateShiftAllocations(room.id)
+      _getRoomLeaders(room.id)
     }
   }, [room])
 
   useEffect(function () {
     let shiftUnsubscribe: () => void
     let allocationUnsubscribe: () => void
+    let leadersUnsubscribe: () => void
 
     if (room) {
       shiftUnsubscribe = onShiftPatternChange(() => updateShiftPatterns(room.id))
       allocationUnsubscribe = onShiftAllocationChange(() => updateShiftAllocations(room.id))
+      leadersUnsubscribe = onRoomLeadersChange(() => _getRoomLeaders(room.id))
     }
 
     return () => {
-      if (shiftUnsubscribe) shiftUnsubscribe()
-      if (allocationUnsubscribe) allocationUnsubscribe()
+      shiftUnsubscribe?.();
+      allocationUnsubscribe?.();
+      leadersUnsubscribe?.();
     }
   }, [room])
 
   return <RotaContext.Provider value={{
+    roomLeaders,
     shiftPatterns,
     createShiftPattern: (sp) => room && createShiftPattern({ ...sp, roomId: room.id }),
     shiftAllocations,
@@ -122,7 +134,7 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
               key={allocatedSlots[i]?.id || i}
               shiftAllocation={allocatedSlots[i]}
               shiftPattern={shiftPattern}
-              options={profile ? [profile] : []}
+              options={rota.roomLeaders}
             />
           )
         })}

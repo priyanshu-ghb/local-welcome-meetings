@@ -1,4 +1,4 @@
-import { ShiftPattern, ShiftAllocation } from '../types/app';
+import { ShiftPattern, ShiftAllocation, Profile, RoomPermission, RoomPermissionType } from '../types/app';
 import { supabase } from './supabase';
 import { SupabaseRealtimePayload } from '@supabase/supabase-js';
 
@@ -56,4 +56,25 @@ export const createShiftAllocation = async (sp: Omit<ShiftAllocation, 'id'>) => 
 
 export async function deleteShiftAllocation (id: string) {
   return await supabase.from<ShiftPattern>(`shiftallocation`).delete().eq('id', id);
+}
+
+/**
+ * Leaders
+ */
+
+export async function getRoomLeaders (roomId: string) {
+  return await supabase.from<RoomPermission & { profile: Profile }>('roompermission')
+    .select('profile ( * )')
+    .match({
+      'roomId': roomId,
+      'type': RoomPermissionType.Lead
+    })
+}
+
+export function onRoomLeadersChange(cb: (payload: SupabaseRealtimePayload<RoomPermission>) => void) {
+  const sub = supabase
+    .from<RoomPermission>('roompermission')
+    .on('*', cb)
+    .subscribe()
+  return () => supabase.removeSubscription(sub)
 }
