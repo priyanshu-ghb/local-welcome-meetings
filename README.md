@@ -2,7 +2,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Screenshots
 
-### Session call view
+### Session call (leader view)
 
 ![Session call view](public/screenshots/call.png)
 
