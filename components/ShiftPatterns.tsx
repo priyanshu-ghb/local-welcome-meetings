@@ -131,7 +131,7 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
         {new Array(Math.max(shiftPattern.required_people, allocatedSlots.length)).fill(0).map((_, i) => {
           return (
             <ShiftAllocationEditor
-              key={allocatedSlots[i]?.id || i}
+              key={(allocatedSlots[i]?.id || i.toString()) + JSON.stringify(rota.roomLeaders)}
               shiftAllocation={allocatedSlots[i]}
               shiftPattern={shiftPattern}
               options={rota.roomLeaders}
@@ -158,10 +158,11 @@ function ShiftAllocationEditor(
   const [savedDataState, setDataState] = useState<null | 'loading' | 'saved' | 'error'>(null)
   const rota = useRota()
 
+  const itemToString = (o: Profile | null) => o ? o.firstName ? `${o.firstName?.trim()} ${o.lastName?.trim() || ''}` : o.email : "Vacant slot"
   const comboProps: UseComboboxProps<Profile> = {
     initialSelectedItem: options.find(o => o.id === shiftAllocation?.profileId),
     items: inputItems,
-    itemToString: (o) => o?.email || "No person selected",
+    itemToString,
     onInputValueChange: ({ inputValue }) => {
       setInputItems(
         options.filter(profile => (
@@ -244,7 +245,7 @@ function ShiftAllocationEditor(
                 key={`${item}${index}`}
                 {...getItemProps({ item, index })}
               >
-                {item.email}
+                {itemToString(item)}
               </li>
             ))}
         </ul>
