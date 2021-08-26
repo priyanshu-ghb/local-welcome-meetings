@@ -27,7 +27,7 @@ const Home: NextPage<IProps> = ({ rooms }) => {
 
       <Header />
 
-      <main className='max-w-3xl mx-auto p-5 space-y-4 py-7'>
+      <main className='max-w-3xl mx-auto py-5'>
         {profile?.canLeadSessions && <RoomList rooms={rooms} />}
       </main>
     </div>
