@@ -144,25 +144,25 @@ function ShiftAllocationEditor(
   const rota = useRota()
 
   const comboProps: UseComboboxProps<Profile> = {
-    initialSelectedItem: options.find(o => o.userId === shiftAllocation?.userId),
+    initialSelectedItem: options.find(o => o.id === shiftAllocation?.profileId),
     items: inputItems,
     itemToString: (o) => o?.email || "No person selected",
     onInputValueChange: ({ inputValue }) => {
       setInputItems(
         options.filter(profile => (
-          profile.email.startsWith(inputValue?.toLowerCase() || '') ||
+          profile.email?.startsWith(inputValue?.toLowerCase() || '') ||
           profile.firstName?.startsWith(inputValue?.toLowerCase() || '') ||
           profile.lastName?.startsWith(inputValue?.toLowerCase() || '')
         )),
       )
     },
-    onSelectedItemChange: async ({ selectedItem }) => {
-      if (selectedItem) {
+    onSelectedItemChange: async ({ selectedItem: profile }) => {
+      if (profile) {
         try {
           setDataState('loading')
           await rota.createShiftAllocation({
             shiftPatternId: shiftPattern.id,
-            userId: selectedItem.userId
+            profileId: profile.id
           })
           setDataState('saved')
         } catch (e) {
