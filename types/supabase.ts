@@ -18,12 +18,14 @@ export interface paths {
         query: {
           insertedAt?: parameters["rowFilter.profile.insertedAt"];
           updatedAt?: parameters["rowFilter.profile.updatedAt"];
-          email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
           firstName?: parameters["rowFilter.profile.firstName"];
           lastName?: parameters["rowFilter.profile.lastName"];
           userId?: parameters["rowFilter.profile.userId"];
           canManageShifts?: parameters["rowFilter.profile.canManageShifts"];
+          email?: parameters["rowFilter.profile.email"];
+          id?: parameters["rowFilter.profile.id"];
+          hubspotContactId?: parameters["rowFilter.profile.hubspotContactId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -76,12 +78,14 @@ export interface paths {
         query: {
           insertedAt?: parameters["rowFilter.profile.insertedAt"];
           updatedAt?: parameters["rowFilter.profile.updatedAt"];
-          email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
           firstName?: parameters["rowFilter.profile.firstName"];
           lastName?: parameters["rowFilter.profile.lastName"];
           userId?: parameters["rowFilter.profile.userId"];
           canManageShifts?: parameters["rowFilter.profile.canManageShifts"];
+          email?: parameters["rowFilter.profile.email"];
+          id?: parameters["rowFilter.profile.id"];
+          hubspotContactId?: parameters["rowFilter.profile.hubspotContactId"];
         };
         header: {
           /** Preference */
@@ -98,12 +102,14 @@ export interface paths {
         query: {
           insertedAt?: parameters["rowFilter.profile.insertedAt"];
           updatedAt?: parameters["rowFilter.profile.updatedAt"];
-          email?: parameters["rowFilter.profile.email"];
           canLeadSessions?: parameters["rowFilter.profile.canLeadSessions"];
           firstName?: parameters["rowFilter.profile.firstName"];
           lastName?: parameters["rowFilter.profile.lastName"];
           userId?: parameters["rowFilter.profile.userId"];
           canManageShifts?: parameters["rowFilter.profile.canManageShifts"];
+          email?: parameters["rowFilter.profile.email"];
+          id?: parameters["rowFilter.profile.id"];
+          hubspotContactId?: parameters["rowFilter.profile.hubspotContactId"];
         };
         body: {
           /** profile */
@@ -141,6 +147,7 @@ export interface paths {
           wherebyRoomUrl?: parameters["rowFilter.room.wherebyRoomUrl"];
           wherebyHostRoomUrl?: parameters["rowFilter.room.wherebyHostRoomUrl"];
           id?: parameters["rowFilter.room.id"];
+          hubspotLeaderListId?: parameters["rowFilter.room.hubspotLeaderListId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -208,6 +215,7 @@ export interface paths {
           wherebyRoomUrl?: parameters["rowFilter.room.wherebyRoomUrl"];
           wherebyHostRoomUrl?: parameters["rowFilter.room.wherebyHostRoomUrl"];
           id?: parameters["rowFilter.room.id"];
+          hubspotLeaderListId?: parameters["rowFilter.room.hubspotLeaderListId"];
         };
         header: {
           /** Preference */
@@ -239,10 +247,110 @@ export interface paths {
           wherebyRoomUrl?: parameters["rowFilter.room.wherebyRoomUrl"];
           wherebyHostRoomUrl?: parameters["rowFilter.room.wherebyHostRoomUrl"];
           id?: parameters["rowFilter.room.id"];
+          hubspotLeaderListId?: parameters["rowFilter.room.hubspotLeaderListId"];
         };
         body: {
           /** room */
           room?: definitions["room"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
+  "/roompermission": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.roompermission.id"];
+          roomId?: parameters["rowFilter.roompermission.roomId"];
+          profileId?: parameters["rowFilter.roompermission.profileId"];
+          /** member | leader | manager */
+          type?: parameters["rowFilter.roompermission.type"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["roompermission"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** roompermission */
+          roompermission?: definitions["roompermission"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.roompermission.id"];
+          roomId?: parameters["rowFilter.roompermission.roomId"];
+          profileId?: parameters["rowFilter.roompermission.profileId"];
+          /** member | leader | manager */
+          type?: parameters["rowFilter.roompermission.type"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.roompermission.id"];
+          roomId?: parameters["rowFilter.roompermission.roomId"];
+          profileId?: parameters["rowFilter.roompermission.profileId"];
+          /** member | leader | manager */
+          type?: parameters["rowFilter.roompermission.type"];
+        };
+        body: {
+          /** roompermission */
+          roompermission?: definitions["roompermission"];
         };
         header: {
           /** Preference */
@@ -260,8 +368,8 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.shiftallocation.id"];
-          userId?: parameters["rowFilter.shiftallocation.userId"];
           shiftPatternId?: parameters["rowFilter.shiftallocation.shiftPatternId"];
+          profileId?: parameters["rowFilter.shiftallocation.profileId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -313,8 +421,8 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.shiftallocation.id"];
-          userId?: parameters["rowFilter.shiftallocation.userId"];
           shiftPatternId?: parameters["rowFilter.shiftallocation.shiftPatternId"];
+          profileId?: parameters["rowFilter.shiftallocation.profileId"];
         };
         header: {
           /** Preference */
@@ -330,8 +438,8 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.shiftallocation.id"];
-          userId?: parameters["rowFilter.shiftallocation.userId"];
           shiftPatternId?: parameters["rowFilter.shiftallocation.shiftPatternId"];
+          profileId?: parameters["rowFilter.shiftallocation.profileId"];
         };
         body: {
           /** shiftallocation */
@@ -450,16 +558,18 @@ export interface definitions {
   profile: {
     insertedAt: string;
     updatedAt: string;
-    /**
-     * Note:
-     * This is a Primary Key.<pk/>
-     */
-    email: string;
     canLeadSessions: boolean;
     firstName?: string;
     lastName?: string;
     userId?: string;
     canManageShifts: boolean;
+    email?: string;
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    hubspotContactId?: string;
   };
   room: {
     /** Human readable name. */
@@ -483,6 +593,26 @@ export interface definitions {
      * This is a Primary Key.<pk/>
      */
     id: string;
+    hubspotLeaderListId?: string;
+  };
+  roompermission: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `room.id`.<fk table='room' column='id'/>
+     */
+    roomId: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `profile.id`.<fk table='profile' column='id'/>
+     */
+    profileId: string;
+    /** member | leader | manager */
+    type: string;
   };
   shiftallocation: {
     /**
@@ -490,12 +620,16 @@ export interface definitions {
      * This is a Primary Key.<pk/>
      */
     id: string;
-    userId?: string;
     /**
      * Note:
      * This is a Foreign Key to `shiftpattern.id`.<fk table='shiftpattern' column='id'/>
      */
     shiftPatternId: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `profile.id`.<fk table='profile' column='id'/>
+     */
+    profileId: string;
   };
   shiftpattern: {
     name: string;
@@ -538,12 +672,14 @@ export interface parameters {
   "body.profile": definitions["profile"];
   "rowFilter.profile.insertedAt": string;
   "rowFilter.profile.updatedAt": string;
-  "rowFilter.profile.email": string;
   "rowFilter.profile.canLeadSessions": string;
   "rowFilter.profile.firstName": string;
   "rowFilter.profile.lastName": string;
   "rowFilter.profile.userId": string;
   "rowFilter.profile.canManageShifts": string;
+  "rowFilter.profile.email": string;
+  "rowFilter.profile.id": string;
+  "rowFilter.profile.hubspotContactId": string;
   /** room */
   "body.room": definitions["room"];
   /** Human readable name. */
@@ -563,11 +699,19 @@ export interface parameters {
   "rowFilter.room.wherebyRoomUrl": string;
   "rowFilter.room.wherebyHostRoomUrl": string;
   "rowFilter.room.id": string;
+  "rowFilter.room.hubspotLeaderListId": string;
+  /** roompermission */
+  "body.roompermission": definitions["roompermission"];
+  "rowFilter.roompermission.id": string;
+  "rowFilter.roompermission.roomId": string;
+  "rowFilter.roompermission.profileId": string;
+  /** member | leader | manager */
+  "rowFilter.roompermission.type": string;
   /** shiftallocation */
   "body.shiftallocation": definitions["shiftallocation"];
   "rowFilter.shiftallocation.id": string;
-  "rowFilter.shiftallocation.userId": string;
   "rowFilter.shiftallocation.shiftPatternId": string;
+  "rowFilter.shiftallocation.profileId": string;
   /** shiftpattern */
   "body.shiftpattern": definitions["shiftpattern"];
   "rowFilter.shiftpattern.name": string;
