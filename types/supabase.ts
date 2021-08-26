@@ -563,7 +563,7 @@ export interface definitions {
     lastName?: string;
     userId?: string;
     canManageShifts: boolean;
-    email?: string;
+    email: string;
     /**
      * Note:
      * This is a Primary Key.<pk/>
