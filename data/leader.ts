@@ -1,11 +1,13 @@
-import { hubspotV1 } from './hubspot';
+import { hubspotV1, getHubspotContactsInList } from './hubspot';
 import env from 'env-var';
 import { supabase } from './supabase';
 import { Profile } from '../types/app';
 import { NextApiRequestCookies } from 'next/dist/server/api-utils';
 
-export async function upsertUserProfile (props: Pick<Profile, 'email'> & Partial<Profile>) {
-  return supabase.from<Profile>('profile').insert(props, { upsert: true })
+export type UpsertProfile = Pick<Profile, 'email'> & Partial<Profile>
+
+export async function upsertUserProfile (props: UpsertProfile | UpsertProfile[]) {
+  return supabase.from<Profile>('profile').upsert(props, { onConflict: 'email', returning: 'representation' })
 }
 
 export async function isValidLeaderEmail (email: string): Promise<boolean> {
@@ -37,10 +39,10 @@ function isEmailInArbitraryList(email: string): boolean {
 
 async function isEmailInHubspotList (email: string): Promise<boolean> {
   const HUBSPOT_LEADER_LIST_ID = env.get('HUBSPOT_LEADER_LIST_ID').required().asInt()
-  const { contacts } = await hubspotV1(`/lists/${HUBSPOT_LEADER_LIST_ID}/contacts/all`)
-  if (contacts.some((contact: any) =>
-      contact['identity-profiles'].some((profile: any) =>
-        profile.identities.some((identity: any) =>
+  const { contacts } = await getHubspotContactsInList(HUBSPOT_LEADER_LIST_ID)
+  if (contacts.some((contact) =>
+      contact['identity-profiles'].some((profile) =>
+        profile.identities.some((identity) =>
           identity.type === 'EMAIL' && identity.value === email
   )))) {
     return true

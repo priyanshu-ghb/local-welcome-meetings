@@ -2596,7 +2596,7 @@ locate-path@^5.0.0:
   dependencies:
     p-locate "^4.1.0"
 
-lodash-es@^4.17.21:
+lodash-es@^4.17.11, lodash-es@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
   integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
@@ -3308,6 +3308,13 @@ postcss@^8.1.6, postcss@^8.1.8, postcss@^8.2.1, postcss@^8.3.6:
     colorette "^1.2.2"
     nanoid "^3.1.23"
     source-map-js "^0.6.2"
+
+postgrest-syntax-builder@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/postgrest-syntax-builder/-/postgrest-syntax-builder-0.2.0.tgz#8d0c3de136a51a3e58290f919ab67774d948f42e"
+  integrity sha512-CcadMWPVXNSjQk7KNKhJ32U813g2t2/ykh4KVfR9EqkWXCSm1nBJ7FIvbEnPqHtifddXnZXN64w37C39ACXGgQ==
+  dependencies:
+    lodash-es "^4.17.11"
 
 posthog-js@^1.12.6:
   version "1.12.6"

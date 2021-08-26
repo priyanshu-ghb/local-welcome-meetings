@@ -1,9 +1,7 @@
-import { Room } from '../types/app';
 import { useRoom } from '../data/room';
 import { useUser } from '../data/auth';
 import { isWithinInterval, addSeconds } from 'date-fns';
 import qs from 'query-string';
-import { Debug } from './Elements';
 
 export function VideoCall () {
   const { user, isLoggedIn, profile, session } = useUser()

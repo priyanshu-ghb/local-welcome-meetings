@@ -30,8 +30,6 @@ export const Navigation = ({ clickPrevious, clickNext, children }: {
   </nav>
 )
 
-export const Debug = (o: any) => <pre>{JSON.stringify(o, null, 2)}</pre>
-
 export const ShowFor = ({ seconds, children, then }: { seconds: number, children: any, then?: any }) => {
   const [startTime, setStartTime] = useState(new Date())
   const endTime = addSeconds(startTime, seconds)

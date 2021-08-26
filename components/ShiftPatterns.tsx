@@ -7,7 +7,7 @@ import { onShiftPatternChange, onShiftAllocationChange, getShiftAllocations, cre
 import { EmojiHappyIcon, EmojiSadIcon } from '@heroicons/react/outline';
 import { useCombobox, UseComboboxProps } from 'downshift';
 import { Transition } from '@headlessui/react';
-import { Debug, ShowFor } from './Elements';
+import { ShowFor } from './Elements';
 
 interface IRotaContext {
   shiftPatterns: ShiftPattern[]
@@ -37,6 +37,9 @@ export const RotaContextProvider = (props: any) => {
   }
 
   useEffect(() => {
+    // On page view, update the list of leaders in the database
+    fetch('/api/updateProfilesForRooms')
+
     if (room) {
       updateShiftPatterns(room.id)
       updateShiftAllocations(room.id)
