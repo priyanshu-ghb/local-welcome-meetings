@@ -10,6 +10,7 @@ import { ShowFor } from './Elements';
 import cronRenderer from 'cronstrue'
 import later from '@breejs/later'
 import { format } from 'date-fns-tz';
+import { useForm } from "react-hook-form";
 
 export function ShiftPatterns () {
   const rota = useRota()
@@ -64,7 +65,9 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
           )
         })}
       </div>
-      {profile?.canManageShifts && <div className='button' onClick={() => deleteShiftPattern(shiftPattern.id)}>Delete</div>}
+      {profile?.canManageShifts && <div className='button' onClick={() => deleteShiftPattern(shiftPattern.id)}>
+        Delete shift pattern
+      </div>}
     </div>
   )
 }
@@ -195,32 +198,58 @@ export function CreateShiftPattern () {
   const { room } = useRoom()
   const rota = useRota()
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (!room) throw new Error("No room was available")
-    rota.createShiftPattern({
-      // @ts-ignore
-      name: event.target.name.value,
-      // @ts-ignore
-      required_people: event.target.required_people.value,
-      roomId: room.id
-    })
+  const defaultValues = {
+    roomId: room?.id!,
+    name: '',
+    required_people: 2,
+    cron: '30 18 * * WED#1', 
   }
 
+  const { register, handleSubmit, watch, reset } = useForm({
+    defaultValues
+  });
+
+  const onSubmit = async (data: typeof defaultValues) => {
+    if (data.roomId === null) {
+      throw new Error("No room was available")
+    }
+    await rota.createShiftPattern(data)
+    reset()
+  }
+
+  const cron = watch('cron')
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="shadow overflow-hidden sm:rounded-md">
         <div className="p-4 sm:p-5 bg-white">
           <h3 className='text-2xl mb-4 text-left'>Add a shift pattern</h3>
           <div className="grid grid-flow-row gap-2">
             <div className="col-span-6 sm:col-span-3">
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name of shift pattern</label>
-              <input required type="text" name="name" id="name" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+              <input required type='text' {...register("name")} id='name' className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
             </div>
 
             <div className="col-span-6 sm:col-span-3">
               <label htmlFor="required_people" className="block text-sm font-medium text-gray-700">Number of required people</label>
-              <input required type="number" min={1} max={100} defaultValue={2} name="required_people" id="required_people" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+              <input required type="number" min={1} max={100} {...register("required_people")} id="required_people" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+            </div>
+
+            <div className="col-span-6 sm:col-span-3">
+              <label htmlFor="cron" className="block text-sm font-medium text-gray-700">Chronological pattern</label>
+              <input required type="text" {...register("cron", {
+                validate: value => !!cronRenderer.toString(value).length || "Not a valid cron string"
+              })} id="cron" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+              <section className='space-y-2 p-3 bg-gray-50 rounded-lg'>
+              <p>
+                <CronExplainer cron={cron} />
+              </p>
+              <p>
+                <a className='underline text-blue-500' href='https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#CronExpressions'>
+                  Syntax explainer.
+                </a>
+              </p>
+              </section>
             </div>
           </div>
         </div>
@@ -232,4 +261,13 @@ export function CreateShiftPattern () {
       </div>
     </form>
   )
+}
+
+function CronExplainer ({ cron }: { cron: string }) {
+  try {
+    const explainer = cronRenderer.toString(cron)
+    return <span>{explainer}</span>
+  } catch (e) {
+    return <span>Not a valid cron</span>
+  }
 }
