@@ -1,19 +1,15 @@
-import { Page } from '@notionhq/client/build/src/api-types';
 import type { GetServerSideProps, NextPage } from 'next'
-import { useRouter } from 'next/dist/client/router'
 import Head from 'next/head'
 import { getRoomBySlug, RoomContextProvider } from '../../data/room';
-import { getSlides } from '../../data/slideshow';
 import { Room } from '../../types/app';
 import Link from 'next/link';
-import { Logo } from '../../components/Branding';
-import { isClient } from '../../styles/screens';
 import { getUserFromHTTPRequest } from '../../data/leader';
 import { getUserProfile, useUser } from '../../data/auth';
 import { strict as assert } from 'assert';
-import { CreateShiftPattern, RotaContextProvider, ShiftPatterns } from '../../components/ShiftPatterns';
+import { CreateShiftPattern, ShiftPatterns } from '../../components/ShiftPatterns';
 import { ExternalLinkIcon } from '@heroicons/react/solid';
 import { Header } from '../../components/Layout';
+import { RotaContextProvider } from '../../data/rota';
 
 type IProps = {
   room: Room
