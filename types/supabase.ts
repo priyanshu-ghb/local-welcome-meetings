@@ -465,6 +465,111 @@ export interface paths {
       };
     };
   };
+  "/shiftexception": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.shiftexception.id"];
+          shiftPatternId?: parameters["rowFilter.shiftexception.shiftPatternId"];
+          date?: parameters["rowFilter.shiftexception.date"];
+          profileId?: parameters["rowFilter.shiftexception.profileId"];
+          /** drop_out or drop_in */
+          type?: parameters["rowFilter.shiftexception.type"];
+          lastUpdated?: parameters["rowFilter.shiftexception.lastUpdated"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["shiftexception"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** shiftexception */
+          shiftexception?: definitions["shiftexception"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.shiftexception.id"];
+          shiftPatternId?: parameters["rowFilter.shiftexception.shiftPatternId"];
+          date?: parameters["rowFilter.shiftexception.date"];
+          profileId?: parameters["rowFilter.shiftexception.profileId"];
+          /** drop_out or drop_in */
+          type?: parameters["rowFilter.shiftexception.type"];
+          lastUpdated?: parameters["rowFilter.shiftexception.lastUpdated"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.shiftexception.id"];
+          shiftPatternId?: parameters["rowFilter.shiftexception.shiftPatternId"];
+          date?: parameters["rowFilter.shiftexception.date"];
+          profileId?: parameters["rowFilter.shiftexception.profileId"];
+          /** drop_out or drop_in */
+          type?: parameters["rowFilter.shiftexception.type"];
+          lastUpdated?: parameters["rowFilter.shiftexception.lastUpdated"];
+        };
+        body: {
+          /** shiftexception */
+          shiftexception?: definitions["shiftexception"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/shiftpattern": {
     get: {
       parameters: {
@@ -864,6 +969,27 @@ export interface definitions {
     profileId: string;
     updatedAt: string;
   };
+  shiftexception: {
+    /**
+     * Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `profile.id`.<fk table='profile' column='id'/>
+     */
+    shiftPatternId: string;
+    date: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `profile.id`.<fk table='profile' column='id'/>
+     */
+    profileId: string;
+    /** drop_out or drop_in */
+    type: string;
+    lastUpdated: string;
+  };
   shiftpattern: {
     name: string;
     required_people: number;
@@ -950,6 +1076,15 @@ export interface parameters {
   "rowFilter.shiftallocation.shiftPatternId": string;
   "rowFilter.shiftallocation.profileId": string;
   "rowFilter.shiftallocation.updatedAt": string;
+  /** shiftexception */
+  "body.shiftexception": definitions["shiftexception"];
+  "rowFilter.shiftexception.id": string;
+  "rowFilter.shiftexception.shiftPatternId": string;
+  "rowFilter.shiftexception.date": string;
+  "rowFilter.shiftexception.profileId": string;
+  /** drop_out or drop_in */
+  "rowFilter.shiftexception.type": string;
+  "rowFilter.shiftexception.lastUpdated": string;
   /** shiftpattern */
   "body.shiftpattern": definitions["shiftpattern"];
   "rowFilter.shiftpattern.name": string;
