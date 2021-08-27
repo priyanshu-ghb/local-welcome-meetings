@@ -148,6 +148,7 @@ export interface paths {
           wherebyHostRoomUrl?: parameters["rowFilter.room.wherebyHostRoomUrl"];
           id?: parameters["rowFilter.room.id"];
           hubspotLeaderListId?: parameters["rowFilter.room.hubspotLeaderListId"];
+          updatedAt?: parameters["rowFilter.room.updatedAt"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -216,6 +217,7 @@ export interface paths {
           wherebyHostRoomUrl?: parameters["rowFilter.room.wherebyHostRoomUrl"];
           id?: parameters["rowFilter.room.id"];
           hubspotLeaderListId?: parameters["rowFilter.room.hubspotLeaderListId"];
+          updatedAt?: parameters["rowFilter.room.updatedAt"];
         };
         header: {
           /** Preference */
@@ -248,6 +250,7 @@ export interface paths {
           wherebyHostRoomUrl?: parameters["rowFilter.room.wherebyHostRoomUrl"];
           id?: parameters["rowFilter.room.id"];
           hubspotLeaderListId?: parameters["rowFilter.room.hubspotLeaderListId"];
+          updatedAt?: parameters["rowFilter.room.updatedAt"];
         };
         body: {
           /** room */
@@ -269,10 +272,11 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.roompermission.id"];
-          roomId?: parameters["rowFilter.roompermission.roomId"];
-          profileId?: parameters["rowFilter.roompermission.profileId"];
           /** member | leader | manager */
           type?: parameters["rowFilter.roompermission.type"];
+          updatedAt?: parameters["rowFilter.roompermission.updatedAt"];
+          profileId?: parameters["rowFilter.roompermission.profileId"];
+          roomId?: parameters["rowFilter.roompermission.roomId"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -324,10 +328,11 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.roompermission.id"];
-          roomId?: parameters["rowFilter.roompermission.roomId"];
-          profileId?: parameters["rowFilter.roompermission.profileId"];
           /** member | leader | manager */
           type?: parameters["rowFilter.roompermission.type"];
+          updatedAt?: parameters["rowFilter.roompermission.updatedAt"];
+          profileId?: parameters["rowFilter.roompermission.profileId"];
+          roomId?: parameters["rowFilter.roompermission.roomId"];
         };
         header: {
           /** Preference */
@@ -343,10 +348,11 @@ export interface paths {
       parameters: {
         query: {
           id?: parameters["rowFilter.roompermission.id"];
-          roomId?: parameters["rowFilter.roompermission.roomId"];
-          profileId?: parameters["rowFilter.roompermission.profileId"];
           /** member | leader | manager */
           type?: parameters["rowFilter.roompermission.type"];
+          updatedAt?: parameters["rowFilter.roompermission.updatedAt"];
+          profileId?: parameters["rowFilter.roompermission.profileId"];
+          roomId?: parameters["rowFilter.roompermission.roomId"];
         };
         body: {
           /** roompermission */
@@ -370,6 +376,7 @@ export interface paths {
           id?: parameters["rowFilter.shiftallocation.id"];
           shiftPatternId?: parameters["rowFilter.shiftallocation.shiftPatternId"];
           profileId?: parameters["rowFilter.shiftallocation.profileId"];
+          updatedAt?: parameters["rowFilter.shiftallocation.updatedAt"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -423,6 +430,7 @@ export interface paths {
           id?: parameters["rowFilter.shiftallocation.id"];
           shiftPatternId?: parameters["rowFilter.shiftallocation.shiftPatternId"];
           profileId?: parameters["rowFilter.shiftallocation.profileId"];
+          updatedAt?: parameters["rowFilter.shiftallocation.updatedAt"];
         };
         header: {
           /** Preference */
@@ -440,6 +448,7 @@ export interface paths {
           id?: parameters["rowFilter.shiftallocation.id"];
           shiftPatternId?: parameters["rowFilter.shiftallocation.shiftPatternId"];
           profileId?: parameters["rowFilter.shiftallocation.profileId"];
+          updatedAt?: parameters["rowFilter.shiftallocation.updatedAt"];
         };
         body: {
           /** shiftallocation */
@@ -464,6 +473,8 @@ export interface paths {
           required_people?: parameters["rowFilter.shiftpattern.required_people"];
           id?: parameters["rowFilter.shiftpattern.id"];
           roomId?: parameters["rowFilter.shiftpattern.roomId"];
+          updatedAt?: parameters["rowFilter.shiftpattern.updatedAt"];
+          cron?: parameters["rowFilter.shiftpattern.cron"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -518,6 +529,8 @@ export interface paths {
           required_people?: parameters["rowFilter.shiftpattern.required_people"];
           id?: parameters["rowFilter.shiftpattern.id"];
           roomId?: parameters["rowFilter.shiftpattern.roomId"];
+          updatedAt?: parameters["rowFilter.shiftpattern.updatedAt"];
+          cron?: parameters["rowFilter.shiftpattern.cron"];
         };
         header: {
           /** Preference */
@@ -536,6 +549,8 @@ export interface paths {
           required_people?: parameters["rowFilter.shiftpattern.required_people"];
           id?: parameters["rowFilter.shiftpattern.id"];
           roomId?: parameters["rowFilter.shiftpattern.roomId"];
+          updatedAt?: parameters["rowFilter.shiftpattern.updatedAt"];
+          cron?: parameters["rowFilter.shiftpattern.cron"];
         };
         body: {
           /** shiftpattern */
@@ -594,6 +609,7 @@ export interface definitions {
      */
     id: string;
     hubspotLeaderListId?: string;
+    updatedAt: string;
   };
   roompermission: {
     /**
@@ -601,18 +617,19 @@ export interface definitions {
      * This is a Primary Key.<pk/>
      */
     id: string;
-    /**
-     * Note:
-     * This is a Foreign Key to `room.id`.<fk table='room' column='id'/>
-     */
-    roomId: string;
+    /** member | leader | manager */
+    type: string;
+    updatedAt: string;
     /**
      * Note:
      * This is a Foreign Key to `profile.id`.<fk table='profile' column='id'/>
      */
     profileId: string;
-    /** member | leader | manager */
-    type: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `room.id`.<fk table='room' column='id'/>
+     */
+    roomId: string;
   };
   shiftallocation: {
     /**
@@ -630,6 +647,7 @@ export interface definitions {
      * This is a Foreign Key to `profile.id`.<fk table='profile' column='id'/>
      */
     profileId: string;
+    updatedAt: string;
   };
   shiftpattern: {
     name: string;
@@ -644,6 +662,8 @@ export interface definitions {
      * This is a Foreign Key to `room.id`.<fk table='room' column='id'/>
      */
     roomId: string;
+    updatedAt: string;
+    cron?: string;
   };
 }
 
@@ -700,24 +720,29 @@ export interface parameters {
   "rowFilter.room.wherebyHostRoomUrl": string;
   "rowFilter.room.id": string;
   "rowFilter.room.hubspotLeaderListId": string;
+  "rowFilter.room.updatedAt": string;
   /** roompermission */
   "body.roompermission": definitions["roompermission"];
   "rowFilter.roompermission.id": string;
-  "rowFilter.roompermission.roomId": string;
-  "rowFilter.roompermission.profileId": string;
   /** member | leader | manager */
   "rowFilter.roompermission.type": string;
+  "rowFilter.roompermission.updatedAt": string;
+  "rowFilter.roompermission.profileId": string;
+  "rowFilter.roompermission.roomId": string;
   /** shiftallocation */
   "body.shiftallocation": definitions["shiftallocation"];
   "rowFilter.shiftallocation.id": string;
   "rowFilter.shiftallocation.shiftPatternId": string;
   "rowFilter.shiftallocation.profileId": string;
+  "rowFilter.shiftallocation.updatedAt": string;
   /** shiftpattern */
   "body.shiftpattern": definitions["shiftpattern"];
   "rowFilter.shiftpattern.name": string;
   "rowFilter.shiftpattern.required_people": string;
   "rowFilter.shiftpattern.id": string;
   "rowFilter.shiftpattern.roomId": string;
+  "rowFilter.shiftpattern.updatedAt": string;
+  "rowFilter.shiftpattern.cron": string;
 }
 
 export interface operations {}
