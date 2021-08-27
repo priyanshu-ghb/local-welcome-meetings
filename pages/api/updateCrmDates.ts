@@ -6,7 +6,7 @@ import assert from 'assert';
 
 export default async function handler (req: NextApiRequest, res: NextApiResponse<{ dates?: any, error?: any }>) {
   const profiles = await supabase.from<Profile>('profile').select('*')
-  assert.strict(profiles.data?.length, 'Profile not found')
+  assert.strict(profiles.data?.length, 'Profiles not found')
   try {
     const dates = await updateCrmWithDatesByProfile(profiles.data)
     return res.status(200).json({ dates })

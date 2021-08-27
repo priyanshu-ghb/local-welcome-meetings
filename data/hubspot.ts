@@ -48,8 +48,7 @@ export const formatProperties = (properties: { [key: string]: any }) => {
 export async function updateHubspotContact (id: string, properties: { [key: string]: any; }) {
   try {
     const result = await hubspotV3.crm.contacts.basicApi.update(
-      id,
-      { properties: formatProperties(properties) }
+      id, { properties: formatProperties(properties) }
     )
     return result
   } catch (e) {

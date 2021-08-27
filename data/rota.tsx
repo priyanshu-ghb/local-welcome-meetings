@@ -4,7 +4,8 @@ import { SupabaseRealtimePayload } from '@supabase/supabase-js';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useRoom } from './room';
 import later from '@breejs/later';
-import { isSameDay } from 'date-fns';
+import { isSameDay, isBefore } from 'date-fns';
+import { passThroughLog } from '../utils/debug';
 
 /**
  * Context
@@ -229,18 +230,19 @@ export function calculateSchedule(
   }, [] as Array<ScheduledDate>)
 }
 
-export function nextDateForProfile (profileId: string, schedule: ScheduledDate[]) {
-  return schedule.find((date) => (
-    (
-      // If the user is a leader for the shift pattern
-      date.shiftAllocations.some(sa => sa.profileId === profileId) &&
-      // And they aren't dropped out this day
-      !date.shiftExceptions.some(se => se.profileId === profileId && se.type === ShiftExceptionType.DropOut)
-    ) || (
-      // Or they are temporarily filling in on this day
-      date.shiftExceptions.some(se => se.profileId === profileId && se.type === ShiftExceptionType.FillIn)
-    )
-  ))
+export function nextDateForProfile (profileId: string, schedule: ScheduledDate[], exceptions?: ShiftException[]) {
+  const earliestScheduledDate = schedule.find((date) => {
+    const isAssigned = date.shiftAllocations.some(sa => sa.profileId === profileId)
+    const isDroppedOut = date.shiftExceptions.some(se => se.profileId === profileId && se.type === ShiftExceptionType.DropOut)
+    const isFillingIn = date.shiftExceptions.some(se => se.profileId === profileId && se.type === ShiftExceptionType.FillIn)
+    return (isAssigned && !isDroppedOut) || isFillingIn
+  })
+  const fillInExceptions = exceptions && exceptions.filter(e => e.type === ShiftExceptionType.FillIn)
+  if (!fillInExceptions?.length) return earliestScheduledDate
+  const nextExceptionDate = fillInExceptions.slice().sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]
+  if (!earliestScheduledDate) return nextExceptionDate
+  const nextDate = isBefore(new Date(nextExceptionDate.date), new Date(earliestScheduledDate.date)) ? nextExceptionDate : earliestScheduledDate
+  return nextDate
 }
 
 /**

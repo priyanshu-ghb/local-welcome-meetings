@@ -14,10 +14,9 @@ const HUBSPOT_DATE_PROPERTY = env.get('HUBSPOT_DATE_PROPERTY').required().asStri
 export async function updateCrmWithDatesByProfile(profiles: Profile[]) {
   // Query all allocations for all profiles, because it's optimal to do it once
   const or = `profileId.in.(${profiles.map(p => p.id).join(',')})`
-  console.error(or)
   const shiftAllocations = await supabase.from<ShiftAllocation & { shiftPattern: ShiftPattern }>('shiftallocation').select(`
-  id, shiftPatternId, profileId, shiftPattern: shiftPatternId ( name, required_people, id, roomId, cron )
-`).or(or)
+    id, shiftPatternId, profileId, shiftPattern: shiftPatternId ( name, required_people, id, roomId, cron )
+  `).or(or)
   const shiftExceptions = await supabase.from<ShiftException>('shiftexception').select(`
     id, shiftPatternId, profileId, type, date
   `).or(or)
@@ -33,33 +32,38 @@ export async function updateCrmWithDatesByProfile(profiles: Profile[]) {
         'id'
       )
 
+      const allocations = shiftAllocations.data?.filter(e => e.profileId === profile.id) || []
+      const exceptions = shiftExceptions.data?.filter(e => e.profileId === profile.id) || []
+
       const schedule = calculateSchedule(
         {
           shiftPatterns,
-          shiftAllocations: shiftAllocations.data || [],
-          shiftExceptions: shiftExceptions.data || []
+          shiftAllocations: allocations,
+          shiftExceptions: exceptions
         },
-        10
+        2
       )
 
-      return updateCrmWithDates(profile, schedule)
+      const nextDate = nextDateForProfile(
+        profile.id,
+        schedule,
+        exceptions
+      )
+
+      if (!profile.hubspotContactId) return
+      const result = await updateHubspotContact(profile.hubspotContactId, {
+        [HUBSPOT_DATE_PROPERTY]: nextDate?.date ? new Date(nextDate.date) : "",
+      })
+      return {
+        crmResponse: result?.body,
+        profile,
+        schedule,
+        exceptions,
+      }
     })
   )
 
   return results
-}
-
-export async function updateCrmWithDates (
-  profile: Profile,
-  schedule: ScheduledDate[]
-) {
-  const nextDate = nextDateForProfile(profile.id, schedule)
-  if (profile.hubspotContactId) {
-    const result = await updateHubspotContact(profile.hubspotContactId, {
-      [HUBSPOT_DATE_PROPERTY]: nextDate?.date || "",
-    })
-    return result?.body
-  }
 }
 
 export async function upsertUserProfile (props: UpsertProfile | UpsertProfile[]) {
