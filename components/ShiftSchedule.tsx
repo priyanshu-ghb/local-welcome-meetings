@@ -1,24 +1,51 @@
 import { useRota, calculateSchedule, calculateShiftPatternStatus, ScheduledDate } from '../data/rota';
 import { format } from 'date-fns-tz';
 import { ShiftAllocationEditor } from './ShiftPatterns';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ShiftExceptionType } from '../types/app';
 import n from 'pluralize'
+import { Transition } from '@headlessui/react';
+import { ArrowCircleDownIcon } from '@heroicons/react/solid';
+import { isSameYear } from 'date-fns/esm';
 
 export function ShiftSchedule () {
   const rota = useRota()
 
+  const [maxDates, setMaxDates] = useState(4)
+
   const dates = useMemo(() => calculateSchedule(
     rota,
-    4,
+    maxDates,
     true
-  ), [rota])
+  ), [rota, maxDates])
 
   return (
     <section className='space-y-5'>
-      {dates.filter((_, i) => i < 10).map(date =>
-        <DateManager key={date.date+date.shiftPattern.id} date={date} />
+      {dates.filter((_, i) => i < maxDates).map((date, i) =>
+        <Transition
+          key={date.date+date.shiftPattern.id}
+          appear={true}
+          show={true}
+          enter="transition-opacity duration-75"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="transition-opacity duration-150"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          {dates[i-1] && !isSameYear(dates[i-1].date, date.date) && (
+            <div className='text-2xl font-semibold text-gray-500 text-center my-6'>
+              Happy {format(date.date, 'yyyy')}! 🎉
+            </div>
+          )}
+          <DateManager date={date} />
+        </Transition>
       )}
+      <div className='text-center'>
+        <button className='button mx-auto' onClick={() => setMaxDates(m => m+4)}>
+          Show more <ArrowCircleDownIcon className='w-4 h-4' />
+        </button>
+      </div>
     </section>
   )
 }
