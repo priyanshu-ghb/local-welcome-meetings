@@ -1,6 +1,5 @@
 var https = require('https');
 var fs = require('fs');
-const path = require('path')
 const { parse } = require('url');
 
 const next = require('next')
@@ -20,6 +19,6 @@ app.prepare().then(() => {
     handle(req, res, parsedUrl);
   }).listen(port, err => {
     if (err) throw err
-    console.log(`> Ready on localhost:${port}`)
+    console.info(`> Ready on localhost:${port}`)
   })
 })

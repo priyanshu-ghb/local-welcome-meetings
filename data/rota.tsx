@@ -188,6 +188,9 @@ export function calculateSchedule(
   datesAhead = 10
 ) {
   return shiftPatterns.reduce((acc, shiftPattern) => {
+    const thisPatternAllocations = shiftAllocations.filter(sa => sa.shiftPatternId === shiftPattern.id)
+    // Shift patterns must have at least one allocation
+    if (thisPatternAllocations.length === 0) return acc
     const schedule = later.parse.cron(shiftPattern.cron)
     const nextDates = later.schedule(schedule).next(datesAhead) as Date[]
     // TODO: add exceptions
@@ -195,7 +198,7 @@ export function calculateSchedule(
       return {
         date,
         shiftPattern,
-        shiftAllocations: shiftAllocations.filter(sa => sa.shiftPatternId === shiftPattern.id),
+        shiftAllocations: thisPatternAllocations,
       }
     })
     acc = acc.concat(dates).sort((a, b) => a.date.getTime() - b.date.getTime())

@@ -54,9 +54,9 @@ export async function updateHubspotContact (id: string, properties: { [key: stri
     return result
   } catch (e) {
     if (e?.response?.body) {
-      console.log(e.response.body)
+      console.error(e.response.body)
     } else {
-      console.log(e)
+      console.error(e)
     }
   }
 }

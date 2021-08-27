@@ -4,18 +4,14 @@ import { supabase } from '../../data/supabase';
 import { Profile } from '../../types/app';
 import assert from 'assert';
 
-export default async function handler (req: NextApiRequest, res: NextApiResponse<{ status: string }>) {
-  const { profileId } = JSON.parse(req.body || {})
-
-  if (req.method !== 'POST' || !profileId) {
-    return res.status(400).end({ status: "Please POST with a profileId." })
+export default async function handler (req: NextApiRequest, res: NextApiResponse<{ dates?: any, error?: any }>) {
+  const profiles = await supabase.from<Profile>('profile').select('*')
+  assert.strict(profiles.data?.length, 'Profile not found')
+  try {
+    const dates = await updateCrmWithDatesByProfile(profiles.data)
+    return res.status(200).json({ dates })
+  } catch (e) {
+    console.error(e)
+    return res.status(500).json({ error: e.toString() })
   }
-
-  const profileRes = await supabase.from<Profile>('profile').select('*').eq('id', profileId)
-  const profile = profileRes.body?.[0]
-  assert.strict(profile, 'Profile not found')
-
-  updateCrmWithDatesByProfile(profile)
-
-  return res.status(200).end()
 }

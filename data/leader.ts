@@ -5,31 +5,47 @@ import { Profile, ShiftPattern, ShiftAllocation } from '../types/app';
 import { NextApiRequestCookies } from 'next/dist/server/api-utils';
 import { ScheduledDate, nextDateForProfile, calculateSchedule } from './rota';
 import { sortedUniqBy } from 'lodash-es';
+import assert from 'assert';
 
 export type UpsertProfile = Pick<Profile, 'email'> & Partial<Profile>
 
 const HUBSPOT_DATE_PROPERTY = env.get('HUBSPOT_DATE_PROPERTY').required().asString()
 
-export async function updateCrmWithDatesByProfile(profile: Profile): Promise<void> {
-  const shiftAllocations = await supabase.from<ShiftAllocation>('shiftallocation').select(`
+export async function updateCrmWithDatesByProfile(profiles: Profile[]) {
+  // Query all allocations for all profiles, because it's optimal to do it once
+  const or = `profileId.in.(${profiles.map(p => p.id).join(',')})`
+  console.error(or)
+  const shiftAllocations = await supabase.from<ShiftAllocation & { shiftPattern: ShiftPattern }>('shiftallocation').select(`
   id, shiftPatternId, profileId, shiftPattern: shiftPatternId ( name, required_people, id, roomId, cron )
-`).eq('profileId', profile.id)
+`).or(or)
 
-  const shiftPatterns = sortedUniqBy(
-    shiftAllocations.data?.reduce((acc, shift) => {
-      // @ts-ignore
-      return acc.concat(shift.shiftPattern)
-    }, [] as ShiftPattern[]) || [],
-    'id'
+  assert.strict(
+    shiftAllocations.data?.length,
+    `No allocations found: ${JSON.stringify(shiftAllocations.error, null, 2)}`
   )
 
-  const schedule = await calculateSchedule(
-    shiftPatterns,
-    shiftAllocations.data || [],
-    10
+  const results = Promise.all(
+    profiles.map(async (profile) => {
+      const shiftPatterns = sortedUniqBy(
+        shiftAllocations.data?.reduce((acc, sa) => {
+          // Only get allocations for this particular profile
+          if (sa.profileId !== profile.id) return acc
+          return acc.concat(sa.shiftPattern)
+        }, [] as ShiftPattern[]) || [],
+        'id'
+      )
+
+      const schedule = calculateSchedule(
+        shiftPatterns,
+        shiftAllocations.data || [],
+        10
+      )
+
+      return updateCrmWithDates(profile, schedule)
+    })
   )
 
-  updateCrmWithDates(profile, schedule)
+  return results
 }
 
 export async function updateCrmWithDates (
@@ -38,9 +54,10 @@ export async function updateCrmWithDates (
 ) {
   const nextDate = nextDateForProfile(profile.id, schedule)
   if (nextDate && profile.hubspotContactId) {
-    await updateHubspotContact(profile.hubspotContactId, {
+    const result = await updateHubspotContact(profile.hubspotContactId, {
       [HUBSPOT_DATE_PROPERTY]: nextDate.date,
     })
+    return result?.body
   }
 }
 
