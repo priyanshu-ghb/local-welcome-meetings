@@ -3,18 +3,17 @@ import { ShiftPattern, ShiftAllocation, Profile, ShiftException, ShiftExceptionT
 import { useRoom } from '../data/room';
 import { deleteShiftAllocation, deleteShiftPattern, useRota, calculateShiftPatternStatus, deleteShiftException, createShiftException } from '../data/rota';
 import { useUser } from '../data/auth';
-import { ClockIcon, DotsHorizontalIcon, EmojiHappyIcon, EmojiSadIcon, PencilIcon } from '@heroicons/react/outline';
+import { DotsHorizontalIcon, EmojiHappyIcon, EmojiSadIcon } from '@heroicons/react/outline';
 import { useCombobox, UseComboboxProps } from 'downshift';
 import { Transition } from '@headlessui/react';
-import { ShowFor } from './Elements';
 import cronRenderer from 'cronstrue'
 import later from '@breejs/later'
 import { format } from 'date-fns-tz';
 import { useForm } from "react-hook-form";
 import cx from 'classnames'
 import { isSameDay } from 'date-fns';
-import { CheckCircleIcon, PencilAltIcon } from '@heroicons/react/solid';
 import n from 'pluralize';
+import useId from '@accessible/use-id'
 
 export function ShiftPatterns () {
   const rota = useRota()
@@ -195,17 +194,19 @@ export function ShiftAllocationEditor(
     }
   }
 
+  const id = useId(undefined, 'sp-input-')
+
   return (
     <div className='relative'>
-      <div className={cx(
-          'flex flex-row justify-between border rounded-lg p-2 hover:bg-gray-50 transition',
-          !selectedItem && 'border-dashed border-gray-400',
-          selectedItem && 'bg-white shadow-sm'
-        )} {...getComboboxProps()}>
+      <label htmlFor={id} className={cx(
+        'flex flex-row justify-between border rounded-lg p-2 hover:bg-gray-50 transition focus-within:outline-black',
+        !selectedItem && 'border-dashed border-gray-400',
+        selectedItem && 'bg-white shadow-sm'
+      )} {...getComboboxProps()}>
         <Avatar profile={selectedItem} disabled={shiftException?.type === ShiftExceptionType.DropOut} />
         <div className='px-2 flex flex-col justify-center items-start flex-grow-0 flex-shrink'>
-          <input {...getInputProps()} disabled={!editable} placeholder={placeholder} className={cx(
-            'w-full border-none rounded-md font-semibold disabled:bg-transparent',
+          <input {...getInputProps()} id={id} disabled={!editable} placeholder={placeholder} className={cx(
+            'w-full border-none rounded-md font-semibold bg-transparent outline-none',
             shiftException?.type === ShiftExceptionType.DropOut && 'line-through text-gray-500'
           )} />
           {shiftException?.type === ShiftExceptionType.DropOut && 
@@ -244,7 +245,7 @@ export function ShiftAllocationEditor(
             </div>
           )}
         </div>
-      </div>
+      </label>
       <Transition
         appear={true}
         show={editable && isOpen}
@@ -255,7 +256,7 @@ export function ShiftAllocationEditor(
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <ul className='space-y-1 border border-gray-400 rounded-lg p-1 shadow-md absolute top-[100%] z-50 w-full bg-white' {...getMenuProps()}>
+        <ul className='max-h-[50vh] overflow-y-auto space-y-1 border border-gray-400 rounded-lg p-1 shadow-md absolute top-[100%] z-50 w-full bg-white' {...getMenuProps()}>
           {editable && isOpen &&
             inputItems.map((item, index) => (
               <li

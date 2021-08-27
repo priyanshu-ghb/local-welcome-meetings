@@ -10,6 +10,7 @@
     "start:local": "PORT=4000 node ./server-local-https.js"
   },
   "dependencies": {
+    "@accessible/use-id": "^1.1.2",
     "@breejs/later": "^4.0.2",
     "@headlessui/react": "^1.4.0",
     "@heroicons/react": "^1.0.4",

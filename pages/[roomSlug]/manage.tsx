@@ -31,7 +31,7 @@ const Route: NextPage<IProps> = ({ room }) => {
         <meta name="description" content="Call link for ADHD Together." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className='bg-white min-h-screen w-screen'>
+      <div className='bg-gray-100 min-h-screen w-screen'>
         <Header isNarrow />
         <main className='max-w-lg mx-auto p-4 sm:p-5 space-y-5 py-5'>
           <section>

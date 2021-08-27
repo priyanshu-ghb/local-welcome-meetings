@@ -91,7 +91,6 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
             />
           )
         })}
-        {fillInsNeeded > 0 && <div className='text-red-500 text-xs font-semibold uppercase'>Temporary cover required</div>}
         {shiftExceptions.filter(se => se.type === ShiftExceptionType.FillIn).map((se) => {
           return (
             <ShiftAllocationEditor
@@ -118,6 +117,7 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
             placeholder={'Add temporary cover'}
           />
         ))}
+        {fillInsNeeded > 0 && <div className='text-red-500 text-xs font-semibold uppercase'>Temporary cover required</div>}
       </section>
     </article>
   )
