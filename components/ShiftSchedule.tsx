@@ -1,10 +1,9 @@
-import { useRota, calculateSchedule, calculateShiftPatternStatus, ScheduledDate, deleteShiftException } from '../data/rota';
+import { useRota, calculateSchedule, calculateShiftPatternStatus, ScheduledDate } from '../data/rota';
 import { format } from 'date-fns-tz';
-import { itemToString, ShiftAllocationEditor } from './ShiftPatterns';
+import { ShiftAllocationEditor } from './ShiftPatterns';
 import { useMemo } from 'react';
-import { EmojiHappyIcon, EmojiSadIcon } from '@heroicons/react/outline';
-import { ShiftExceptionType, ShiftAllocation, ShiftException } from '../types/app';
-import { isSameDay } from 'date-fns';
+import { ShiftExceptionType } from '../types/app';
+import n from 'pluralize'
 
 export function ShiftSchedule () {
   const rota = useRota()
@@ -34,28 +33,24 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
   const dropOutCount = shiftExceptions.filter(se => se.type === ShiftExceptionType.DropOut).length
   const fillInCount = shiftExceptions.filter(se => se.type === ShiftExceptionType.FillIn).length
   const fillInsNeeded = Math.max(0, dropOutCount - fillInCount)
+  const allocationsRequired = shiftPattern.required_people - shiftAllocations.length
 
   return (
     <article className='flex flex-row w-full'>
       {/* Date */}
-      <div className={`${
+      <header className={`${
         notEnough ? 'text-red-500' : tooMany ? 'text-yellow-600' : 'text-green-500'
       } text-center font-bold w-7 leading-3 pr-2`}>
-        <div className='text-xs text-gray-400 font-normal mb-2'>{shiftPattern.name}</div>
         <div className='text-xs uppercase'>{format(date, 'MMM')}</div>
         <div className='text-2xl -mt-1'>{format(date, 'dd')}</div>
-      </div>
-      <div className='text-left flex-grow col-span-4 w-full space-y-2'>
+      </header>
+      {/* Details */}
+      <section className='text-left flex-grow col-span-4 w-full space-y-2'>
         {spStatus.notEnough && <div className={`font-semibold uppercase flex justify-between w-full text-xs ${
           spStatus.notEnough ? 'text-red-500' : spStatus.tooMany ? 'text-yellow-600' : 'text-green-500'
         }`}>
-          <span>{spStatus.availablePeople} / {shiftPattern.required_people} regular leader{shiftPattern.required_people > 1 && 's'}</span>
+          <span>{n('more leader', allocationsRequired, true)} required - {shiftPattern.name}</span>
         </div>}
-        {/* {!!shiftAllocations.length && (
-          <header className='text-gray-500 text-xs font-semibold uppercase'>
-            Regular leaders - {shiftPattern.name}
-          </header>
-        )} */}
         {shiftAllocations.map((sa) => {
           return (
             <ShiftAllocationEditor
@@ -69,7 +64,7 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
             />
           )
         })}
-        {fillInsNeeded > 0 && <div className='text-gray-500 text-xs font-semibold uppercase'>Temporary cover</div>}
+        {fillInsNeeded > 0 && <div className='text-red-500 text-xs font-semibold uppercase'>Temporary cover required</div>}
         {shiftExceptions.filter(se => se.type === ShiftExceptionType.FillIn).map((se) => {
           return (
             <ShiftAllocationEditor
@@ -96,7 +91,7 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
             placeholder={'Add temporary cover'}
           />
         ))}
-      </div>
+      </section>
     </article>
   )
 }

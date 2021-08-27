@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import cx from 'classnames'
 import { isSameDay } from 'date-fns';
 import { CheckCircleIcon, PencilAltIcon } from '@heroicons/react/solid';
+import n from 'pluralize';
 
 export function ShiftPatterns () {
   const rota = useRota()
@@ -48,7 +49,7 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
       <div className={`font-bold uppercase flex justify-between w-full text-sm ${
         notEnough ? 'text-red-500' : tooMany ? 'text-yellow-600' : 'text-green-500'
       }`}>
-        <span>{allocatedSlots.length} / {shiftPattern.required_people} leader slot{shiftPattern.required_people > 1 && 's'} filled</span>
+        <span>{allocatedSlots.length} / {n('leader slot', shiftPattern.required_people, true)} filled</span>
         <span>{justRight ? <EmojiHappyIcon className='w-[25px] h-[25px]' /> : <EmojiSadIcon className='w-[25px] h-[25px]' />}</span>
       </div>
       <div className='space-y-2 my-2'>
