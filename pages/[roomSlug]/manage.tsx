@@ -35,14 +35,10 @@ const Route: NextPage<IProps> = ({ room }) => {
         <Header isNarrow />
         <main className='max-w-lg mx-auto p-5 space-y-5 py-5'>
           <section>
-            <h2 className='text-2xl font-bold text-adhdPurple mb-2'>Meeting room</h2>
+            <h2 className='text-sm font-bold text-adhdPurple mb-2 uppercase'>Meeting room</h2>
             <RoomLink room={room} />
           </section>
           <section>
-            <header className='mb-5'>
-              <h2 className='text-2xl font-bold text-adhdPurple mb-2'>Rota</h2>
-              <p>A rota of who will be hosting each session. We use this to send out confirmation emails to leaders and members.</p>
-            </header>
             <RotaContextProvider>
               <Tab.Group>
                 <Tab.List className='w-full flex justify-evenly border-b-2 border-gray-200'>
