@@ -19,3 +19,12 @@ export enum RoomPermissionType {
 export type RoomPermission = definitions['roompermission'] & {
   type: RoomPermissionType
 }
+
+export enum ShiftExceptionType {
+  DropOut ='drop_out',
+  FillIn = 'fill_in'
+}
+
+export type ShiftException = definitions['shiftexception'] & {
+  type: ShiftExceptionType
+}

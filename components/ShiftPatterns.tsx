@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { ShiftPattern, ShiftAllocation, Profile } from '../types/app';
+import { ShiftPattern, ShiftAllocation, Profile, ShiftException, ShiftExceptionType } from '../types/app';
 import { useRoom } from '../data/room';
-import { deleteShiftAllocation, deleteShiftPattern, useRota, calculateScheduleStatus } from '../data/rota';
+import { deleteShiftAllocation, deleteShiftPattern, useRota, calculateShiftPatternStatus, deleteShiftException, createShiftException } from '../data/rota';
 import { useUser } from '../data/auth';
 import { EmojiHappyIcon, EmojiSadIcon } from '@heroicons/react/outline';
 import { useCombobox, UseComboboxProps } from 'downshift';
@@ -11,6 +11,8 @@ import cronRenderer from 'cronstrue'
 import later from '@breejs/later'
 import { format } from 'date-fns-tz';
 import { useForm } from "react-hook-form";
+import cx from 'classnames'
+import { isSameDay } from 'date-fns';
 
 export function ShiftPatterns () {
   const rota = useRota()
@@ -34,7 +36,7 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
     .filter(({ shiftPatternId }) => shiftPatternId === shiftPattern.id)
     .sort((a, b) => a.id.localeCompare(b.id))
     
-  const { notEnough, justRight, tooMany } = calculateScheduleStatus(shiftPattern, allocatedSlots)
+  const { notEnough, justRight, tooMany } = calculateShiftPatternStatus(shiftPattern, allocatedSlots)
 
   return (
     <div key={shiftPattern.id} className=''>
@@ -80,22 +82,41 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
 
 export const itemToString = (o: Profile | null) => o ? o.firstName ? `${o.firstName?.trim()} ${o.lastName?.trim() || ''}` : o.email : "Vacant slot"
 
-function ShiftAllocationEditor(
-  { shiftPattern, options, shiftAllocation }:
-  { shiftPattern: ShiftPattern, options: Profile[], shiftAllocation?: ShiftAllocation }
+export function ShiftAllocationEditor(
+  { shiftPattern, options, shiftAllocation, editable = true, date, shiftException: _shiftException }:
+  { shiftPattern: ShiftPattern, options: Profile[], shiftAllocation?: ShiftAllocation, editable?: boolean, date?: Date, shiftException?: ShiftException }
 ) {
   const rota = useRota()
   const [inputItems, setInputItems] = useState<Profile[]>(options)
   const [savedDataState, setDataState] = useState<null | 'loading' | 'saved' | 'error'>(null)
 
-  const initialSelectedItem = options.find(o => o.id === shiftAllocation?.profileId)
+  // If an explicit shift exception has been provided,
+  // then we are dealing with a date-specific exception (likely a fill-in)
+  const shiftException = _shiftException ? _shiftException
+  // Else if a date and an allocation have been provided,
+  // see if this allocation, on this date, has been excepted
+    : ( date && shiftAllocation ) ? rota.shiftExceptions.find(se =>
+      isSameDay(new Date(se.date), date) &&
+      se.profileId === shiftAllocation.profileId &&
+      se.type === ShiftExceptionType.DropOut
+    )
+  // Else there's no shift exception to speak of!
+  : null
+
+  const initialSelectedItem = options.find(o => o.id === shiftAllocation?.profileId || o.id === shiftException?.profileId)
+  
+  console.debug(
+    shiftAllocation?.profileId,
+    shiftException?.profileId,
+    initialSelectedItem?.id
+  )
 
   const comboProps: UseComboboxProps<Profile> = {
     initialSelectedItem,
     items: inputItems,
     itemToString,
     onInputValueChange: ({ inputValue }) => {
-      setInputItems(
+      editable && setInputItems(
         options
           .filter(profile => {
             const inShiftPatternAlready = !!rota.shiftAllocations.find(sa =>
@@ -113,13 +134,25 @@ function ShiftAllocationEditor(
       )
     },
     onSelectedItemChange: async ({ selectedItem: profile }) => {
-      if (profile) {
+      if (profile && editable) {
         try {
           setDataState('loading')
-          await rota.createShiftAllocation({
-            shiftPatternId: shiftPattern.id,
-            profileId: profile.id
-          })
+          if (!date) {
+            // Add to the rota
+            await rota.createShiftAllocation({
+              shiftPatternId: shiftPattern.id,
+              profileId: profile.id
+            })
+          } else {
+            // Add for just this date
+            await rota.createShiftException({
+              profileId: profile.id,
+              shiftPatternId: shiftPattern.id,
+              // @ts-ignore
+              date,
+              type: ShiftExceptionType.FillIn
+            })
+          }
           setDataState('saved')
         } catch (e) {
           setDataState('error')
@@ -147,25 +180,76 @@ function ShiftAllocationEditor(
     }
   }
 
+  async function removeException () {
+    if (shiftException) {
+      await deleteShiftException(shiftException.id)
+    }
+  }
+
+  async function dropOut () {
+    if (shiftAllocation) {
+      await createShiftException({
+        profileId: shiftAllocation.profileId,
+        shiftPatternId: shiftAllocation.shiftPatternId,
+        shiftAllocationId: shiftAllocation.id,
+        // @ts-ignore
+        date,
+        type: ShiftExceptionType.DropOut
+      })
+    }
+  }
+
   return (
     <div className='relative'>
-      <div className='flex flex-row justify-between border border-dashed border-gray-400 rounded-lg p-3 hover:bg-gray-50 transition' {...getComboboxProps()}>
-        <input {...getInputProps()} placeholder='Fill vacant slot' className='border-none bg-gray-50 rounded-md' />
-        <button
+      <div className={cx(
+          'flex flex-row justify-between border border-dashed border-gray-400 rounded-lg p-3 hover:bg-gray-50 transition'
+        )} {...getComboboxProps()}>
+        <div>
+          <input {...getInputProps()} disabled={!editable} placeholder='Fill vacant slot' className={cx(
+            'border-none bg-gray-50 rounded-md font-semibold',
+            shiftException?.type === ShiftExceptionType.DropOut && 'line-through text-gray-500'
+          )} />
+          {shiftException?.type === ShiftExceptionType.DropOut && 
+            <div className='text-red-500 text-xs uppercase font-semibold'>Dropped out</div>}
+          {shiftException?.type === ShiftExceptionType.FillIn &&
+            <div className='text-green-500 text-xs uppercase font-semibold'>Filling in</div>}
+        </div>
+        {editable && <button
           type="button"
           {...getToggleButtonProps()}
           aria-label="Show available staff"
         >
           &#8595;
-        </button>
+        </button>}
         <ShowFor seconds={3} key={savedDataState}>
           {savedDataState && <span className='bg-adhdBlue rounded-lg p-1 text-sm uppercase'>{savedDataState}</span>}
         </ShowFor>
-        {shiftAllocation && <div onClick={deleteAllocation} className='button p-1 uppercase text-sm'>Clear</div>}
+        <div className='flex flex-row justify-end space-x-2 items-start'>
+          {shiftException?.type === ShiftExceptionType.DropOut && (
+            <div onClick={removeException} className='button p-1 uppercase text-xs'>
+              Drop back in
+            </div>
+          )}
+          {!!date && shiftException?.type === ShiftExceptionType.FillIn && (
+            <div onClick={removeException} className='button p-1 uppercase text-xs'>
+              Cancel fill-in
+            </div>
+          )}
+          {!!date && !!shiftAllocation && !shiftException && (
+            <div onClick={dropOut} className='button p-1 uppercase text-xs'>
+              Drop out
+            </div>
+          )}
+          {shiftAllocation && editable && (
+            <div onClick={deleteAllocation} className='button p-1 uppercase text-xs'>
+              Drop from rota
+            </div>
+          )}
+        </div>
       </div>
       <Transition
         appear={true}
-        show={isOpen}
+        show={editable && isOpen}
         enter="transition-opacity duration-75"
         enterFrom="opacity-0"
         enterTo="opacity-100"
@@ -174,7 +258,7 @@ function ShiftAllocationEditor(
         leaveTo="opacity-0"
       >
         <ul className='border border-gray-400 rounded-lg p-3 shadow-md absolute top-[100%] z-50 w-full bg-white' {...getMenuProps()}>
-          {isOpen &&
+          {editable && isOpen &&
             inputItems.map((item, index) => (
               <li
                 style={

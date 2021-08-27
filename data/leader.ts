@@ -1,7 +1,7 @@
 import { getHubspotContactsInList, updateHubspotContact } from './hubspot';
 import env from 'env-var';
 import { supabase } from './supabase';
-import { Profile, ShiftPattern, ShiftAllocation } from '../types/app';
+import { Profile, ShiftPattern, ShiftAllocation, ShiftException } from '../types/app';
 import { NextApiRequestCookies } from 'next/dist/server/api-utils';
 import { ScheduledDate, nextDateForProfile, calculateSchedule } from './rota';
 import { sortedUniqBy } from 'lodash-es';
@@ -18,6 +18,9 @@ export async function updateCrmWithDatesByProfile(profiles: Profile[]) {
   const shiftAllocations = await supabase.from<ShiftAllocation & { shiftPattern: ShiftPattern }>('shiftallocation').select(`
   id, shiftPatternId, profileId, shiftPattern: shiftPatternId ( name, required_people, id, roomId, cron )
 `).or(or)
+  const shiftExceptions = await supabase.from<ShiftException>('shiftexception').select(`
+    id, shiftPatternId, profileId, type, date
+  `).or(or)
 
   const results = Promise.all(
     profiles.map(async (profile) => {
@@ -31,8 +34,11 @@ export async function updateCrmWithDatesByProfile(profiles: Profile[]) {
       )
 
       const schedule = calculateSchedule(
-        shiftPatterns,
-        shiftAllocations.data || [],
+        {
+          shiftPatterns,
+          shiftAllocations: shiftAllocations.data || [],
+          shiftExceptions: shiftExceptions.data || []
+        },
         10
       )
 
