@@ -19,11 +19,6 @@ export async function updateCrmWithDatesByProfile(profiles: Profile[]) {
   id, shiftPatternId, profileId, shiftPattern: shiftPatternId ( name, required_people, id, roomId, cron )
 `).or(or)
 
-  assert.strict(
-    shiftAllocations.data?.length,
-    `No allocations found: ${JSON.stringify(shiftAllocations.error, null, 2)}`
-  )
-
   const results = Promise.all(
     profiles.map(async (profile) => {
       const shiftPatterns = sortedUniqBy(
@@ -53,9 +48,9 @@ export async function updateCrmWithDates (
   schedule: ScheduledDate[]
 ) {
   const nextDate = nextDateForProfile(profile.id, schedule)
-  if (nextDate && profile.hubspotContactId) {
+  if (profile.hubspotContactId) {
     const result = await updateHubspotContact(profile.hubspotContactId, {
-      [HUBSPOT_DATE_PROPERTY]: nextDate.date,
+      [HUBSPOT_DATE_PROPERTY]: nextDate?.date || "",
     })
     return result?.body
   }
