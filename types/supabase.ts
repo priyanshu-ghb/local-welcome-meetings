@@ -474,6 +474,7 @@ export interface paths {
           id?: parameters["rowFilter.shiftpattern.id"];
           roomId?: parameters["rowFilter.shiftpattern.roomId"];
           updatedAt?: parameters["rowFilter.shiftpattern.updatedAt"];
+          cron?: parameters["rowFilter.shiftpattern.cron"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -529,6 +530,7 @@ export interface paths {
           id?: parameters["rowFilter.shiftpattern.id"];
           roomId?: parameters["rowFilter.shiftpattern.roomId"];
           updatedAt?: parameters["rowFilter.shiftpattern.updatedAt"];
+          cron?: parameters["rowFilter.shiftpattern.cron"];
         };
         header: {
           /** Preference */
@@ -548,6 +550,7 @@ export interface paths {
           id?: parameters["rowFilter.shiftpattern.id"];
           roomId?: parameters["rowFilter.shiftpattern.roomId"];
           updatedAt?: parameters["rowFilter.shiftpattern.updatedAt"];
+          cron?: parameters["rowFilter.shiftpattern.cron"];
         };
         body: {
           /** shiftpattern */
@@ -660,6 +663,7 @@ export interface definitions {
      */
     roomId: string;
     updatedAt: string;
+    cron?: string;
   };
 }
 
@@ -738,6 +742,7 @@ export interface parameters {
   "rowFilter.shiftpattern.id": string;
   "rowFilter.shiftpattern.roomId": string;
   "rowFilter.shiftpattern.updatedAt": string;
+  "rowFilter.shiftpattern.cron": string;
 }
 
 export interface operations {}
