@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ShiftPattern, ShiftAllocation, Profile } from '../types/app';
 import { useRoom } from '../data/room';
-import { deleteShiftAllocation, deleteShiftPattern, useRota } from '../data/rota';
+import { deleteShiftAllocation, deleteShiftPattern, useRota, calculateScheduleStatus } from '../data/rota';
 import { useUser } from '../data/auth';
 import { EmojiHappyIcon, EmojiSadIcon } from '@heroicons/react/outline';
 import { useCombobox, UseComboboxProps } from 'downshift';
@@ -33,11 +33,7 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
     .filter(({ shiftPatternId }) => shiftPatternId === shiftPattern.id)
     .sort((a, b) => a.id.localeCompare(b.id))
     
-  const unfilledSlots = shiftPattern.required_people - allocatedSlots.length
-
-  const notEnough = unfilledSlots > 0
-  const justRight = unfilledSlots === 0
-  const tooMany = unfilledSlots < 0
+  const { notEnough, justRight, tooMany } = calculateScheduleStatus(shiftPattern, allocatedSlots)
 
   return (
     <div key={shiftPattern.id} className=''>

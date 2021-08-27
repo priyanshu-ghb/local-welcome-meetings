@@ -1,32 +1,19 @@
-import { useRota } from '../data/rota';
-import { ShiftPattern, ShiftAllocation } from '../types/app';
-import later from '@breejs/later';
+import { useRota, calculateSchedule, calculateScheduleStatus } from '../data/rota';
 import { format } from 'date-fns-tz';
 import { itemToString } from './ShiftPatterns';
-import secondsToMinutes from 'date-fns/esm/secondsToMinutes';
 
 export function ShiftSchedule () {
   const rota = useRota()
 
-  const dates = rota.shiftPatterns.reduce((acc, shiftPattern) => {
-    const schedule = later.parse.cron(shiftPattern.cron)
-    const nextDates = later.schedule(schedule).next(10) as Date[]
-    const dates = nextDates.map(date => ({
-      date,
-      shiftPattern,
-      shiftAllocations: rota.shiftAllocations.filter(sa => sa.shiftPatternId === shiftPattern.id)
-    }))
-    acc = acc.concat(dates).sort((a, b) => a.date.getTime() - b.date.getTime())
-    return acc
-  }, [] as Array<{ date: Date, shiftPattern: ShiftPattern, shiftAllocations: ShiftAllocation[] }>)
+  const dates = calculateSchedule(
+    rota.shiftPatterns,
+    rota.shiftAllocations
+  )
 
   return (
     <section className='space-y-4'>
       {dates.filter((_, i) => i < 10).map(({ date, shiftPattern, shiftAllocations }) => {
-        const unfilledSlots = shiftPattern.required_people - shiftAllocations.length
-        const notEnough = unfilledSlots > 0
-        const justRight = unfilledSlots === 0
-        const tooMany = unfilledSlots < 0
+        const { notEnough, tooMany } = calculateScheduleStatus(shiftPattern, shiftAllocations)
         return (
           <article key={date+shiftPattern.id} className='grid grid-cols-3 gap-4 w-full'>
             <div className={`${

@@ -1,6 +1,8 @@
 import { Client } from '@hubspot/api-client'
+import { startOfDay, formatISO } from 'date-fns';
 import env from 'env-var';
 import qs from 'query-string'
+import { passThroughLog } from '../utils/debug';
 
 const HUBSPOT_API_KEY = env.get('HUBSPOT_API_KEY').required().asString()
 
@@ -31,6 +33,32 @@ export const getDetailsForContact = (contact: Contact) => {
   }, {} as { EMAIL: Identity[], [type: string]: Identity[] })
 
   return contactData
+}
+
+export const formatProperties = (properties: { [key: string]: any }) => {
+  for (const key in properties) {
+    const value = properties[key]
+    if (value instanceof Date) {
+      properties[key] = formatISO(startOfDay(value), { representation: 'date' })
+    }
+  }
+  return properties
+}
+
+export async function updateHubspotContact (id: string, properties: { [key: string]: any; }) {
+  try {
+    const result = await hubspotV3.crm.contacts.basicApi.update(
+      id,
+      { properties: formatProperties(properties) }
+    )
+    return result
+  } catch (e) {
+    if (e?.response?.body) {
+      console.log(e.response.body)
+    } else {
+      console.log(e)
+    }
+  }
 }
 
 export interface HubspotContactListResponse {

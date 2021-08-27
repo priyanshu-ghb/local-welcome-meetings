@@ -3,6 +3,7 @@ import { supabase } from './supabase';
 import { SupabaseRealtimePayload } from '@supabase/supabase-js';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useRoom } from './room';
+import later from '@breejs/later';
 
 /**
  * Context
@@ -159,4 +160,49 @@ export function onRoomLeadersChange(cb: (payload: SupabaseRealtimePayload<RoomPe
     .on('*', cb)
     .subscribe()
   return () => supabase.removeSubscription(sub)
+}
+
+/**
+ * Schedule
+ */
+
+export function calculateScheduleStatus(shiftPattern: ShiftPattern, shiftAllocations: ShiftAllocation[]) {
+  const unfilledSlots = shiftPattern.required_people - shiftAllocations.length
+  return {
+    unfilledSlots,
+    notEnough: unfilledSlots > 0,
+    justRight: unfilledSlots == 0,
+    tooMany: unfilledSlots < 0
+  }
+}
+
+export type ScheduledDate = {
+  date: Date,
+  shiftPattern: ShiftPattern,
+  shiftAllocations: ShiftAllocation[]
+}
+
+export function calculateSchedule(
+  shiftPatterns: ShiftPattern[],
+  shiftAllocations: ShiftAllocation[],
+  datesAhead = 10
+) {
+  return shiftPatterns.reduce((acc, shiftPattern) => {
+    const schedule = later.parse.cron(shiftPattern.cron)
+    const nextDates = later.schedule(schedule).next(datesAhead) as Date[]
+    // TODO: add exceptions
+    const dates = nextDates.map(date => {
+      return {
+        date,
+        shiftPattern,
+        shiftAllocations: shiftAllocations.filter(sa => sa.shiftPatternId === shiftPattern.id),
+      }
+    })
+    acc = acc.concat(dates).sort((a, b) => a.date.getTime() - b.date.getTime())
+    return acc
+  }, [] as Array<ScheduledDate>)
+}
+
+export function nextDateForProfile (profileId: string, schedule: ScheduledDate[]) {
+  return schedule.find((date) => date.shiftAllocations.some(sa => sa.profileId === profileId))
 }
