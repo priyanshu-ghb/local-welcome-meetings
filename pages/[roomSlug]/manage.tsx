@@ -3,7 +3,6 @@ import Head from 'next/head'
 import { getRoomBySlug, RoomContextProvider } from '../../data/room';
 import { Room } from '../../types/app';
 import Link from 'next/link';
-import { getUserFromHTTPRequest } from '../../data/leader';
 import { getUserProfile, useUser } from '../../data/auth';
 import { strict as assert } from 'assert';
 import { CreateShiftPattern, ShiftPatterns } from '../../components/ShiftPatterns';
@@ -12,6 +11,7 @@ import { Header } from '../../components/Layout';
 import { RotaContextProvider } from '../../data/rota';
 import { ShiftSchedule } from '../../components/ShiftSchedule';
 import { Tab } from '@headlessui/react'
+import { getUserFromHTTPRequest } from '../../data/leader-shared';
 
 type IProps = {
   room: Room

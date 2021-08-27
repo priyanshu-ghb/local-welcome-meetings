@@ -76,10 +76,6 @@ export async function isValidLeaderEmail (email: string): Promise<boolean> {
   return false
 }
 
-export async function getUserFromHTTPRequest(req: { cookies: NextApiRequestCookies }) {
-  return supabase.auth.api.getUserByCookie(req)
-}
-
 export async function getUserFromSessionToken(token: string) {
   return await supabase.auth.api.getUser(token)
 }
