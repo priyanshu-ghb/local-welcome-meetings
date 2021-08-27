@@ -8,6 +8,7 @@ import { EmojiHappyIcon, EmojiSadIcon } from '@heroicons/react/outline';
 import { useCombobox, UseComboboxProps } from 'downshift';
 import { Transition } from '@headlessui/react';
 import { ShowFor } from './Elements';
+import cronRenderer from 'cronstrue'
 
 interface IRotaContext {
   roomLeaders: Profile[];
@@ -116,7 +117,8 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
   return (
     <div key={shiftPattern.id} className=''>
       <h3 className='text-lg font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
-      <div className={`font-bold text-sm uppercase flex justify-between w-full ${
+      <p className='mb-2'>Sessions run at {cronRenderer.toString(shiftPattern.cron, { use24HourTimeFormat: true }).replace(/^At/, '')}.</p>
+      <div className={`font-bold uppercase flex justify-between w-full ${
         notEnough ? 'text-red-500' : tooMany ? 'text-yellow-600' : 'text-green-500'
       }`}>
         <span>{allocatedSlots.length} / {shiftPattern.required_people} leader slot{shiftPattern.required_people > 1 && 's'} filled</span>
@@ -221,7 +223,7 @@ function ShiftAllocationEditor(
   return (
     <div className='relative'>
       <div className='flex flex-row justify-between border border-dashed border-gray-400 rounded-lg p-3 hover:bg-gray-50 transition' {...getComboboxProps()}>
-        <input {...getInputProps()} placeholder='Fill vacant slot' />
+        <input {...getInputProps()} placeholder='Fill vacant slot' className='border-none bg-gray-50 rounded-md' />
         <button
           type="button"
           {...getToggleButtonProps()}
