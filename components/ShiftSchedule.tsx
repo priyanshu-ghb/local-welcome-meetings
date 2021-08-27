@@ -1,14 +1,17 @@
 import { useRota, calculateSchedule, calculateScheduleStatus } from '../data/rota';
 import { format } from 'date-fns-tz';
 import { itemToString } from './ShiftPatterns';
+import { useMemo } from 'react';
 
 export function ShiftSchedule () {
   const rota = useRota()
 
-  const dates = calculateSchedule(
+  const dates = useMemo(() => calculateSchedule(
     rota.shiftPatterns,
-    rota.shiftAllocations
-  )
+    rota.shiftAllocations,
+    4,
+    true
+  ), [rota.shiftPatterns, rota.shiftAllocations])
 
   return (
     <section className='space-y-4'>

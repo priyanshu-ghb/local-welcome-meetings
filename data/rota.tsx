@@ -185,12 +185,13 @@ export type ScheduledDate = {
 export function calculateSchedule(
   shiftPatterns: ShiftPattern[],
   shiftAllocations: ShiftAllocation[],
-  datesAhead = 10
+  datesAhead = 10,
+  includeEmptyShiftPatterns = false
 ) {
   return shiftPatterns.reduce((acc, shiftPattern) => {
     const thisPatternAllocations = shiftAllocations.filter(sa => sa.shiftPatternId === shiftPattern.id)
     // Shift patterns must have at least one allocation
-    if (thisPatternAllocations.length === 0) return acc
+    if (!includeEmptyShiftPatterns && thisPatternAllocations.length === 0) return acc
     const schedule = later.parse.cron(shiftPattern.cron)
     const nextDates = later.schedule(schedule).next(datesAhead) as Date[]
     // TODO: add exceptions
