@@ -476,6 +476,7 @@ export interface paths {
           /** drop_out or drop_in */
           type?: parameters["rowFilter.shiftexception.type"];
           lastUpdated?: parameters["rowFilter.shiftexception.lastUpdated"];
+          shiftallocationid?: parameters["rowFilter.shiftexception.shiftallocationid"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -533,6 +534,7 @@ export interface paths {
           /** drop_out or drop_in */
           type?: parameters["rowFilter.shiftexception.type"];
           lastUpdated?: parameters["rowFilter.shiftexception.lastUpdated"];
+          shiftallocationid?: parameters["rowFilter.shiftexception.shiftallocationid"];
         };
         header: {
           /** Preference */
@@ -554,6 +556,7 @@ export interface paths {
           /** drop_out or drop_in */
           type?: parameters["rowFilter.shiftexception.type"];
           lastUpdated?: parameters["rowFilter.shiftexception.lastUpdated"];
+          shiftallocationid?: parameters["rowFilter.shiftexception.shiftallocationid"];
         };
         body: {
           /** shiftexception */
@@ -989,6 +992,11 @@ export interface definitions {
     /** drop_out or drop_in */
     type: string;
     lastUpdated: string;
+    /**
+     * Note:
+     * This is a Foreign Key to `shiftallocation.id`.<fk table='shiftallocation' column='id'/>
+     */
+    shiftallocationid?: string;
   };
   shiftpattern: {
     name: string;
@@ -1085,6 +1093,7 @@ export interface parameters {
   /** drop_out or drop_in */
   "rowFilter.shiftexception.type": string;
   "rowFilter.shiftexception.lastUpdated": string;
+  "rowFilter.shiftexception.shiftallocationid": string;
   /** shiftpattern */
   "body.shiftpattern": definitions["shiftpattern"];
   "rowFilter.shiftpattern.name": string;
