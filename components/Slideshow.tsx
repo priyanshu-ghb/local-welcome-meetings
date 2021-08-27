@@ -1,13 +1,14 @@
 import { Page } from '@notionhq/client/build/src/api-types';
 import { useCallback } from 'react';
 import { useMemo } from 'react';
-import { useState } from 'react';
 import { useRoom } from '../data/room';
-import { Room } from '../types/app';
 import { markdownToHtml } from '../data/markdown';
 import { useKeyPress, keyToCode } from '../utils/hooks';
 import { Navigation } from './Elements';
 import { useUser } from '../data/auth';
+import { Disclosure } from '@headlessui/react'
+import { ChevronRightIcon } from '@heroicons/react/solid';
+import cx from 'classnames';
 
 export function Slideshow() {
   const { profile } = useUser()
@@ -32,12 +33,25 @@ export function Slideshow() {
           <div key={i} className={`dictates-colour ${convertNotionToTailwindColour(fragment.annotations.color)}`} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.text.content) }} />
         )}
       </section>
-      {profile?.canLeadSessions && <section className='dark-prose rounded-lg p-4 mx-4 bg-white text-adhdPurple'>
-        <h4 className='!mt-0 uppercase text-sm font-semibold'>Leader notes</h4>
-        {/* @ts-ignore */}
-        {currentSlide?.properties["Speaker notes"].rich_text!.map((fragment, i) =>
-          <div key={i} className={`dictates-colour ${convertNotionToTailwindColour(fragment.annotations.color)}`} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.text.content) }} />
-        )}
+      {profile?.canLeadSessions && <section className='dark-prose mx-4 text-adhdPurple'>
+        <Disclosure>
+          {({ open }) => <div className={cx(open ? 'opacity-100' : 'opacity-50', 'bg-white rounded-lg overflow-hidden')}>
+            <Disclosure.Button className='flex flex-row justify-between items-center w-full hover:bg-yellow-200 transition rounded-lg p-4 py-3'>
+              <span className='flex flex-row items-center'>
+                <span className='uppercase text-sm font-semibold'>{open ? 'Close leader notes' : 'Show leader notes'}</span>
+                <ChevronRightIcon
+                  className={cx('inline-block w-[30px] h-[30px]', open ? "transform rotate-90" : "")}
+                />
+              </span>
+            </Disclosure.Button>
+            <Disclosure.Panel className='p-4 pt-0 pb-2'>
+              {/* @ts-ignore */}
+              {currentSlide?.properties["Speaker notes"].rich_text!.map((fragment, i) =>
+                <div key={i} className={`dictates-colour ${convertNotionToTailwindColour(fragment.annotations.color)}`} dangerouslySetInnerHTML={{ __html: markdownToHtml(fragment.text.content) }} />
+              )}
+            </Disclosure.Panel>
+          </div>}
+        </Disclosure>
       </section>}
       <div className='pt-4' />
     </div>
