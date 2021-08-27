@@ -9,6 +9,8 @@ import { useCombobox, UseComboboxProps } from 'downshift';
 import { Transition } from '@headlessui/react';
 import { ShowFor } from './Elements';
 import cronRenderer from 'cronstrue'
+import later from '@breejs/later'
+import { format } from 'date-fns-tz';
 
 interface IRotaContext {
   roomLeaders: Profile[];
@@ -90,7 +92,7 @@ export function ShiftPatterns () {
   const rota = useRota()
 
   return (
-    <div className='space-y-4'>
+    <div className='space-y-5'>
       {rota.shiftPatterns?.map((shiftPattern, index) => {
         return (
           <ShiftPatternAllocations key={shiftPattern.id} shiftPattern={shiftPattern} />
@@ -116,9 +118,11 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
 
   return (
     <div key={shiftPattern.id} className=''>
-      <h3 className='text-lg font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
-      <p className='mb-2'>Sessions run at {cronRenderer.toString(shiftPattern.cron, { use24HourTimeFormat: true }).replace(/^At/, '')}.</p>
-      <div className={`font-bold uppercase flex justify-between w-full ${
+      <h3 className='text-xl font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
+      {shiftPattern.cron && <section className='space-y-2 mb-4'>
+        <p>Sessions run at {cronRenderer.toString(shiftPattern.cron, { use24HourTimeFormat: false }).replace(/^At/, '')}. Next session is <b>{format(later.schedule(later.parse.cron(shiftPattern.cron)).next(), "PP")}.</b></p>
+      </section>}
+      <div className={`font-bold uppercase flex justify-between w-full text-sm ${
         notEnough ? 'text-red-500' : tooMany ? 'text-yellow-600' : 'text-green-500'
       }`}>
         <span>{allocatedSlots.length} / {shiftPattern.required_people} leader slot{shiftPattern.required_people > 1 && 's'} filled</span>
