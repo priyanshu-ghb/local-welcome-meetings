@@ -3,7 +3,7 @@ import { ShiftPattern, ShiftAllocation, Profile, ShiftException, ShiftExceptionT
 import { useRoom } from '../data/room';
 import { deleteShiftAllocation, deleteShiftPattern, useRota, calculateShiftPatternStatus, deleteShiftException, createShiftException } from '../data/rota';
 import { useUser } from '../data/auth';
-import { EmojiHappyIcon, EmojiSadIcon } from '@heroicons/react/outline';
+import { ClockIcon, DotsHorizontalIcon, EmojiHappyIcon, EmojiSadIcon, PencilIcon } from '@heroicons/react/outline';
 import { useCombobox, UseComboboxProps } from 'downshift';
 import { Transition } from '@headlessui/react';
 import { ShowFor } from './Elements';
@@ -13,6 +13,7 @@ import { format } from 'date-fns-tz';
 import { useForm } from "react-hook-form";
 import cx from 'classnames'
 import { isSameDay } from 'date-fns';
+import { CheckCircleIcon, PencilAltIcon } from '@heroicons/react/solid';
 
 export function ShiftPatterns () {
   const rota = useRota()
@@ -59,7 +60,7 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
         {new Array(Math.max(shiftPattern.required_people, allocatedSlots.length)).fill(0).map((_, i) => {
           return (
             <ShiftAllocationEditor
-              key={(allocatedSlots[i]?.id || i.toString()) + JSON.stringify(rota.roomLeaders)}
+              key={(allocatedSlots?.[i]?.profileId || i.toString()) + JSON.stringify(rota.roomLeaders)}
               shiftAllocation={allocatedSlots[i]}
               shiftPattern={shiftPattern}
               options={rota.roomLeaders}
@@ -83,8 +84,8 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
 export const itemToString = (o: Profile | null) => o ? o.firstName ? `${o.firstName?.trim()} ${o.lastName?.trim() || ''}` : o.email : "Vacant slot"
 
 export function ShiftAllocationEditor(
-  { shiftPattern, options, shiftAllocation, editable = true, date, shiftException: _shiftException }:
-  { shiftPattern: ShiftPattern, options: Profile[], shiftAllocation?: ShiftAllocation, editable?: boolean, date?: Date, shiftException?: ShiftException }
+  { shiftPattern, options, shiftAllocation, editable = true, date, shiftException: _shiftException, label, placeholder = 'Fill vacant slot' }:
+  { shiftPattern: ShiftPattern, options: Profile[], shiftAllocation?: ShiftAllocation, editable?: boolean, date?: Date, shiftException?: ShiftException, label?: string, placeholder?: string }
 ) {
   const rota = useRota()
   const [inputItems, setInputItems] = useState<Profile[]>(options)
@@ -103,16 +104,10 @@ export function ShiftAllocationEditor(
   // Else there's no shift exception to speak of!
   : null
 
-  const initialSelectedItem = options.find(o => o.id === shiftAllocation?.profileId || o.id === shiftException?.profileId)
+  const selectedItem = options.find(o => o.id === shiftAllocation?.profileId || o.id === shiftException?.profileId)
   
-  console.debug(
-    shiftAllocation?.profileId,
-    shiftException?.profileId,
-    initialSelectedItem?.id
-  )
-
   const comboProps: UseComboboxProps<Profile> = {
-    initialSelectedItem,
+    initialSelectedItem: selectedItem,
     items: inputItems,
     itemToString,
     onInputValueChange: ({ inputValue }) => {
@@ -170,7 +165,7 @@ export function ShiftAllocationEditor(
     getComboboxProps,
     highlightedIndex,
     getItemProps,
-    reset
+    reset,
   } = useCombobox<Profile>(comboProps)
 
   function deleteAllocation () {
@@ -202,37 +197,39 @@ export function ShiftAllocationEditor(
   return (
     <div className='relative'>
       <div className={cx(
-          'flex flex-row justify-between border border-dashed border-gray-400 rounded-lg p-3 hover:bg-gray-50 transition'
+          'flex flex-row justify-between border rounded-lg p-2 hover:bg-gray-50 transition',
+          !selectedItem && 'border-dashed border-gray-400',
+          selectedItem && 'bg-white shadow-sm'
         )} {...getComboboxProps()}>
-        <div>
-          <input {...getInputProps()} disabled={!editable} placeholder='Fill vacant slot' className={cx(
-            'border-none bg-gray-50 rounded-md font-semibold',
+        <Avatar profile={selectedItem} disabled={shiftException?.type === ShiftExceptionType.DropOut} />
+        <div className='px-2 flex flex-col justify-center items-start flex-grow-0 flex-shrink'>
+          <input {...getInputProps()} disabled={!editable} placeholder={placeholder} className={cx(
+            'w-full border-none rounded-md font-semibold disabled:bg-transparent',
             shiftException?.type === ShiftExceptionType.DropOut && 'line-through text-gray-500'
           )} />
           {shiftException?.type === ShiftExceptionType.DropOut && 
             <div className='text-red-500 text-xs uppercase font-semibold'>Dropped out</div>}
           {shiftException?.type === ShiftExceptionType.FillIn &&
             <div className='text-green-500 text-xs uppercase font-semibold'>Filling in</div>}
+          {label &&
+            <div className='text-gray-500 text-xs uppercase font-semibold'>{label}</div>}
         </div>
         {editable && <button
           type="button"
           {...getToggleButtonProps()}
           aria-label="Show available staff"
         >
-          &#8595;
+          <DotsHorizontalIcon className='w-4 h-4 text-gray-500' />
         </button>}
-        <ShowFor seconds={3} key={savedDataState}>
-          {savedDataState && <span className='bg-adhdBlue rounded-lg p-1 text-sm uppercase'>{savedDataState}</span>}
-        </ShowFor>
-        <div className='flex flex-row justify-end space-x-2 items-start'>
+        <div className='flex flex-row justify-end space-x-2 items-center w-1/4 flex-shrink-0'>
           {shiftException?.type === ShiftExceptionType.DropOut && (
             <div onClick={removeException} className='button p-1 uppercase text-xs'>
-              Drop back in
+              Back in
             </div>
           )}
           {!!date && shiftException?.type === ShiftExceptionType.FillIn && (
             <div onClick={removeException} className='button p-1 uppercase text-xs'>
-              Cancel fill-in
+              Cancel
             </div>
           )}
           {!!date && !!shiftAllocation && !shiftException && (
@@ -242,7 +239,7 @@ export function ShiftAllocationEditor(
           )}
           {shiftAllocation && editable && (
             <div onClick={deleteAllocation} className='button p-1 uppercase text-xs'>
-              Drop from rota
+              Drop out
             </div>
           )}
         </div>
@@ -257,24 +254,35 @@ export function ShiftAllocationEditor(
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <ul className='border border-gray-400 rounded-lg p-3 shadow-md absolute top-[100%] z-50 w-full bg-white' {...getMenuProps()}>
+        <ul className='space-y-1 border border-gray-400 rounded-lg p-1 shadow-md absolute top-[100%] z-50 w-full bg-white' {...getMenuProps()}>
           {editable && isOpen &&
             inputItems.map((item, index) => (
               <li
-                style={
-                  highlightedIndex === index
-                    ? { backgroundColor: '#bde4ff' }
-                    : {}
-                }
-                key={`${item}${index}`}
+                className={cx(
+                  'flex flex-row justify-start items-center p-1 rounded-lg',
+                  highlightedIndex === index && 'bg-yellow-100'
+                )}
+                key={item.id}
                 {...getItemProps({ item, index })}
               >
-                {itemToString(item)}
+                <Avatar profile={item} />
+                <span className='px-2 border-none rounded-md font-semibold'>{itemToString(item)}</span>
               </li>
             ))}
         </ul>
       </Transition>
     </div>
+  )
+}
+
+export function Avatar({ profile, disabled }: { profile?: Profile, disabled?: boolean }) {
+  return (
+    <span className={cx(
+      'w-[43px] h-[43px] rounded-full overflow-hidden flex justify-center items-center flex-shrink-0',
+      disabled && profile ? 'bg-gray-100 text-gray-500' : profile ? 'bg-adhdBlue' : ''
+    )}>
+      {profile && <span className='text-base font-semibold'>{profile?.firstName ? `${profile?.firstName?.[0]}${profile?.lastName?.[0]}` : profile.email[0]}</span>}
+    </span>
   )
 }
 

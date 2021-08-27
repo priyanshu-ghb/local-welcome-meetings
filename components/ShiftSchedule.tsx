@@ -27,32 +27,35 @@ export function ShiftSchedule () {
 function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExceptions, availablePeople } }: { date: ScheduledDate }) {
   const rota = useRota()
   const peopleStillRequired = shiftPattern.required_people - availablePeople
+  const spStatus = calculateShiftPatternStatus(shiftPattern, shiftAllocations)
   const notEnough = peopleStillRequired > 0
   const tooMany = peopleStillRequired < 0
   const justRight = peopleStillRequired === 0
   const dropOutCount = shiftExceptions.filter(se => se.type === ShiftExceptionType.DropOut).length
   const fillInCount = shiftExceptions.filter(se => se.type === ShiftExceptionType.FillIn).length
+  const fillInsNeeded = Math.max(0, dropOutCount - fillInCount)
 
   return (
     <article className='flex flex-row w-full'>
       {/* Date */}
       <div className={`${
         notEnough ? 'text-red-500' : tooMany ? 'text-yellow-600' : 'text-green-500'
-      } text-center font-bold w-7`}>
-        <div className='text-sm uppercase'>{format(date, 'MMM')}</div>
-        <div className='text-3xl'>{format(date, 'dd')}</div>
+      } text-center font-bold w-7 leading-3 pr-2`}>
+        <div className='text-xs text-gray-400 font-normal mb-2'>{shiftPattern.name}</div>
+        <div className='text-xs uppercase'>{format(date, 'MMM')}</div>
+        <div className='text-2xl -mt-1'>{format(date, 'dd')}</div>
       </div>
       <div className='text-left flex-grow col-span-4 w-full space-y-2'>
-        <header>
-          {/* Metadata */}
-          <div className='text-gray-600 uppercase text-sm'>Rota for {shiftPattern.name}</div>
-          <div className={`font-bold uppercase flex justify-between w-full text-sm ${
-            notEnough ? 'text-red-500' : tooMany ? 'text-yellow-600' : 'text-green-500'
-          }`}>
-            <span>{availablePeople} / {shiftPattern.required_people} leader slot{shiftPattern.required_people > 1 && 's'} filled</span>
-            <span>{justRight ? <EmojiHappyIcon className='w-[25px] h-[25px]' /> : <EmojiSadIcon className='w-[25px] h-[25px]' />}</span>
-          </div>
-        </header>
+        {spStatus.notEnough && <div className={`font-semibold uppercase flex justify-between w-full text-xs ${
+          spStatus.notEnough ? 'text-red-500' : spStatus.tooMany ? 'text-yellow-600' : 'text-green-500'
+        }`}>
+          <span>{spStatus.availablePeople} / {shiftPattern.required_people} regular leader{shiftPattern.required_people > 1 && 's'}</span>
+        </div>}
+        {/* {!!shiftAllocations.length && (
+          <header className='text-gray-500 text-xs font-semibold uppercase'>
+            Regular leaders - {shiftPattern.name}
+          </header>
+        )} */}
         {shiftAllocations.map((sa) => {
           return (
             <ShiftAllocationEditor
@@ -62,9 +65,11 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
               options={rota.roomLeaders}
               editable={false}
               date={date}
+              label={`Regular leader - ${shiftPattern.name}`}
             />
           )
         })}
+        {fillInsNeeded > 0 && <div className='text-gray-500 text-xs font-semibold uppercase'>Temporary cover</div>}
         {shiftExceptions.filter(se => se.type === ShiftExceptionType.FillIn).map((se) => {
           return (
             <ShiftAllocationEditor
@@ -74,6 +79,7 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
               shiftException={se}
               editable={false}
               date={date}
+              placeholder={'Add temporary cover'}
             />
           )
         })}
@@ -81,12 +87,13 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
         because we don't want to encourage one-off signups.
         If you wanted to allow one-off signups, then use:
         `new Array(peopleStillRequired)` */}
-        {new Array(Math.max(0, dropOutCount - fillInCount)).fill(0).map((_, i) => (
+        {new Array(fillInsNeeded).fill(0).map((_, i) => (
           <ShiftAllocationEditor
             key={'vacant-fill-in-' + peopleStillRequired + i}
             shiftPattern={shiftPattern}
             options={rota.roomLeaders}
             date={date}
+            placeholder={'Add temporary cover'}
           />
         ))}
       </div>

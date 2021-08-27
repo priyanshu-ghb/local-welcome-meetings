@@ -177,6 +177,7 @@ export function onRoomLeadersChange(cb: (payload: SupabaseRealtimePayload<RoomPe
 export function calculateShiftPatternStatus(shiftPattern: ShiftPattern, shiftAllocations: ShiftAllocation[]) {
   const unfilledSlots = shiftPattern.required_people - shiftAllocations.length
   return {
+    availablePeople: shiftAllocations.length,
     unfilledSlots,
     notEnough: unfilledSlots > 0,
     justRight: unfilledSlots == 0,
