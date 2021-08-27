@@ -1,19 +1,17 @@
-import { Page } from '@notionhq/client/build/src/api-types';
 import type { GetServerSideProps, NextPage } from 'next'
-import { useRouter } from 'next/dist/client/router'
 import Head from 'next/head'
 import { getRoomBySlug, RoomContextProvider } from '../../data/room';
-import { getSlides } from '../../data/slideshow';
 import { Room } from '../../types/app';
 import Link from 'next/link';
-import { Logo } from '../../components/Branding';
-import { isClient } from '../../styles/screens';
 import { getUserFromHTTPRequest } from '../../data/leader';
 import { getUserProfile, useUser } from '../../data/auth';
 import { strict as assert } from 'assert';
-import { CreateShiftPattern, RotaContextProvider, ShiftPatterns } from '../../components/ShiftPatterns';
+import { CreateShiftPattern, ShiftPatterns } from '../../components/ShiftPatterns';
 import { ExternalLinkIcon } from '@heroicons/react/solid';
 import { Header } from '../../components/Layout';
+import { RotaContextProvider } from '../../data/rota';
+import { ShiftSchedule } from '../../components/ShiftSchedule';
+import { Tab } from '@headlessui/react'
 
 type IProps = {
   room: Room
@@ -34,7 +32,7 @@ const Route: NextPage<IProps> = ({ room }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className='bg-white min-h-screen w-screen'>
-        <Header />
+        <Header isNarrow />
         <main className='max-w-lg mx-auto p-5 space-y-5 py-5'>
           <section>
             <h2 className='text-2xl font-bold text-adhdPurple mb-2'>Meeting room</h2>
@@ -46,8 +44,25 @@ const Route: NextPage<IProps> = ({ room }) => {
               <p>A rota of who will be hosting each session. We use this to send out confirmation emails to leaders and members.</p>
             </header>
             <RotaContextProvider>
-              <ShiftPatterns />
-              {profile?.canManageShifts && <CreateShiftPattern />}
+              <Tab.Group>
+                <Tab.List className='w-full flex justify-evenly border-b-2 border-gray-200'>
+                  <Tab className={({ selected }) => `uppercase text-sm font-bold py-2 px-4 w-full box-content border-b-2 ${selected ? 'border-adhdPurple text-adhdPurple' : 'text-gray-500 border-transparent'}`}>
+                    Rota
+                  </Tab>
+                  <Tab className={({ selected }) => `uppercase text-sm font-bold py-2 px-4 w-full box-content border-b-2 ${selected ? 'border-adhdPurple text-adhdPurple' : 'text-gray-500 border-transparent'}`}>
+                    Calendar
+                  </Tab>
+                </Tab.List>
+                <Tab.Panels>
+                  <Tab.Panel className='space-y-5 py-5'>
+                    <ShiftPatterns />
+                    {profile?.canManageShifts && <CreateShiftPattern />}
+                  </Tab.Panel>
+                  <Tab.Panel className='space-y-5 py-5'>
+                    <ShiftSchedule />
+                  </Tab.Panel>
+                </Tab.Panels>
+              </Tab.Group>
             </RotaContextProvider>
           </section>
         </main>
@@ -79,7 +94,7 @@ export const getServerSideProps: GetServerSideProps<IProps, IQuery> = async ({ r
     return { props: { room } }
   } catch (e) {
     console.error(e)
-    return { props: {}, redirect: { destination: '/', permanent: false } }
+    return { props: {}, redirect: { destination: '/user', permanent: false } }
   }
 }
 

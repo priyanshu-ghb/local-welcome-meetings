@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import isEmail from 'is-email'
 import { getUserFromHTTPRequest, isValidLeaderEmail, upsertUserProfile } from '../../data/leader'
 import { strict as assert } from 'assert';
 

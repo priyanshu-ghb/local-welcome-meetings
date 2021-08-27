@@ -32,7 +32,7 @@ const Home: NextPage<IProps> = ({ room, slides }) => {
 export const getServerSideProps: GetServerSideProps<IProps, IQuery> = async ({ params }) => {
   const room = await getRoomBySlug(params!.roomSlug as string)
   if (!room) {
-    return { props: { room: null as any, slides: [] }, redirect: { destination: '/', permanent: false } }
+    return { props: { room: null as any, slides: [] }, redirect: { destination: '/user', permanent: false } }
   }
   const slides = await getSlides(room.slideshowName)
   return { props: { room, slides: slides || [] } }

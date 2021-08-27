@@ -1,88 +1,196 @@
-import { createContext, useState, useEffect, useContext } from 'react';
-import { ShiftPattern, ShiftAllocation } from '../types/app';
+import { useState } from 'react';
+import { ShiftPattern, ShiftAllocation, Profile } from '../types/app';
 import { useRoom } from '../data/room';
-import { deleteShiftPattern, getShiftPatterns } from '../data/rota';
+import { deleteShiftAllocation, deleteShiftPattern, useRota } from '../data/rota';
 import { useUser } from '../data/auth';
-import { onShiftPatternChange, onShiftAllocationChange, getShiftAllocations, createShiftPattern, createShiftAllocation } from '../data/rota';
-
-interface IRotaContext {
-  shiftPatterns: ShiftPattern[]
-  shiftAllocations: ShiftAllocation[],
-  createShiftPattern: (sp: Omit<ShiftPattern, 'id'>) => void
-  createShiftAllocation: (sp: Omit<ShiftAllocation, 'id'>) => void
-}
-
-export const RotaContext = createContext<IRotaContext>({
-  shiftPatterns: [],
-  shiftAllocations: [],
-  createShiftPattern: () => {},
-  createShiftAllocation: () => {}
-})
-
-export const RotaContextProvider = (props: any) => {
-  const { room } = useRoom()
-  const [shiftPatterns, setShiftPatterns] = useState<ShiftPattern[]>([]);
-  const [shiftAllocations, setShiftAllocations] = useState<ShiftAllocation[]>([]);
-
-  async function updateShiftPatterns (roomId: string) {
-    setShiftPatterns(await getShiftPatterns(roomId))
-  }
-
-  async function updateShiftAllocations (roomId: string) {
-    setShiftAllocations(await getShiftAllocations(roomId))
-  }
-
-  useEffect(() => {
-    if (room) {
-      updateShiftPatterns(room.id)
-    }
-  }, [room])
-
-  useEffect(function () {
-    let shiftUnsubscribe: () => void
-    let allocationUnsubscribe: () => void
-
-    if (room) {
-      shiftUnsubscribe = onShiftPatternChange(() => updateShiftPatterns(room.id))
-      allocationUnsubscribe = onShiftAllocationChange(() => updateShiftAllocations(room.id))
-    }
-
-    return () => {
-      if (shiftUnsubscribe) shiftUnsubscribe()
-      if (allocationUnsubscribe) allocationUnsubscribe()
-    }
-  }, [room])
-
-  return <RotaContext.Provider value={{
-    shiftPatterns,
-    createShiftPattern: (sp) => room && createShiftPattern({ ...sp, roomId: room.id }),
-    shiftAllocations,
-    createShiftAllocation: (sp) => room && createShiftAllocation(sp),
-  }} {...props} />
-}
-
-export const useRota = () => {
-  return useContext(RotaContext)
-}
+import { EmojiHappyIcon, EmojiSadIcon } from '@heroicons/react/outline';
+import { useCombobox, UseComboboxProps } from 'downshift';
+import { Transition } from '@headlessui/react';
+import { ShowFor } from './Elements';
+import cronRenderer from 'cronstrue'
+import later from '@breejs/later'
+import { format } from 'date-fns-tz';
 
 export function ShiftPatterns () {
   const rota = useRota()
-  const { profile } = useUser()
 
-  function del (id: string) {
-    deleteShiftPattern(id)
+  return (
+    <div className='space-y-5'>
+      {rota.shiftPatterns?.map((shiftPattern, index) => {
+        return (
+          <ShiftPatternAllocations key={shiftPattern.id} shiftPattern={shiftPattern} />
+        )
+      })}
+    </div>
+  )
+}
+
+export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: ShiftPattern }) {
+  const { profile } = useUser()
+  const rota = useRota()
+
+  const allocatedSlots = rota.shiftAllocations
+    .filter(({ shiftPatternId }) => shiftPatternId === shiftPattern.id)
+    .sort((a, b) => a.id.localeCompare(b.id))
+    
+  const unfilledSlots = shiftPattern.required_people - allocatedSlots.length
+
+  const notEnough = unfilledSlots > 0
+  const justRight = unfilledSlots === 0
+  const tooMany = unfilledSlots < 0
+
+  return (
+    <div key={shiftPattern.id} className=''>
+      <h3 className='text-2xl font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
+      {shiftPattern.cron && <section className='space-y-2 mb-4'>
+        <p>Sessions run at {cronRenderer.toString(shiftPattern.cron, { use24HourTimeFormat: false }).replace(/^At/, '')}. Next session is <b>{format(later.schedule(later.parse.cron(shiftPattern.cron)).next(1) as Date, "PP")}.</b></p>
+      </section>}
+      <div className={`font-bold uppercase flex justify-between w-full text-sm ${
+        notEnough ? 'text-red-500' : tooMany ? 'text-yellow-600' : 'text-green-500'
+      }`}>
+        <span>{allocatedSlots.length} / {shiftPattern.required_people} leader slot{shiftPattern.required_people > 1 && 's'} filled</span>
+        <span>{justRight ? <EmojiHappyIcon className='w-[25px] h-[25px]' /> : <EmojiSadIcon className='w-[25px] h-[25px]' />}</span>
+      </div>
+      <div className='space-y-2 my-2'>
+        {/* {allocatedSlots.map((shiftAllocation, i) => (
+          <div key={i} className='shadow-sm rounded-lg p-3 hover:bg-gray-50 transition'>
+            {shiftAllocation.userId}
+          </div>
+        ))} */}
+        {new Array(Math.max(shiftPattern.required_people, allocatedSlots.length)).fill(0).map((_, i) => {
+          return (
+            <ShiftAllocationEditor
+              key={(allocatedSlots[i]?.id || i.toString()) + JSON.stringify(rota.roomLeaders)}
+              shiftAllocation={allocatedSlots[i]}
+              shiftPattern={shiftPattern}
+              options={rota.roomLeaders}
+            />
+          )
+        })}
+      </div>
+      {profile?.canManageShifts && <div className='button' onClick={() => deleteShiftPattern(shiftPattern.id)}>Delete</div>}
+    </div>
+  )
+}
+
+/*
+<div key={i} className='border border-dashed border-gray-400 rounded-lg p-3 hover:bg-gray-50 transition'>
+  Fill vacant slot {allocatedSlots.length + i + 1}
+</div>
+*/
+
+export const itemToString = (o: Profile | null) => o ? o.firstName ? `${o.firstName?.trim()} ${o.lastName?.trim() || ''}` : o.email : "Vacant slot"
+
+function ShiftAllocationEditor(
+  { shiftPattern, options, shiftAllocation }:
+  { shiftPattern: ShiftPattern, options: Profile[], shiftAllocation?: ShiftAllocation }
+) {
+  const rota = useRota()
+  const [inputItems, setInputItems] = useState<Profile[]>(options)
+  const [savedDataState, setDataState] = useState<null | 'loading' | 'saved' | 'error'>(null)
+
+  const initialSelectedItem = options.find(o => o.id === shiftAllocation?.profileId)
+
+  const comboProps: UseComboboxProps<Profile> = {
+    initialSelectedItem,
+    items: inputItems,
+    itemToString,
+    onInputValueChange: ({ inputValue }) => {
+      setInputItems(
+        options
+          .filter(profile => {
+            const inShiftPatternAlready = !!rota.shiftAllocations.find(sa =>
+              sa.shiftPatternId === shiftPattern.id &&
+              sa.profileId === profile.id
+            )
+            if (inShiftPatternAlready) return false
+            const matchesInputValue = (
+              profile.email?.toLowerCase().startsWith(inputValue?.toLowerCase() || '') ||
+              profile.firstName?.toLowerCase().startsWith(inputValue?.toLowerCase() || '') ||
+              profile.lastName?.toLowerCase().startsWith(inputValue?.toLowerCase() || '')
+            )
+            return matchesInputValue
+          }),
+      )
+    },
+    onSelectedItemChange: async ({ selectedItem: profile }) => {
+      if (profile) {
+        try {
+          setDataState('loading')
+          await rota.createShiftAllocation({
+            shiftPatternId: shiftPattern.id,
+            profileId: profile.id
+          })
+          setDataState('saved')
+        } catch (e) {
+          setDataState('error')
+        }
+      }
+    }
+  }
+
+  const {
+    isOpen,
+    getToggleButtonProps,
+    getLabelProps,
+    getMenuProps,
+    getInputProps,
+    getComboboxProps,
+    highlightedIndex,
+    getItemProps,
+    reset
+  } = useCombobox<Profile>(comboProps)
+
+  function deleteAllocation () {
+    reset()
+    if (shiftAllocation) {
+      deleteShiftAllocation(shiftAllocation.id)
+    }
   }
 
   return (
-    <div className='space-y-4'>
-      {rota.shiftPatterns?.map((shiftPattern, index) => {
-        return (
-          <div key={shiftPattern.id} className=''>
-            <h3 className='text-lg font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
-            {profile?.canManageShifts && <div className='button' onClick={() => del(shiftPattern.id)}>Delete</div>}
-          </div>
-        )
-      })}
+    <div className='relative'>
+      <div className='flex flex-row justify-between border border-dashed border-gray-400 rounded-lg p-3 hover:bg-gray-50 transition' {...getComboboxProps()}>
+        <input {...getInputProps()} placeholder='Fill vacant slot' className='border-none bg-gray-50 rounded-md' />
+        <button
+          type="button"
+          {...getToggleButtonProps()}
+          aria-label="Show available staff"
+        >
+          &#8595;
+        </button>
+        <ShowFor seconds={3} key={savedDataState}>
+          {savedDataState && <span className='bg-adhdBlue rounded-lg p-1 text-sm uppercase'>{savedDataState}</span>}
+        </ShowFor>
+        {shiftAllocation && <div onClick={deleteAllocation} className='button p-1 uppercase text-sm'>Clear</div>}
+      </div>
+      <Transition
+        appear={true}
+        show={isOpen}
+        enter="transition-opacity duration-75"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-opacity duration-300"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        <ul className='border border-gray-400 rounded-lg p-3 shadow-md absolute top-[100%] z-50 w-full bg-white' {...getMenuProps()}>
+          {isOpen &&
+            inputItems.map((item, index) => (
+              <li
+                style={
+                  highlightedIndex === index
+                    ? { backgroundColor: '#bde4ff' }
+                    : {}
+                }
+                key={`${item}${index}`}
+                {...getItemProps({ item, index })}
+              >
+                {itemToString(item)}
+              </li>
+            ))}
+        </ul>
+      </Transition>
     </div>
   )
 }
