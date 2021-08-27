@@ -977,7 +977,7 @@ export interface definitions {
     id: string;
     /**
      * Note:
-     * This is a Foreign Key to `profile.id`.<fk table='profile' column='id'/>
+     * This is a Foreign Key to `shiftpattern.id`.<fk table='shiftpattern' column='id'/>
      */
     shiftPatternId: string;
     date: string;
