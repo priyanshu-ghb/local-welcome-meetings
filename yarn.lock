@@ -311,6 +311,11 @@
     lodash.merge "^4.6.2"
     lodash.uniq "^4.5.0"
 
+"@types/later@^1.2.7":
+  version "1.2.7"
+  resolved "https://registry.yarnpkg.com/@types/later/-/later-1.2.7.tgz#20346a8aa2fd0a5309860396e42928d3b043050d"
+  integrity sha512-LXWQrSkPXrkTl0StFfeDWs0scJy/BdIVoRiWMkdKHFpPgpNXlJgF3vZIDjFI7rhjpPCSICT4elJxtKl3IczPTQ==
+
 "@types/linkify-it@*":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@types/linkify-it/-/linkify-it-3.0.2.tgz#fd2cd2edbaa7eaac7e7f3c1748b52a19143846c9"

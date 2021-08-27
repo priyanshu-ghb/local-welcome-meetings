@@ -41,9 +41,9 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
 
   return (
     <div key={shiftPattern.id} className=''>
-      <h3 className='text-xl font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
+      <h3 className='text-2xl font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
       {shiftPattern.cron && <section className='space-y-2 mb-4'>
-        <p>Sessions run at {cronRenderer.toString(shiftPattern.cron, { use24HourTimeFormat: false }).replace(/^At/, '')}. Next session is <b>{format(later.schedule(later.parse.cron(shiftPattern.cron)).next(), "PP")}.</b></p>
+        <p>Sessions run at {cronRenderer.toString(shiftPattern.cron, { use24HourTimeFormat: false }).replace(/^At/, '')}. Next session is <b>{format(later.schedule(later.parse.cron(shiftPattern.cron)).next(1) as Date, "PP")}.</b></p>
       </section>}
       <div className={`font-bold uppercase flex justify-between w-full text-sm ${
         notEnough ? 'text-red-500' : tooMany ? 'text-yellow-600' : 'text-green-500'
@@ -79,6 +79,8 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
 </div>
 */
 
+export const itemToString = (o: Profile | null) => o ? o.firstName ? `${o.firstName?.trim()} ${o.lastName?.trim() || ''}` : o.email : "Vacant slot"
+
 function ShiftAllocationEditor(
   { shiftPattern, options, shiftAllocation }:
   { shiftPattern: ShiftPattern, options: Profile[], shiftAllocation?: ShiftAllocation }
@@ -88,7 +90,6 @@ function ShiftAllocationEditor(
   const [savedDataState, setDataState] = useState<null | 'loading' | 'saved' | 'error'>(null)
 
   const initialSelectedItem = options.find(o => o.id === shiftAllocation?.profileId)
-  const itemToString = (o: Profile | null) => o ? o.firstName ? `${o.firstName?.trim()} ${o.lastName?.trim() || ''}` : o.email : "Vacant slot"
 
   const comboProps: UseComboboxProps<Profile> = {
     initialSelectedItem,
