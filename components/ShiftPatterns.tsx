@@ -15,6 +15,7 @@ import { isSameDay } from 'date-fns';
 import n from 'pluralize';
 import useId from '@accessible/use-id'
 import { UserAddIcon } from '@heroicons/react/solid';
+import { isEqual } from 'lodash-es';
 
 export function ShiftPatterns () {
   const rota = useRota()
@@ -131,15 +132,21 @@ export function ShiftAllocationEditor(
         try {
           setDataState('loading')
           if (!date) {
-            if (shiftAllocation) {
-              // Delete this one as it's been replaced
-              await deleteShiftAllocation(shiftAllocation.id)
-            }
-            // Add to the rota
-            await rota.createShiftAllocation({
+            const nextShiftAllocation = {
               shiftPatternId: shiftPattern.id,
               profileId: profile.id
-            })
+            }
+            if (shiftAllocation && (
+              shiftAllocation?.shiftPatternId === nextShiftAllocation.shiftPatternId && 
+              shiftAllocation?.profileId === nextShiftAllocation.profileId
+            )) {
+              // It's identical. Do nothing.
+            } else if (shiftAllocation) {
+              await deleteShiftAllocation(shiftAllocation.id)
+              await rota.createShiftAllocation(nextShiftAllocation)
+            } else {
+              await rota.createShiftAllocation(nextShiftAllocation)
+            }
           } else {
             // Add for just this date
             await rota.createShiftException({
