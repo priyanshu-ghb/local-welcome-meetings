@@ -7,6 +7,7 @@ import n from 'pluralize'
 import { Transition } from '@headlessui/react';
 import { ArrowCircleDownIcon } from '@heroicons/react/solid';
 import { isSameYear } from 'date-fns/esm';
+import { ExclamationCircleIcon } from '@heroicons/react/outline';
 
 export function ShiftSchedule () {
   const rota = useRota()
@@ -73,11 +74,14 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
       </header>
       {/* Details */}
       <section className='text-left flex-grow col-span-4 w-full space-y-2'>
-        {spStatus.notEnough && <div className={`font-semibold uppercase flex justify-between w-full text-xs ${
-          spStatus.notEnough ? 'text-red-500' : spStatus.tooMany ? 'text-yellow-600' : 'text-green-500'
-        }`}>
-          <span>{n('more leader', allocationsRequired, true)} required - {shiftPattern.name}</span>
-        </div>}
+        {spStatus.notEnough && (
+          <div className={`font-semibold uppercase w-full text-xs text-red-500`}>
+            <ExclamationCircleIcon className='w-4 h-4 inline mr-1 align-middle' />
+            <span className='align-middle'>
+              {n('more regulars', allocationsRequired, true)} needed - {shiftPattern.name} rota
+            </span>
+          </div>
+        )}
         {shiftAllocations.map((sa) => {
           return (
             <ShiftAllocationEditor
@@ -87,7 +91,7 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
               options={rota.roomLeaders}
               editable={false}
               date={date}
-              label={`Regular leader - ${shiftPattern.name}`}
+              label={`Regular - ${shiftPattern.name} rota`}
             />
           )
         })}
@@ -104,6 +108,10 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
             />
           )
         })}
+        {(shiftPattern.allowOneOffAllocations ? peopleStillRequired : fillInsNeeded) > 0 && <div className='text-red-500 text-xs font-semibold uppercase'>
+          <ExclamationCircleIcon className='w-4 h-4 inline mr-1 align-middle' />
+          <span className='align-middle'>Temporary cover needed - this session</span>
+        </div>}
         {new Array(shiftPattern.allowOneOffAllocations ? peopleStillRequired : fillInsNeeded).fill(0).map((_, i) => (
           <ShiftAllocationEditor
             key={'vacant-fill-in-' + peopleStillRequired + i}
@@ -113,7 +121,6 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
             placeholder={'Add temporary cover'}
           />
         ))}
-        {fillInsNeeded > 0 && <div className='text-red-500 text-xs font-semibold uppercase'>Temporary cover required</div>}
       </section>
     </article>
   )
