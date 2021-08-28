@@ -583,6 +583,7 @@ export interface paths {
           roomId?: parameters["rowFilter.shiftpattern.roomId"];
           updatedAt?: parameters["rowFilter.shiftpattern.updatedAt"];
           cron?: parameters["rowFilter.shiftpattern.cron"];
+          allowOneOffAllocations?: parameters["rowFilter.shiftpattern.allowOneOffAllocations"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -639,6 +640,7 @@ export interface paths {
           roomId?: parameters["rowFilter.shiftpattern.roomId"];
           updatedAt?: parameters["rowFilter.shiftpattern.updatedAt"];
           cron?: parameters["rowFilter.shiftpattern.cron"];
+          allowOneOffAllocations?: parameters["rowFilter.shiftpattern.allowOneOffAllocations"];
         };
         header: {
           /** Preference */
@@ -659,6 +661,7 @@ export interface paths {
           roomId?: parameters["rowFilter.shiftpattern.roomId"];
           updatedAt?: parameters["rowFilter.shiftpattern.updatedAt"];
           cron?: parameters["rowFilter.shiftpattern.cron"];
+          allowOneOffAllocations?: parameters["rowFilter.shiftpattern.allowOneOffAllocations"];
         };
         body: {
           /** shiftpattern */
@@ -1012,7 +1015,8 @@ export interface definitions {
      */
     roomId: string;
     updatedAt: string;
-    cron?: string;
+    cron: string;
+    allowOneOffAllocations: boolean;
   };
 }
 
@@ -1102,6 +1106,7 @@ export interface parameters {
   "rowFilter.shiftpattern.roomId": string;
   "rowFilter.shiftpattern.updatedAt": string;
   "rowFilter.shiftpattern.cron": string;
+  "rowFilter.shiftpattern.allowOneOffAllocations": string;
 }
 
 export interface operations {}
