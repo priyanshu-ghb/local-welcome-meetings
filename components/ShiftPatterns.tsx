@@ -42,9 +42,10 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
   return (
     <div key={shiftPattern.id} className=''>
       <h3 className='text-2xl font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
-      {shiftPattern.cron && <section className='space-y-2 mb-4'>
+      <section className='space-y-2 mb-4'>
         <p>Sessions run at {cronRenderer.toString(shiftPattern.cron, { use24HourTimeFormat: false }).replace(/^At/, '')}. Next session is <b>{format(later.schedule(later.parse.cron(shiftPattern.cron)).next(1) as Date, "PP")}.</b></p>
-      </section>}
+        {shiftPattern.allowOneOffAllocations && <p>Leaders can sign up for one-off sessions.</p>}
+      </section>
       <div className={`font-bold uppercase flex justify-between w-full text-sm ${
         notEnough ? 'text-red-500' : tooMany ? 'text-yellow-600' : 'text-green-500'
       }`}>
@@ -347,7 +348,7 @@ export function CreateShiftPattern () {
               })} id="cron" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
               <section className='space-y-2 p-3 bg-gray-50 rounded-lg'>
               <p>
-                {cron && <CronExplainer cron={cron} />}
+                <CronExplainer cron={cron} />
               </p>
               <p>
                 <a className='underline text-blue-500' href='https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#CronExpressions'>
