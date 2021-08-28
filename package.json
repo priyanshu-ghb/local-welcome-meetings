@@ -34,6 +34,7 @@
     "date-fns-tz": "^1.1.6",
     "downshift": "^6.1.7",
     "env-var": "^7.0.1",
+    "ical-generator": "^3.0.0",
     "is-email": "^1.0.1",
     "jstz": "^2.1.1",
     "lodash-es": "^4.17.21",
