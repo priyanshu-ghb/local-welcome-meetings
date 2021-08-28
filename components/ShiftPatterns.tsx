@@ -46,7 +46,7 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
     <div key={shiftPattern.id} className=''>
       <h3 className='text-2xl font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
       <section className='space-y-2 mb-4'>
-        <p>Sessions run at {cronRenderer.toString(shiftPattern.cron, { use24HourTimeFormat: false }).replace(/^At/, '')}. Next session is <b>{format(nextDate, "PP")}.</b></p>
+        <p>Sessions run at {cronRenderer.toString(shiftPattern.cron, { use24HourTimeFormat: false }).replace(/^At/, '')} ({shiftPattern.cronTimezone} time). Next session is <b>{format(nextDate, "h:mm a, do MMMM (zzz)", { timeZone: getTimezone() })}.</b></p>
         {shiftPattern.allowOneOffAllocations && <p>Leaders can sign up for one-off sessions.</p>}
       </section>
       <div className={`font-bold uppercase flex justify-between w-full text-sm ${

@@ -8,6 +8,7 @@ import { Transition } from '@headlessui/react';
 import { ArrowCircleDownIcon } from '@heroicons/react/solid';
 import { isSameYear } from 'date-fns/esm';
 import { ExclamationCircleIcon } from '@heroicons/react/outline';
+import { getTimezone } from '../utils/date';
 
 export function ShiftSchedule () {
   const rota = useRota()
@@ -69,8 +70,9 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
       <header className={`${
         notEnough ? 'text-red-500' : tooMany ? 'text-yellow-600' : 'text-green-500'
       } text-center font-bold w-7 leading-3 pr-2`}>
-        <div className='text-xs uppercase'>{format(date, 'MMM')}</div>
-        <div className='text-2xl -mt-1'>{format(date, 'dd')}</div>
+        <div className='text-xs uppercase'>{format(date, 'MMM', { timeZone: getTimezone() })}</div>
+        <div className='text-2xl -mt-1'>{format(date, 'dd', { timeZone: getTimezone() })}</div>
+        <div className='text-xs opacity-60 text-gray-500 font-semibold'>{format(date, "h:mm a (zzz)", { timeZone: getTimezone() })}</div>
       </header>
       {/* Details */}
       <section className='text-left flex-grow col-span-4 w-full space-y-2'>
