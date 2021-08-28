@@ -207,7 +207,7 @@ export function ShiftAllocationEditor(
         <div className='px-2 flex flex-col justify-center items-start flex-grow-0 flex-shrink'>
           <input {...getInputProps()} id={id} disabled={!editable} placeholder={placeholder} className={cx(
             'w-full border-none rounded-md font-semibold bg-transparent outline-none',
-            shiftException?.type === ShiftExceptionType.DropOut ? 'line-through text-gray-500' : 'text-gray-800'
+            shiftException?.type === ShiftExceptionType.DropOut ? 'line-through text-gray-500' : 'text-gray-800 disabled:text-gray-800 !disabled:text-gray-800 disabled:text-gray-800!'
           )} />
           {shiftException?.type === ShiftExceptionType.DropOut && 
             <div className='text-red-500 text-xs uppercase font-semibold'>Dropped out</div>}
