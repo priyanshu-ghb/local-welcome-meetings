@@ -8,7 +8,7 @@ import { strict as assert } from 'assert';
 import { CreateShiftPattern, ShiftPatterns } from '../../components/ShiftPatterns';
 import { ExternalLinkIcon } from '@heroicons/react/solid';
 import { Header } from '../../components/Layout';
-import { RotaContextProvider } from '../../data/rota';
+import { RotaContextProvider, useRota } from '../../data/rota';
 import { ShiftSchedule } from '../../components/ShiftSchedule';
 import { Tab } from '@headlessui/react'
 import { getUserFromHTTPRequest } from '../../data/leader-shared';
@@ -22,8 +22,6 @@ type IQuery = {
 }
 
 const Route: NextPage<IProps> = ({ room }) => {
-  const { profile } = useUser()
-
   return (
     <RoomContextProvider slug={room.slug} initialData={{ room }}>
       <Head>
@@ -40,30 +38,41 @@ const Route: NextPage<IProps> = ({ room }) => {
           </section>
           <section>
             <RotaContextProvider>
-              <Tab.Group>
-                <Tab.List className='w-full flex justify-evenly border-b-2 border-gray-200'>
-                  <Tab className={({ selected }) => `uppercase text-sm font-bold py-2 px-4 w-full box-content border-b-2 ${selected ? 'border-adhdPurple text-adhdPurple' : 'text-gray-500 border-transparent'}`}>
-                    Rota
-                  </Tab>
-                  <Tab className={({ selected }) => `uppercase text-sm font-bold py-2 px-4 w-full box-content border-b-2 ${selected ? 'border-adhdPurple text-adhdPurple' : 'text-gray-500 border-transparent'}`}>
-                    Calendar
-                  </Tab>
-                </Tab.List>
-                <Tab.Panels>
-                  <Tab.Panel className='space-y-5 py-5'>
-                    <ShiftPatterns />
-                    {profile?.canManageShifts && <CreateShiftPattern />}
-                  </Tab.Panel>
-                  <Tab.Panel className='space-y-5 py-5'>
-                    <ShiftSchedule />
-                  </Tab.Panel>
-                </Tab.Panels>
-              </Tab.Group>
+              <ShiftManager />
             </RotaContextProvider>
           </section>
         </main>
       </div>
     </RoomContextProvider>
+  )
+}
+
+function ShiftManager () {
+  const rota = useRota()
+  const { profile } = useUser()
+
+  return !rota.roomLeaders.length ? (
+    <div>Loading rota...</div>
+  ) : (
+    <Tab.Group>
+      <Tab.List className='w-full flex justify-evenly border-b-2 border-gray-200'>
+        <Tab className={({ selected }) => `uppercase text-sm font-bold py-2 px-4 w-full box-content border-b-2 ${selected ? 'border-adhdPurple text-adhdPurple' : 'text-gray-500 border-transparent'}`}>
+          Rota
+        </Tab>
+        <Tab className={({ selected }) => `uppercase text-sm font-bold py-2 px-4 w-full box-content border-b-2 ${selected ? 'border-adhdPurple text-adhdPurple' : 'text-gray-500 border-transparent'}`}>
+          Calendar
+        </Tab>
+      </Tab.List>
+      <Tab.Panels>
+        <Tab.Panel className='space-y-5 py-5'>
+          <ShiftPatterns />
+          {profile?.canManageShifts && <CreateShiftPattern />}
+        </Tab.Panel>
+        <Tab.Panel className='space-y-5 py-5'>
+          <ShiftSchedule />
+        </Tab.Panel>
+      </Tab.Panels>
+    </Tab.Group>
   )
 }
 
