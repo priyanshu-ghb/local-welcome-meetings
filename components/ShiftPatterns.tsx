@@ -210,7 +210,7 @@ export function ShiftAllocationEditor(
       >
         <div {...getComboboxProps()} className={'w-full flex flex-row justify-start'}>
           <button {...getToggleButtonProps()} className={cx(
-            'w-full inline-flex flex-row justify-start border-0 outline-none bg-none hover:bg-none',
+            'text-left w-full inline-flex flex-row justify-start border-0 outline-none bg-none hover:bg-none',
             editable ? 'cursor-text' : 'cursor-default'
           )}>
             {selectedItem && (
