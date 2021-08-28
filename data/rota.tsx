@@ -230,6 +230,57 @@ export function calculateSchedule(
   }, [] as Array<ScheduledDate>)
 }
 
+export type CalendarDate = { date: Date, isFillingIn: boolean, shiftPattern: ShiftPattern }
+
+export function calendarForProfile(
+  profileId: string, 
+  rota: {
+    shiftPatterns: ShiftPattern[],
+    shiftAllocations: ShiftAllocation[],
+    shiftExceptions: ShiftException[]
+  },
+  datesAhead = 10
+) {
+  const shiftExceptionsForProfile = rota.shiftExceptions.filter(se => se.profileId === profileId)
+
+  const regularDates = rota.shiftPatterns.reduce((acc, shiftPattern) => {
+    const profileIsAllocatedToThisShiftPattern = !!rota.shiftAllocations.find(sa =>
+      sa.shiftPatternId === shiftPattern.id &&
+      sa.profileId === profileId
+    )
+    if (!profileIsAllocatedToThisShiftPattern) return acc
+
+    const schedule = later.parse.cron(shiftPattern.cron)
+    const nextDates = later.schedule(schedule).next(datesAhead) as Date[]
+
+    return nextDates.reduce((acc, date) => {
+      const profileDroppedOutToday = shiftExceptionsForProfile.find(se =>
+        se.type === ShiftExceptionType.DropOut &&
+        se.shiftPatternId === shiftPattern.id &&
+        isSameDay(new Date(se.date), date)
+      )
+      if (profileDroppedOutToday) return acc
+
+      return acc.concat([{
+        date,
+        isFillingIn: false,
+        shiftPattern,
+      }])
+    }, [] as Array<CalendarDate>)
+  }, [] as Array<CalendarDate>)
+
+  // Add fill-ins
+  const fillInDates = shiftExceptionsForProfile.filter(se => se.type === ShiftExceptionType.FillIn).map(se => {
+    return {
+      date: new Date(se.date),
+      isFillingIn: true,
+      shiftPattern: rota.shiftPatterns.find(sp => sp.id === se.shiftPatternId)
+    }
+  })
+
+  return [...regularDates, ...fillInDates].sort((a, b) => a.date.getTime() - b.date.getTime())
+}
+
 export function nextDateForProfile (profileId: string, schedule: ScheduledDate[], exceptions?: ShiftException[]) {
   const earliestScheduledDate = schedule.find((date) => {
     const isAssigned = date.shiftAllocations.some(sa => sa.profileId === profileId)
