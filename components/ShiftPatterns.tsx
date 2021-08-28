@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { ShiftPattern, ShiftAllocation, Profile, ShiftException, ShiftExceptionType } from '../types/app';
 import { useRoom } from '../data/room';
 import { deleteShiftAllocation, deleteShiftPattern, useRota, calculateShiftPatternStatus, deleteShiftException, createShiftException } from '../data/rota';
@@ -7,7 +7,6 @@ import { XCircleIcon, LoginIcon, LogoutIcon, EmojiHappyIcon, EmojiSadIcon } from
 import { useCombobox, UseComboboxProps } from 'downshift';
 import { Transition } from '@headlessui/react';
 import cronRenderer from 'cronstrue'
-import later from '@breejs/later'
 import { format } from 'date-fns-tz';
 import { useForm } from "react-hook-form";
 import cx from 'classnames'
@@ -15,7 +14,7 @@ import { isSameDay } from 'date-fns';
 import n from 'pluralize';
 import useId from '@accessible/use-id'
 import { UserAddIcon } from '@heroicons/react/solid';
-import { isEqual } from 'lodash-es';
+import { getTimezone, parseCron } from '../utils/date';
 
 export function ShiftPatterns () {
   const rota = useRota()
@@ -40,12 +39,14 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
     .sort((a, b) => a.id.localeCompare(b.id))
     
   const { notEnough, justRight, tooMany } = calculateShiftPatternStatus(shiftPattern, allocatedSlots)
+  const schedule = parseCron(shiftPattern.cron, shiftPattern.cronTimezone)
+  const nextDate = new Date(schedule.next().toString())
 
   return (
     <div key={shiftPattern.id} className=''>
       <h3 className='text-2xl font-bold text-adhdPurple mb-2'>{shiftPattern.name}</h3>
       <section className='space-y-2 mb-4'>
-        <p>Sessions run at {cronRenderer.toString(shiftPattern.cron, { use24HourTimeFormat: false }).replace(/^At/, '')}. Next session is <b>{format(later.schedule(later.parse.cron(shiftPattern.cron)).next(1) as Date, "PP")}.</b></p>
+        <p>Sessions run at {cronRenderer.toString(shiftPattern.cron, { use24HourTimeFormat: false }).replace(/^At/, '')}. Next session is <b>{format(nextDate, "PP")}.</b></p>
         {shiftPattern.allowOneOffAllocations && <p>Leaders can sign up for one-off sessions.</p>}
       </section>
       <div className={`font-bold uppercase flex justify-between w-full text-sm ${
@@ -325,7 +326,8 @@ export function CreateShiftPattern () {
     name: '',
     required_people: 2,
     cron: '30 18 * * WED#1',
-    allowOneOffAllocations: false
+    allowOneOffAllocations: false,
+    cronTimezone: getTimezone()
   }
 
   const { register, handleSubmit, watch, reset } = useForm({

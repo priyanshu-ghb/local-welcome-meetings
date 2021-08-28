@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@accessible/use-id": "^1.1.2",
-    "@breejs/later": "^4.0.2",
     "@headlessui/react": "^1.4.0",
     "@heroicons/react": "^1.0.4",
     "@hubspot/api-client": "^4.1.0",
@@ -20,7 +19,6 @@
     "@supabase/supabase-js": "^1.22.1",
     "@tailwindcss/forms": "^0.3.3",
     "@tailwindcss/typography": "^0.4.1",
-    "@types/later": "^1.2.7",
     "@types/lodash-es": "^4.17.4",
     "@types/markdown-it": "^12.2.0",
     "@types/pluralize": "^0.0.29",
@@ -29,6 +27,7 @@
     "babel-plugin-polished": "^1.1.0",
     "classnames": "^2.3.1",
     "copy-to-clipboard": "^3.3.1",
+    "cron-parser": "^3.5.0",
     "cronstrue": "^1.117.0",
     "date-fns": "^2.23.0",
     "date-fns-tz": "^1.1.6",

@@ -3,9 +3,8 @@ import { supabase } from './supabase';
 import { SupabaseRealtimePayload } from '@supabase/supabase-js';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useRoom } from './room';
-import later from '@breejs/later';
 import { isSameDay, isBefore } from 'date-fns';
-import { passThroughLog } from '../utils/debug';
+import { getDatesForCron } from '../utils/date';
 
 /**
  * Context
@@ -207,8 +206,7 @@ export function calculateSchedule(
     const thisPatternAllocations = rota.shiftAllocations.filter(sa => sa.shiftPatternId === shiftPattern.id)
     // Shift patterns must have at least one allocation
     if (!includeEmptyShiftPatterns && thisPatternAllocations.length === 0) return acc
-    const schedule = later.parse.cron(shiftPattern.cron)
-    const nextDates = later.schedule(schedule).next(datesAhead) as Date[]
+    const nextDates = getDatesForCron(shiftPattern.cron, shiftPattern.cronTimezone, datesAhead)
     // TODO: add exceptions
     const dates = nextDates.map(date => {
       const thisDateExceptions = rota.shiftExceptions.filter(se => se.shiftPatternId === shiftPattern.id && isSameDay(new Date(se.date), date))
@@ -250,8 +248,7 @@ export function calendarForProfile(
     )
     if (!profileIsAllocatedToThisShiftPattern) return acc
 
-    const schedule = later.parse.cron(shiftPattern.cron)
-    const nextDates = later.schedule(schedule).next(datesAhead) as Date[]
+    const nextDates = getDatesForCron(shiftPattern.cron, shiftPattern.cronTimezone, datesAhead)
 
     return nextDates.reduce((acc, date) => {
       const profileDroppedOutToday = shiftExceptionsForProfile.find(se =>

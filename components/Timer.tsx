@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { usePrevious } from '../utils/hooks';
 import { ShowFor } from './Elements';
 import { useMediaQuery, down } from '../styles/screens';
-import jstz from 'jstz';
+import { getTimezone } from '../utils/date';
 
 export function Timer () {
   const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
@@ -35,7 +35,7 @@ export function Timer () {
     }
   }
 
-  const timezone = jstz.determine().name()
+  const timezone = getTimezone()
 
   const resetTimer = () => {
     updateRoom({
