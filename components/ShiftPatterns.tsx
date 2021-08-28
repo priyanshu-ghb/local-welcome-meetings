@@ -113,7 +113,8 @@ export function ShiftAllocationEditor(
     itemToString,
     onInputValueChange: ({ inputValue }) => {
       editable && setInputItems(
-        options
+        !inputValue?.length ? options
+        : options
           .filter(profile => {
             const inShiftPatternAlready = !!rota.shiftAllocations.find(sa =>
               sa.shiftPatternId === shiftPattern.id &&
@@ -260,10 +261,16 @@ export function ShiftAllocationEditor(
         leave="transition-opacity duration-300"
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
+        className='max-h-[50vh] overflow-y-auto space-y-1 border border-gray-400 rounded-lg p-1 shadow-md absolute top-[100%] z-50 w-full bg-white'
       >
-        <ul className='max-h-[50vh] overflow-y-auto space-y-1 border border-gray-400 rounded-lg p-1 shadow-md absolute top-[100%] z-50 w-full bg-white' {...getMenuProps()}>
-          {editable && isOpen &&
-            inputItems.map((item, index) => (
+        {!inputItems.length && (
+          <span className='flex flex-row justify-start items-center p-1 rounded-lg'>
+            <Avatar />
+            <span className='px-2 border-none rounded-md font-semibold'>0 leaders found</span>
+          </span>
+        )}
+        <ul {...getMenuProps()}>
+            {inputItems.map((item, index) => (
               <li
                 className={cx(
                   'flex flex-row justify-start items-center p-1 rounded-lg',
