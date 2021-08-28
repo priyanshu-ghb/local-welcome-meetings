@@ -198,57 +198,67 @@ export function ShiftAllocationEditor(
 
   const id = useId(undefined, 'sp-input-')
 
-  const ref = useRef<HTMLDivElement & HTMLButtonElement>(null)
-
   return (
     <div className='relative'>
-      <label htmlFor={id} className={cx(
-        'flex flex-row justify-start border rounded-lg p-2 hover:bg-gray-50 transition focus-within:outline-black',
-        !selectedItem && 'border-dashed border-gray-400',
-        selectedItem && 'bg-white shadow-sm'
-      )} {...getComboboxProps({ ref })} {...getToggleButtonProps({ ref })}>
-        {selectedItem && (
-          <span className='mr-1'>
-            <Avatar profile={selectedItem} disabled={shiftException?.type === ShiftExceptionType.DropOut} />
-          </span>
+      <label
+        htmlFor={id}
+        className={cx(
+          'flex flex-row justify-start focus-within:outline-black border rounded-lg hover:bg-gray-50 transition p-2',
+          !selectedItem && 'border-dashed border-gray-400',
+          selectedItem && 'bg-white shadow-sm'
         )}
-        <div className={cx(
-          'ml-1 flex flex-col justify-center items-start flex-grow-0 flex-shrink min-h-[43px] w-full',
-          editable && 'cursor-text'
-        )}>
-          <input {...getInputProps()} id={id} disabled={!editable} placeholder={placeholder} className={cx(
-            'w-full border-none rounded-md font-semibold bg-transparent outline-none',
-            shiftException?.type === ShiftExceptionType.DropOut ? 'line-through text-gray-500' : 'text-gray-800 disabled:text-gray-800 !disabled:text-gray-800 disabled:text-gray-800!'
-          )} />
-          {shiftException?.type === ShiftExceptionType.DropOut && 
-            <div className='text-red-500 text-xs uppercase font-semibold'>Dropped out</div>}
-          {shiftException?.type === ShiftExceptionType.FillIn &&
-            <div className='text-green-500 text-xs uppercase font-semibold'>Filling in</div>}
-          {label &&
-            <div className='text-gray-500 text-xs uppercase font-semibold'>{label}</div>}
-        </div>
-        <div className='pl-2 ml-auto flex flex-row justify-end space-x-2 items-center flex-shrink-0'>
-          {!selectedItem && <UserAddIcon className='w-[25px] h-25px] inline-block text-gray-500' />}
-          {shiftException?.type === ShiftExceptionType.DropOut && (
-            <div onClick={removeException} className='button p-1 uppercase text-xs'>
-              Back in <LoginIcon className='w-4 h-4 text-inherit inline ml-[3px]' />
+      >
+        <div {...getComboboxProps()} className={'w-full flex flex-row justify-start'}>
+          <button {...getToggleButtonProps()} className={cx(
+            'w-full inline-flex flex-row justify-start border-0 outline-none bg-none hover:bg-none',
+            editable ? 'cursor-text' : 'cursor-default'
+          )}>
+            {selectedItem && (
+              <span className='mr-1'>
+                <Avatar profile={selectedItem} disabled={shiftException?.type === ShiftExceptionType.DropOut} />
+              </span>
+            )}
+            <div
+              className={cx(
+                'ml-1 flex flex-col justify-center items-start flex-grow-0 flex-shrink min-h-[43px] w-full',
+                editable && 'cursor-text'
+              )}
+            >
+              <input {...getInputProps()} id={id} disabled={!editable} placeholder={placeholder} className={cx(
+                'w-full border-none rounded-md font-semibold bg-transparent outline-none text-gray-800',
+                shiftException?.type === ShiftExceptionType.DropOut && 'line-through'
+              )} />
+              {shiftException?.type === ShiftExceptionType.DropOut && 
+                <div className='text-red-500 text-xs uppercase font-semibold'>Dropped out</div>}
+              {shiftException?.type === ShiftExceptionType.FillIn &&
+                <div className='text-green-500 text-xs uppercase font-semibold'>Filling in</div>}
+              {label &&
+                <div className='text-gray-500 text-xs uppercase font-semibold'>{label}</div>}
             </div>
-          )}
-          {!!date && shiftException?.type === ShiftExceptionType.FillIn && (
-            <div onClick={removeException} className='button p-1 uppercase text-xs'>
-              Remove <XCircleIcon className='w-4 h-4 text-inherit inline ml-[3px]' />
-            </div>
-          )}
-          {!!date && !!shiftAllocation && !shiftException && (
-            <div onClick={dropOut} className='button p-1 uppercase text-xs'>
-              Drop out <LogoutIcon className='w-4 h-4 text-inherit inline ml-[3px]' />
-            </div>
-          )}
-          {shiftAllocation && editable && (
-            <div onClick={deleteAllocation} className='button p-1 uppercase text-xs'>
-              Remove <XCircleIcon className='w-4 h-4 text-inherit inline ml-[3px]' />
-            </div>
-          )}
+          </button>
+          <div className='pl-2 ml-auto flex flex-row justify-end space-x-2 items-center flex-shrink-0'>
+            {!selectedItem && <UserAddIcon className='w-[25px] h-25px] inline-block text-gray-500' />}
+            {shiftException?.type === ShiftExceptionType.DropOut && (
+              <div onClick={(e) => { e.preventDefault(); removeException() }} className='button p-1 uppercase text-xs'>
+                Back in <LoginIcon className='w-4 h-4 text-inherit inline ml-[3px]' />
+              </div>
+            )}
+            {!!date && shiftException?.type === ShiftExceptionType.FillIn && (
+              <div onClick={(e) => { e.preventDefault(); removeException() }} className='button p-1 uppercase text-xs'>
+                Remove <XCircleIcon className='w-4 h-4 text-inherit inline ml-[3px]' />
+              </div>
+            )}
+            {!!date && !!shiftAllocation && !shiftException && (
+              <div onClick={(e) => { e.preventDefault(); dropOut() }} className='button p-1 uppercase text-xs'>
+                Drop out <LogoutIcon className='w-4 h-4 text-inherit inline ml-[3px]' />
+              </div>
+            )}
+            {shiftAllocation && editable && (
+              <div onClick={(e) => { e.preventDefault(); deleteAllocation() }} className='button p-1 uppercase text-xs'>
+                Remove <XCircleIcon className='w-4 h-4 text-inherit inline ml-[3px]' />
+              </div>
+            )}
+          </div>
         </div>
       </label>
       <Transition
