@@ -584,6 +584,7 @@ export interface paths {
           updatedAt?: parameters["rowFilter.shiftpattern.updatedAt"];
           cron?: parameters["rowFilter.shiftpattern.cron"];
           allowOneOffAllocations?: parameters["rowFilter.shiftpattern.allowOneOffAllocations"];
+          cronTimezone?: parameters["rowFilter.shiftpattern.cronTimezone"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -641,6 +642,7 @@ export interface paths {
           updatedAt?: parameters["rowFilter.shiftpattern.updatedAt"];
           cron?: parameters["rowFilter.shiftpattern.cron"];
           allowOneOffAllocations?: parameters["rowFilter.shiftpattern.allowOneOffAllocations"];
+          cronTimezone?: parameters["rowFilter.shiftpattern.cronTimezone"];
         };
         header: {
           /** Preference */
@@ -662,6 +664,7 @@ export interface paths {
           updatedAt?: parameters["rowFilter.shiftpattern.updatedAt"];
           cron?: parameters["rowFilter.shiftpattern.cron"];
           allowOneOffAllocations?: parameters["rowFilter.shiftpattern.allowOneOffAllocations"];
+          cronTimezone?: parameters["rowFilter.shiftpattern.cronTimezone"];
         };
         body: {
           /** shiftpattern */
@@ -1017,6 +1020,7 @@ export interface definitions {
     updatedAt: string;
     cron: string;
     allowOneOffAllocations: boolean;
+    cronTimezone: string;
   };
 }
 
@@ -1107,6 +1111,7 @@ export interface parameters {
   "rowFilter.shiftpattern.updatedAt": string;
   "rowFilter.shiftpattern.cron": string;
   "rowFilter.shiftpattern.allowOneOffAllocations": string;
+  "rowFilter.shiftpattern.cronTimezone": string;
 }
 
 export interface operations {}
