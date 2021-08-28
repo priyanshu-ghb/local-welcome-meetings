@@ -104,11 +104,7 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
             />
           )
         })}
-        {/* We only allow fill-ins on a one-out-one-in basis
-        because we don't want to encourage one-off signups.
-        If you wanted to allow one-off signups, then use:
-        `new Array(peopleStillRequired)` */}
-        {new Array(fillInsNeeded).fill(0).map((_, i) => (
+        {new Array(shiftPattern.allowOneOffAllocations ? peopleStillRequired : fillInsNeeded).fill(0).map((_, i) => (
           <ShiftAllocationEditor
             key={'vacant-fill-in-' + peopleStillRequired + i}
             shiftPattern={shiftPattern}

@@ -292,11 +292,12 @@ export function CreateShiftPattern () {
   const { room } = useRoom()
   const rota = useRota()
 
-  const defaultValues = {
+  const defaultValues: Omit<ShiftPattern, 'id' | 'updatedAt'> = {
     roomId: room?.id!,
     name: '',
     required_people: 2,
-    cron: '30 18 * * WED#1', 
+    cron: '30 18 * * WED#1',
+    allowOneOffAllocations: false
   }
 
   const { register, handleSubmit, watch, reset } = useForm({
@@ -319,24 +320,34 @@ export function CreateShiftPattern () {
         <div className="p-4 sm:p-5 bg-white">
           <h3 className='text-2xl mb-4 text-left'>Add a shift pattern</h3>
           <div className="grid grid-flow-row gap-2">
-            <div className="col-span-6 sm:col-span-3">
+            <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name of shift pattern</label>
               <input required type='text' {...register("name")} id='name' className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
             </div>
 
-            <div className="col-span-6 sm:col-span-3">
+            <div>
               <label htmlFor="required_people" className="block text-sm font-medium text-gray-700">Number of required people</label>
               <input required type="number" min={1} max={100} {...register("required_people")} id="required_people" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
             </div>
 
-            <div className="col-span-6 sm:col-span-3">
+            <div className="flex items-start">
+              <div className="flex items-center h-5">
+                <input id="allowOneOffAllocations" {...register("allowOneOffAllocations")} type="checkbox" className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded" />
+              </div>
+              <div className="ml-3 text-sm">
+                <label htmlFor="allowOneOffAllocations" className="font-medium text-gray-700">Allow one-off leader signups</label>
+                <p className="text-gray-500">When ticked, leaders can sign up for specific dates that are under-staffed. When unticked, leaders can only fill in when someone drops out of their regular shift.</p>
+              </div>
+            </div>
+
+            <div>
               <label htmlFor="cron" className="block text-sm font-medium text-gray-700">Chronological pattern</label>
               <input required type="text" {...register("cron", {
-                validate: value => !!cronRenderer.toString(value).length || "Not a valid cron string"
+                validate: value => !!value && (!!cronRenderer.toString(value).length || "Not a valid cron string")
               })} id="cron" className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
               <section className='space-y-2 p-3 bg-gray-50 rounded-lg'>
               <p>
-                <CronExplainer cron={cron} />
+                {cron && <CronExplainer cron={cron} />}
               </p>
               <p>
                 <a className='underline text-blue-500' href='https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#CronExpressions'>
@@ -345,6 +356,7 @@ export function CreateShiftPattern () {
               </p>
               </section>
             </div>
+
           </div>
         </div>
         <div className="px-4 py-3 bg-gray-50 text-right sm:px-5">
