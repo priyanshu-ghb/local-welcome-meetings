@@ -134,6 +134,10 @@ export function ShiftAllocationEditor(
         try {
           setDataState('loading')
           if (!date) {
+            if (shiftAllocation) {
+              // Delete this one as it's been replaced
+              await deleteShiftAllocation(shiftAllocation.id)
+            }
             // Add to the rota
             await rota.createShiftAllocation({
               shiftPatternId: shiftPattern.id,
