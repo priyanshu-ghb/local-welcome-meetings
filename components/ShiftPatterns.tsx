@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { ShiftPattern, ShiftAllocation, Profile, ShiftException, ShiftExceptionType } from '../types/app';
 import { useRoom } from '../data/room';
 import { deleteShiftAllocation, deleteShiftPattern, useRota, calculateShiftPatternStatus, deleteShiftException, createShiftException } from '../data/rota';
 import { useUser } from '../data/auth';
-import { DotsHorizontalIcon, EmojiHappyIcon, EmojiSadIcon } from '@heroicons/react/outline';
+import { XCircleIcon, LoginIcon, LogoutIcon, EmojiHappyIcon, EmojiSadIcon } from '@heroicons/react/outline';
 import { useCombobox, UseComboboxProps } from 'downshift';
 import { Transition } from '@headlessui/react';
 import cronRenderer from 'cronstrue'
@@ -14,6 +14,7 @@ import cx from 'classnames'
 import { isSameDay } from 'date-fns';
 import n from 'pluralize';
 import useId from '@accessible/use-id'
+import { UserAddIcon } from '@heroicons/react/solid';
 
 export function ShiftPatterns () {
   const rota = useRota()
@@ -53,11 +54,6 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
         <span>{justRight ? <EmojiHappyIcon className='w-[25px] h-[25px]' /> : <EmojiSadIcon className='w-[25px] h-[25px]' />}</span>
       </div>
       <div className='space-y-2 my-2'>
-        {/* {allocatedSlots.map((shiftAllocation, i) => (
-          <div key={i} className='shadow-sm rounded-lg p-3 hover:bg-gray-50 transition'>
-            {shiftAllocation.userId}
-          </div>
-        ))} */}
         {new Array(Math.max(shiftPattern.required_people, allocatedSlots.length)).fill(0).map((_, i) => {
           return (
             <ShiftAllocationEditor
@@ -82,10 +78,10 @@ export function ShiftPatternAllocations ({ shiftPattern }: { shiftPattern: Shift
 </div>
 */
 
-export const itemToString = (o: Profile | null) => o ? o.firstName ? `${o.firstName?.trim()} ${o.lastName?.trim() || ''}` : o.email : "Vacant slot"
+export const itemToString = (o: Profile | null) => o ? o.firstName ? `${o.firstName?.trim()} ${o.lastName?.trim() || ''}` : o.email : "Unfilled slot"
 
 export function ShiftAllocationEditor(
-  { shiftPattern, options, shiftAllocation, editable = true, date, shiftException: _shiftException, label, placeholder = 'Fill vacant slot' }:
+  { shiftPattern, options, shiftAllocation, editable = true, date, shiftException: _shiftException, label, placeholder = 'Fill this slot (repeating dates)' }:
   { shiftPattern: ShiftPattern, options: Profile[], shiftAllocation?: ShiftAllocation, editable?: boolean, date?: Date, shiftException?: ShiftException, label?: string, placeholder?: string }
 ) {
   const rota = useRota()
@@ -202,15 +198,24 @@ export function ShiftAllocationEditor(
 
   const id = useId(undefined, 'sp-input-')
 
+  const ref = useRef<HTMLDivElement & HTMLButtonElement>(null)
+
   return (
     <div className='relative'>
       <label htmlFor={id} className={cx(
-        'flex flex-row justify-between border rounded-lg p-2 hover:bg-gray-50 transition focus-within:outline-black',
+        'flex flex-row justify-start border rounded-lg p-2 hover:bg-gray-50 transition focus-within:outline-black',
         !selectedItem && 'border-dashed border-gray-400',
         selectedItem && 'bg-white shadow-sm'
-      )} {...getComboboxProps()}>
-        <Avatar profile={selectedItem} disabled={shiftException?.type === ShiftExceptionType.DropOut} />
-        <div className='px-2 flex flex-col justify-center items-start flex-grow-0 flex-shrink'>
+      )} {...getComboboxProps({ ref })} {...getToggleButtonProps({ ref })}>
+        {selectedItem && (
+          <span className='mr-1'>
+            <Avatar profile={selectedItem} disabled={shiftException?.type === ShiftExceptionType.DropOut} />
+          </span>
+        )}
+        <div className={cx(
+          'ml-1 flex flex-col justify-center items-start flex-grow-0 flex-shrink min-h-[43px] w-full',
+          editable && 'cursor-text'
+        )}>
           <input {...getInputProps()} id={id} disabled={!editable} placeholder={placeholder} className={cx(
             'w-full border-none rounded-md font-semibold bg-transparent outline-none',
             shiftException?.type === ShiftExceptionType.DropOut ? 'line-through text-gray-500' : 'text-gray-800 disabled:text-gray-800 !disabled:text-gray-800 disabled:text-gray-800!'
@@ -222,32 +227,26 @@ export function ShiftAllocationEditor(
           {label &&
             <div className='text-gray-500 text-xs uppercase font-semibold'>{label}</div>}
         </div>
-        {editable && <button
-          type="button"
-          {...getToggleButtonProps()}
-          aria-label="Show available staff"
-        >
-          <DotsHorizontalIcon className='w-4 h-4 text-gray-500' />
-        </button>}
-        <div className='flex flex-row justify-end space-x-2 items-center w-1/4 flex-shrink-0'>
+        <div className='pl-2 ml-auto flex flex-row justify-end space-x-2 items-center flex-shrink-0'>
+          {!selectedItem && <UserAddIcon className='w-[25px] h-25px] inline-block text-gray-500' />}
           {shiftException?.type === ShiftExceptionType.DropOut && (
             <div onClick={removeException} className='button p-1 uppercase text-xs'>
-              Back in
+              Back in <LoginIcon className='w-4 h-4 text-inherit inline ml-[3px]' />
             </div>
           )}
           {!!date && shiftException?.type === ShiftExceptionType.FillIn && (
             <div onClick={removeException} className='button p-1 uppercase text-xs'>
-              Cancel
+              Remove <XCircleIcon className='w-4 h-4 text-inherit inline ml-[3px]' />
             </div>
           )}
           {!!date && !!shiftAllocation && !shiftException && (
             <div onClick={dropOut} className='button p-1 uppercase text-xs'>
-              Drop out
+              Drop out <LogoutIcon className='w-4 h-4 text-inherit inline ml-[3px]' />
             </div>
           )}
           {shiftAllocation && editable && (
             <div onClick={deleteAllocation} className='button p-1 uppercase text-xs'>
-              Drop out
+              Remove <XCircleIcon className='w-4 h-4 text-inherit inline ml-[3px]' />
             </div>
           )}
         </div>
@@ -264,10 +263,10 @@ export function ShiftAllocationEditor(
         className='max-h-[50vh] overflow-y-auto space-y-1 border border-gray-400 rounded-lg p-1 shadow-md absolute top-[100%] z-50 w-full bg-white'
       >
         {!inputItems.length && (
-          <span className='flex flex-row justify-start items-center p-1 rounded-lg'>
+          <div className='flex flex-row justify-start items-center px-3 pt-1 rounded-lg'>
             <Avatar />
-            <span className='px-2 border-none rounded-md font-semibold'>0 leaders found</span>
-          </span>
+            <span className='border-none rounded-md font-semibold'>0 leaders found</span>
+          </div>
         )}
         <ul {...getMenuProps()}>
             {inputItems.map((item, index) => (
@@ -280,7 +279,7 @@ export function ShiftAllocationEditor(
                 {...getItemProps({ item, index })}
               >
                 <Avatar profile={item} />
-                <span className='px-2 border-none rounded-md font-semibold'>{itemToString(item)}</span>
+                <span className='px-2 border-none rounded-md font-semibold cursor-default'>{itemToString(item)}</span>
               </li>
             ))}
         </ul>

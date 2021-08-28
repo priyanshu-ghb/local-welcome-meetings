@@ -104,7 +104,7 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
               shiftException={se}
               editable={false}
               date={date}
-              placeholder={'Add temporary cover'}
+              placeholder={'Fill this slot (just this date)'}
             />
           )
         })}
@@ -118,7 +118,7 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
             shiftPattern={shiftPattern}
             options={rota.roomLeaders}
             date={date}
-            placeholder={'Add temporary cover'}
+            placeholder={'Fill this slot (just this date)'}
           />
         ))}
       </section>
