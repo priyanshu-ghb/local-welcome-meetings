@@ -219,7 +219,7 @@ export function ShiftAllocationEditor(
         <div {...getComboboxProps()} className={'w-full flex flex-row justify-start'}>
           <button {...getToggleButtonProps()} className={cx(
             'text-left w-full inline-flex flex-row justify-start border-0 outline-none bg-none hover:bg-none',
-            editable ? 'cursor-text' : 'cursor-default'
+            editable ? 'cursor-text' : 'cursor-pointer'
           )}>
             {selectedItem && (
               <span className='mr-1'>
@@ -297,7 +297,7 @@ export function ShiftAllocationEditor(
                 {...getItemProps({ item, index })}
               >
                 <Avatar profile={item} />
-                <span className='px-2 border-none rounded-md font-semibold cursor-default'>{itemToString(item)}</span>
+                <span className='px-2 border-none rounded-md font-semibold cursor-pointer'>{itemToString(item)}</span>
               </li>
             ))}
         </ul>

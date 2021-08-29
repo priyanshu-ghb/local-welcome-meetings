@@ -1,17 +1,24 @@
 import { useRota, calculateSchedule, calculateShiftPatternStatus, ScheduledDate } from '../data/rota';
 import { format } from 'date-fns-tz';
-import { ShiftAllocationEditor } from './ShiftPatterns';
+import { ShiftAllocationEditor, Avatar, itemToString } from './ShiftPatterns';
 import { useMemo, useState } from 'react';
-import { ShiftExceptionType } from '../types/app';
+import { ShiftExceptionType, Profile } from '../types/app';
 import n from 'pluralize'
 import { Transition } from '@headlessui/react';
-import { ArrowCircleDownIcon } from '@heroicons/react/solid';
+import { CalendarIcon, ArrowCircleDownIcon } from '@heroicons/react/solid';
 import { isSameYear } from 'date-fns/esm';
-import { ExclamationCircleIcon } from '@heroicons/react/outline';
+import { ClipboardCopyIcon, ExclamationCircleIcon } from '@heroicons/react/outline';
 import { getTimezone } from '../utils/date';
+import { Dialog } from '@headlessui/react'
+import cx from 'classnames';
+import { useUser } from '../data/auth';
+import { UseComboboxProps, useCombobox } from 'downshift';
+import copy from 'copy-to-clipboard';
+import qs from 'query-string';
 
 export function ShiftSchedule () {
   const rota = useRota()
+  const user = useUser()
 
   const [maxDates, setMaxDates] = useState(4)
 
@@ -21,8 +28,10 @@ export function ShiftSchedule () {
     true
   ), [rota, maxDates])
 
+  const [subscribeToCalendar, setSubscribeToCalendar] = useState(false)
   return (
     <section className='space-y-5'>
+      <SubscribeToCalendarDialog open={subscribeToCalendar} onClose={() => setSubscribeToCalendar(false)} />
       {dates.filter((_, i) => i < maxDates).map((date, i) =>
         <Transition
           key={date.date+date.shiftPattern.id}
@@ -43,12 +52,44 @@ export function ShiftSchedule () {
           <DateManager date={date} />
         </Transition>
       )}
-      <div className='text-center'>
-        <button className='button mx-auto' onClick={() => setMaxDates(m => m+4)}>
-          Show more <ArrowCircleDownIcon className='w-4 h-4' />
+      <div className='text-center flex flex-col items-center justify-center space-y-2'>
+        <button className='button py-1 px-2' onClick={() => setMaxDates(m => m+4)}>
+          Show more <ArrowCircleDownIcon className='w-4 h-4 ml-1' />
+        </button>
+        <button className='button py-1 px-2' onClick={() => setSubscribeToCalendar(true)}>
+          Subscribe to calendar <CalendarIcon className='w-4 h-4 ml-1' />
         </button>
       </div>
     </section>
+  )
+}
+
+function SubscribeToCalendarDialog ({ open, onClose }: { open: boolean, onClose: () => void }) {
+  const user = useUser()
+  const calendarURL = typeof window !== 'undefined' ? qs.stringifyUrl({
+    url: new URL('/api/calendar', window.location.toString()).toString(),
+    query: { email: user.profile?.email }
+  }) : ''
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <Dialog.Overlay className='fixed top-0 left-0 w-full h-full bg-adhdPurple opacity-50' />
+
+      <div className="pointer-events-none fixed top-[10%] left-1/2 transform -translate-x-1/2 w-10/12 md:max-w-sm md:w-full z-50 inset-0 overflow-y-auto">
+        <div className='bg-white p-5 rounded-lg pointer-events-auto'>
+          <Dialog.Title className='text-lg font-bold'>Add session dates to your calendar</Dialog.Title>
+          <Dialog.Description className='space-y-2 my-2'>
+            <p>Copy this URL and subscribe to it in your calendar app, to keep track of the dates you are scheduled to attend.</p>
+            <input type='email' disabled value={calendarURL} className='w-full text-xs border-none rounded-lg bg-gray-100' />
+            <button className='button' onClick={() => copy(calendarURL)}>
+              Copy URL <ClipboardCopyIcon className='w-4 h-4 text-inherit inline ml-[3px]'/>
+            </button>
+          </Dialog.Description>
+
+          {/* <button className='button' onClick={onClose}>Close</button> */}
+        </div>
+      </div>
+    </Dialog>
   )
 }
 
