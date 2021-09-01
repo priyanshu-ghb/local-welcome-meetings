@@ -26,11 +26,8 @@ export function ShiftSchedule () {
     true
   ), [rota, maxDates])
 
-  const [subscribeToCalendar, setSubscribeToCalendar] = useState(false)
   return (
-    <section className='space-y-5'>
-      <SubscribeToCalendarDialog open={subscribeToCalendar} onClose={() => setSubscribeToCalendar(false)} />
-      {dates.filter((_, i) => i < maxDates).map((date, i) =>
+    <section className='space-y-5'>{dates.filter((_, i) => i < maxDates).map((date, i) =>
         <Transition
           key={date.date+date.shiftPattern.id}
           appear={true}
@@ -54,15 +51,12 @@ export function ShiftSchedule () {
         <button className='button py-1 px-2' onClick={() => setMaxDates(m => m+4)}>
           Show more <ArrowCircleDownIcon className='w-4 h-4 ml-1' />
         </button>
-        <button className='button py-1 px-2' onClick={() => setSubscribeToCalendar(true)}>
-          Subscribe to calendar <CalendarIcon className='w-4 h-4 ml-1' />
-        </button>
       </div>
     </section>
   )
 }
 
-function SubscribeToCalendarDialog ({ open, onClose }: { open: boolean, onClose: () => void }) {
+export function SubscribeToCalendarDialog ({ open, onClose }: { open: boolean, onClose: () => void }) {
   const user = useUser()
   const calendarURL = typeof window !== 'undefined' ? qs.stringifyUrl({
     url: new URL('/api/calendar', window.location.toString()).toString(),
@@ -83,8 +77,6 @@ function SubscribeToCalendarDialog ({ open, onClose }: { open: boolean, onClose:
               Copy URL <ClipboardCopyIcon className='w-4 h-4 text-inherit inline ml-[3px]'/>
             </button>
           </Dialog.Description>
-
-          {/* <button className='button' onClick={onClose}>Close</button> */}
         </div>
       </div>
     </Dialog>
@@ -116,7 +108,7 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
       {/* Details */}
       <section className='text-left flex-grow col-span-4 w-full space-y-2'>
         {spStatus.notEnough && (
-          <div className={`flex justify-between font-semibold uppercase w-full text-xs text-red-500`}>
+          <div className={`-mb-1 flex justify-between font-semibold uppercase w-full text-xs text-red-500`}>
             <span className='align-middle'>
               {n('more regulars', allocationsRequired, true)} needed - {shiftPattern.name} rota
             </span>
@@ -150,7 +142,7 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
           )
         })}
         {(shiftPattern.allowOneOffAllocations ? peopleStillRequired : fillInsNeeded) > 0 && (
-          <div className='text-red-500 text-xs font-semibold uppercase flex justify-between'>
+          <div className='!-mb-1 text-red-500 text-xs font-semibold uppercase flex justify-between'>
             <span className='align-middle'>Temporary cover needed - this session</span>
             <ExclamationCircleIcon className='w-4 h-4 inline mr-1 align-middle' />
           </div>

@@ -9,9 +9,11 @@ import { CreateShiftPattern, ShiftPatterns } from '../../components/ShiftPattern
 import { ExternalLinkIcon } from '@heroicons/react/solid';
 import { Header } from '../../components/Layout';
 import { RotaContextProvider, useRota } from '../../data/rota';
-import { ShiftSchedule } from '../../components/ShiftSchedule';
-import { Tab } from '@headlessui/react'
+import { ShiftSchedule, SubscribeToCalendarDialog } from '../../components/ShiftSchedule';
+import { Disclosure, Tab } from '@headlessui/react'
 import { getUserFromHTTPRequest } from '../../data/leader-shared';
+import { CalendarIcon } from '@heroicons/react/outline';
+import { useState } from 'react';
 
 type IProps = {
   room: Room
@@ -30,11 +32,28 @@ const Route: NextPage<IProps> = ({ room }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className='bg-gray-100 min-h-screen w-screen'>
-        <Header isNarrow />
+        <Header />
         <main className='max-w-lg mx-auto p-4 sm:p-5 space-y-5 py-5'>
           <section>
-            <h2 className='text-sm font-bold text-adhdPurple mb-2 uppercase'>Meeting room</h2>
+            <h2 className='text-sm font-bold text-adhdPurple mb-2 uppercase'>
+              Meeting room
+            </h2>
             <RoomLink room={room} />
+          </section>
+          <section>
+            <h2 className='text-sm font-bold text-adhdPurple mb-2 uppercase'>
+              Your calendar
+            </h2>
+            <Disclosure>
+              {({ open, close }) => <>
+                <Disclosure.Button as='button' className="button">
+                  Subscribe to calendar <CalendarIcon className='w-4 h-4 ml-1' />
+                </Disclosure.Button>
+                <Disclosure.Panel>
+                  <SubscribeToCalendarDialog open={open} onClose={() => close()} />
+                </Disclosure.Panel>
+              </>}
+            </Disclosure>
           </section>
           <section>
             <RotaContextProvider>
