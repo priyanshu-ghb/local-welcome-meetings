@@ -1,7 +1,7 @@
-import { AuthChangeEvent, Session, User } from '@supabase/supabase-js';
+import { AuthChangeEvent, Session, User, SupabaseRealtimePayload } from '@supabase/supabase-js';
 import { useState, useEffect, useLayoutEffect, createContext } from 'react';
 import { supabase } from './supabase';
-import { Profile } from '../types/app';
+import { Profile, RoomPermission } from '../types/app';
 import { debounce } from 'lodash-es'
 import { useContext } from 'react';
 
@@ -11,6 +11,7 @@ interface IUserContext {
   session: Session | null;
   profile: Profile | null;
   signOut: () => void;
+  permissions: RoomPermission[]
 }
 
 export const UserContext = createContext<IUserContext>({
@@ -18,7 +19,8 @@ export const UserContext = createContext<IUserContext>({
   isLoggedIn: false,
   session: null,
   profile: null,
-  signOut: () => {}
+  signOut: () => {},
+  permissions: []
 })
 
 
@@ -49,10 +51,27 @@ export function getAuthCookie(event: AuthChangeEvent, session: Session | null) {
   }).then((res) => res.json())
 }
 
+export function subscribeToRoomPermissions (id: string, callback: (payload: SupabaseRealtimePayload<RoomPermission>) => void) {
+  const subscription = supabase
+    .from<RoomPermission>('roompermission')
+    .on('*', callback)
+    .subscribe()
+
+  return () => supabase.removeSubscription(subscription)
+}
+
+export function getRoomPermissions (profileId: string) {
+  return supabase
+    .from<RoomPermission>('roompermission')
+    .select('*')
+    .eq('profileId', profileId)
+}
+
 export function UserContextProvider (props: any) {
   const [session, setSession] = useState<Session | null>(supabase.auth.session())
   const [userProfile, setUserProfile] = useState<Profile | null>(null);
   const [user, setUser] = useState<User | null>(supabase.auth.user())
+  const [permissions, setRoomPermissions] = useState<RoomPermission[]>([])
 
   useEffect(function setupSubscriptions() {
     const profileSub = supabase
@@ -79,25 +98,41 @@ export function UserContextProvider (props: any) {
     }
   }, [user?.id])
 
-  async function getUserSessionData() {
-    const session = supabase.auth.session()
-    setSession(session)
-
-    const user = supabase.auth.user()
-    setUser(user)
-
-    if (user) {
-      await getAuthCookie('SIGNED_IN', session)
-      await updateUserPermissions()
-      const profile = await getUserProfile(user.id)
-      setUserProfile(profile)
-    } else {
-      await getAuthCookie('SIGNED_OUT', session)
-    }
+  async function updateRoomPermissions (profileId: string) {
+    const perms = await getRoomPermissions(profileId)
+    setRoomPermissions(perms.data || [])
   }
 
+  useEffect(() => {
+    if (!userProfile?.id) return () => {}
+
+    const unsubPermissions = subscribeToRoomPermissions(
+      userProfile.id,
+      () => userProfile?.id && updateRoomPermissions(userProfile.id)
+    )
+
+    return () => unsubPermissions?.()
+  }, [userProfile?.id])
+
   useLayoutEffect(() => {
-    getUserSessionData()
+    (async function getUserSessionData() {
+      const session = supabase.auth.session()
+      setSession(session)
+  
+      const user = supabase.auth.user()
+      setUser(user)
+  
+      if (user) {
+        await getAuthCookie('SIGNED_IN', session)
+        await updateUserPermissions()
+        const profile = await getUserProfile(user.id)
+        setUserProfile(profile)
+        if (!profile) return
+        updateRoomPermissions(profile.id)
+      } else {
+        await getAuthCookie('SIGNED_OUT', session)
+      }
+    })()
   }, [session, user?.id])
 
   useEffect(() => {
@@ -119,6 +154,7 @@ export function UserContextProvider (props: any) {
     setUser(null)
     setSession(null)
     setUserProfile(null)
+    setRoomPermissions([])
   }
 
   return <UserContext.Provider
@@ -127,7 +163,8 @@ export function UserContextProvider (props: any) {
       isLoggedIn: !!user,
       profile: userProfile,
       session,
-      signOut
+      signOut,
+      permissions
     }}
     {...props}
   />

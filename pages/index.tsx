@@ -1,7 +1,7 @@
 import type { NextPage, GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { getAllRooms } from '../data/room';
-import { Room } from '../types/app';
+import { Room, RoomPermissionType } from '../types/app';
 import RoomList from '../components/Rooms';
 import Auth from '../components/Auth';
 import { useUser } from '../data/auth';
@@ -14,7 +14,7 @@ type IProps = {
 type IQuery = {}
 
 const Home: NextPage<IProps> = ({ rooms }) => {
-  const { profile } = useUser()
+  const { profile, permissions } = useUser()
 
   return (
     <div className='bg-gray-100 min-h-screen w-screen'>
@@ -28,7 +28,9 @@ const Home: NextPage<IProps> = ({ rooms }) => {
 
       <main className='max-w-lg mx-auto py-5'>
         {!profile && <Auth />}
-        {profile && <RoomList rooms={rooms} />}
+        {profile && <RoomList rooms={rooms.filter(r => {
+          return profile.canManageShifts || permissions.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
+        })} />}
       </main>
     </div>
   )
