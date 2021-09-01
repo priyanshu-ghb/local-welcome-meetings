@@ -1,18 +1,16 @@
 import { useRota, calculateSchedule, calculateShiftPatternStatus, ScheduledDate } from '../data/rota';
 import { format } from 'date-fns-tz';
-import { ShiftAllocationEditor, Avatar, itemToString } from './ShiftPatterns';
+import { ShiftAllocationEditor } from './ShiftPatterns';
 import { useMemo, useState } from 'react';
-import { ShiftExceptionType, Profile } from '../types/app';
+import { ShiftExceptionType } from '../types/app';
 import n from 'pluralize'
 import { Transition } from '@headlessui/react';
 import { CalendarIcon, ArrowCircleDownIcon } from '@heroicons/react/solid';
 import { isSameYear } from 'date-fns/esm';
-import { ClipboardCopyIcon, ExclamationCircleIcon } from '@heroicons/react/outline';
+import { ClipboardCopyIcon, ExclamationCircleIcon, EmojiSadIcon } from '@heroicons/react/outline';
 import { getTimezone } from '../utils/date';
 import { Dialog } from '@headlessui/react'
-import cx from 'classnames';
 import { useUser } from '../data/auth';
-import { UseComboboxProps, useCombobox } from 'downshift';
 import copy from 'copy-to-clipboard';
 import qs from 'query-string';
 
@@ -118,11 +116,11 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
       {/* Details */}
       <section className='text-left flex-grow col-span-4 w-full space-y-2'>
         {spStatus.notEnough && (
-          <div className={`font-semibold uppercase w-full text-xs text-red-500`}>
-            <ExclamationCircleIcon className='w-4 h-4 inline mr-1 align-middle' />
+          <div className={`flex justify-between font-semibold uppercase w-full text-xs text-red-500`}>
             <span className='align-middle'>
               {n('more regulars', allocationsRequired, true)} needed - {shiftPattern.name} rota
             </span>
+            <EmojiSadIcon className='w-4 h-4 inline mr-1 align-middle' />
           </div>
         )}
         {shiftAllocations.map((sa) => {
@@ -151,10 +149,12 @@ function DateManager ({ date: { date, shiftPattern, shiftAllocations, shiftExcep
             />
           )
         })}
-        {(shiftPattern.allowOneOffAllocations ? peopleStillRequired : fillInsNeeded) > 0 && <div className='text-red-500 text-xs font-semibold uppercase'>
-          <ExclamationCircleIcon className='w-4 h-4 inline mr-1 align-middle' />
-          <span className='align-middle'>Temporary cover needed - this session</span>
-        </div>}
+        {(shiftPattern.allowOneOffAllocations ? peopleStillRequired : fillInsNeeded) > 0 && (
+          <div className='text-red-500 text-xs font-semibold uppercase flex justify-between'>
+            <span className='align-middle'>Temporary cover needed - this session</span>
+            <ExclamationCircleIcon className='w-4 h-4 inline mr-1 align-middle' />
+          </div>
+        )}
         {new Array(shiftPattern.allowOneOffAllocations ? peopleStillRequired : fillInsNeeded).fill(0).map((_, i) => (
           <ShiftAllocationEditor
             key={'vacant-fill-in-' + peopleStillRequired + i}

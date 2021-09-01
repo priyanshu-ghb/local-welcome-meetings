@@ -4,7 +4,6 @@ import { getAllRooms } from '../data/room';
 import { Room } from '../types/app';
 import RoomList from '../components/Rooms';
 import Auth from '../components/Auth';
-import { Logo } from '../components/Branding';
 import { useUser } from '../data/auth';
 import { Header } from '../components/Layout';
 
@@ -18,7 +17,7 @@ const Home: NextPage<IProps> = ({ rooms }) => {
   const { profile } = useUser()
 
   return (
-    <div className='bg-white min-h-screen text-adhdBlue'>
+    <div className='bg-gray-100 min-h-screen w-screen'>
       <Head>
         <title>ADHD Together</title>
         <meta name="description" content="Session rooms for ADHD Together" />
@@ -27,8 +26,9 @@ const Home: NextPage<IProps> = ({ rooms }) => {
 
       <Header />
 
-      <main className='max-w-3xl mx-auto py-5'>
-        {profile?.canLeadSessions && <RoomList rooms={rooms} />}
+      <main className='max-w-lg mx-auto py-5'>
+        {!profile && <Auth />}
+        {profile && <RoomList rooms={rooms} />}
       </main>
     </div>
   )
