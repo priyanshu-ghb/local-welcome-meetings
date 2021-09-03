@@ -30,7 +30,9 @@ export default function Auth() {
   if (isLoggedIn) {
     return (
       <div className='text-center'>
-        <span data-attr='auth-sign-out' className='bg-adhdDarkPurple hover:bg-adhdPurple p-2 px-3 rounded-lg cursor-pointer inline-block' onClick={() => signOut()}>Sign out</span>
+        <span data-attr='auth-sign-out' className='text-adhdBlue bg-adhdDarkPurple hover:bg-adhdPurple p-2 px-3 rounded-lg cursor-pointer inline-block' onClick={() => signOut()}>
+          Sign out
+        </span>
       </div>
     )
   }
