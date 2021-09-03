@@ -3,6 +3,11 @@ import { useUser } from '../data/auth';
 import { isWithinInterval, addSeconds } from 'date-fns';
 import qs from 'query-string';
 
+enum Options {
+  TRUE = 'on',
+  FALSE = 'off',
+}
+
 export function VideoCall () {
   const { user, isLoggedIn, profile, session } = useUser()
   const { room } = useRoom()
@@ -37,10 +42,17 @@ export function VideoCall () {
       src={qs.stringifyUrl({
         url: profile?.canLeadSessions ? room.wherebyHostRoomUrl : room.wherebyRoomUrl,
         query: {
-          logo: 'off',
-          precallReview: 'on',
-          personality: 'on',
-          background: 'off'
+          logo: Options.FALSE,
+          precallReview: Options.TRUE,
+          personality: Options.TRUE,
+          background: Options.FALSE,
+          screenshare: Options.TRUE,
+          chat: Options.TRUE,
+          people: Options.TRUE,
+          leaveButton: Options.FALSE,
+          pipButton: Options.FALSE,
+          breakout: Options.TRUE,
+          timer: Options.TRUE
         }
       })}
       allow="camera; microphone; fullscreen; speaker; display-capture"
