@@ -4,6 +4,8 @@ import { supabase } from './supabase';
 import { Profile, RoomPermission } from '../types/app';
 import { debounce } from 'lodash-es'
 import { useContext } from 'react';
+import { useCookies } from 'react-cookie';
+import { CookieSetOptions } from 'universal-cookie';
 
 interface IUserContext {
   user: User | null;
@@ -69,9 +71,18 @@ export function getRoomPermissions (profileId: string) {
 
 export function UserContextProvider (props: any) {
   const [session, setSession] = useState<Session | null>(supabase.auth.session())
-  const [userProfile, setUserProfile] = useState<Profile | null>(null);
+  const [cookies, setCookies, deleteCookies] = useCookies(['lwoProfile', 'lwoPermissions']);
+  const [userProfile, setUserProfile] = useState<Profile | null>(session?.user ? cookies['lwoProfile'] : null);
   const [user, setUser] = useState<User | null>(supabase.auth.user())
-  const [permissions, setRoomPermissions] = useState<RoomPermission[]>([])
+  const [permissions, setRoomPermissions] = useState<RoomPermission[]>(session?.user ? cookies['lwoPermissions'] : null)
+
+  useEffect(() => {
+    const cookieOptions: CookieSetOptions = { path: '/', secure: true, sameSite: 'strict' }
+    if (userProfile) setCookies('lwoProfile', JSON.stringify(userProfile), cookieOptions)
+    else deleteCookies('lwoProfile', cookieOptions)
+    if (permissions) setCookies('lwoPermissions', JSON.stringify(permissions), cookieOptions)
+    else deleteCookies('lwoPermissions', cookieOptions)
+  }, [setCookies, deleteCookies, userProfile, permissions])
 
   useEffect(function setupSubscriptions() {
     const profileSub = supabase

@@ -27,8 +27,8 @@ const Home: NextPage<IProps> = ({ rooms }) => {
       <Header />
 
       <main className='max-w-lg mx-auto py-5'>
-        {!profile && <Auth />}
-        {profile && <RoomList rooms={rooms.filter(r => {
+        {!profile && <Auth key='auth' />}
+        {profile && <RoomList key='rooms' rooms={rooms.filter(r => {
           return profile.canManageShifts || permissions.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
         })} />}
       </main>
