@@ -15,12 +15,12 @@ export function VideoCall () {
   if (!room) return <div />
 
   const startSession = async () => {
-    if (user && isLoggedIn && profile?.canLeadSessions) {
+    if (!!session && profile?.canLeadSessions) {
       await fetch('/api/whereby', {
         method: 'POST',
         body: JSON.stringify({
           roomSlug: room.slug,
-          token: session?.access_token
+          token: session.access_token
         })
       })
     }

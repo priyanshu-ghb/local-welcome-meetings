@@ -171,7 +171,7 @@ export function UserContextProvider (props: any) {
   return <UserContext.Provider
     value={{
       user,
-      isLoggedIn: !!user,
+      isLoggedIn: !!user && !!session,
       profile: userProfile,
       session,
       signOut,
