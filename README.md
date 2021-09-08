@@ -12,6 +12,15 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ### Magic link sign-in
 ![Session call view](public/screenshots/signin.png)
 
+### Scheduling
+TODO:
+
+### Calendar
+TODO:
+
+### Ical subscription URL
+TODO:
+
 ## Getting Started
 
 First, copy the `.env.template` file to `.env.local`, and fill in the gaps.
