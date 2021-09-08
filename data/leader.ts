@@ -6,6 +6,8 @@ import { NextApiRequestCookies } from 'next/dist/server/api-utils';
 import { ScheduledDate, nextDateForProfile, calculateSchedule } from './rota';
 import { sortedUniqBy } from 'lodash';
 import assert from 'assert';
+import { getAllRooms } from './room';
+import { asyncSome } from '../utils/array';
 
 export type UpsertProfile = Pick<Profile, 'email'> & Partial<Profile>
 
@@ -74,7 +76,11 @@ export async function isValidLeaderEmail (email: string): Promise<boolean> {
   // Env
   if (
     !!isEmailInArbitraryList(email) ||
-    !!(await isEmailInHubspotList(email))
+    !!(await isEmailInHubspotList(email, env.get('HUBSPOT_LEADER_LIST_ID').required().asInt())) ||
+    asyncSome(await getAllRooms(), room => {
+      if (!room.hubspotLeaderListId) return Promise.resolve(false);
+      return isEmailInHubspotList(email, room.hubspotLeaderListId)
+    })
   ) {
     return true;
   }
@@ -93,9 +99,8 @@ function isEmailInArbitraryList(email: string): boolean {
   return false
 }
 
-async function isEmailInHubspotList (email: string): Promise<boolean> {
-  const HUBSPOT_LEADER_LIST_ID = env.get('HUBSPOT_LEADER_LIST_ID').required().asInt()
-  const { contacts } = await getHubspotContactsInList(HUBSPOT_LEADER_LIST_ID)
+async function isEmailInHubspotList (email: string, hubspotListId: string | number): Promise<boolean> {
+  const { contacts } = await getHubspotContactsInList(hubspotListId)
   if (contacts.some((contact) =>
       contact['identity-profiles'].some((profile) =>
         profile.identities.some((identity) =>
