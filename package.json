@@ -53,6 +53,7 @@
     "postcss-nested": "^5.0.6",
     "postgrest-syntax-builder": "^0.2.0",
     "posthog-js": "^1.12.6",
+    "promise": "^8.1.0",
     "query-string": "^7.0.1",
     "react": "17.0.2",
     "react-async-hook": "^3.6.2",

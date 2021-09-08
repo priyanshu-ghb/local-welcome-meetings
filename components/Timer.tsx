@@ -10,39 +10,20 @@ import { ShowFor } from './Elements';
 import { useMediaQuery, down, isServer } from '../styles/screens';
 import { getTimezone } from '../utils/date';
 import { Room } from '../types/app';
-import { getServerTimeOffset, getServerTime } from '../data/time';
+import { useServerTime } from '../data/time';
 import { Loading } from './Layout';
 
 export function Timer () {
   const { profile } = useUser()
   const { room, updateRoom } = useRoom()
-  const [serverTimeOffset, setServerTimeOffset] = useState<number>()
+  const serverTime = useServerTime()
 
-  useEffect(() => {
-    (async () => {
-      if (isServer) return
-      setServerTimeOffset(await getServerTimeOffset())
-    })();
-
-    const interval = setInterval(async () => {
-      if (isServer) return
-      setServerTimeOffset(await getServerTimeOffset())
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [])
-
-  const Now = useCallback(
-    (date?: Date | string) => getServerTime(new Date(date || new Date()), serverTimeOffset || 0)
-  , [serverTimeOffset])
-
-  if (!room || !serverTimeOffset) return <Loading />
+  if (!room || !serverTime.connectionEstablished) return <Loading />
 
   return <TimerComponent
     room={room}
     updateRoom={updateRoom}
     isControllable={!profile?.canLeadSessions}
-    Now={Now}
     durations={[
       { duration: 60, label: '1 min', className: 'text-xs text-opacity-80' },
       { duration: 90, label: '1:30', className: 'text-base font-bold' },
@@ -55,15 +36,14 @@ export function TimerComponent ({
   updateRoom,
   isControllable,
   room,
-  durations,
-  Now = () => new Date(),
+  durations
 }: {
   isControllable: boolean,
   updateRoom: IRoomContext['updateRoom'],
   room: Room,
-  durations: Array<{ duration: number, label: string, className?: string }>,
-  Now?: (date?: string | Date | undefined) => Date
+  durations: Array<{ duration: number, label: string, className?: string }>
 }) {  
+  const serverTime = useServerTime()
   const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
 
   const isPlaying = room?.timerState === 'playing'
@@ -71,9 +51,9 @@ export function TimerComponent ({
   const previousTimerState = usePrevious(room?.timerState)
   useEffect(() => {
     if (previousTimerState === 'playing' && room?.timerState !== 'playing') {
-      setTimerFinishedDate(Now())
+      setTimerFinishedDate(serverTime.getServerDate())
     }
-  }, [room?.timerState, previousTimerState, Now])
+  }, [room?.timerState, previousTimerState, serverTime])
 
   const isMobile = useMediaQuery(down('lg'))
 
@@ -90,18 +70,18 @@ export function TimerComponent ({
   const resetTimer = () => {
     updateRoom({
       timerState: 'stopped',
-      timerStartTime: zonedTimeToUtc(Now() as any, timezone) as any,
+      timerStartTime: serverTime.getServerDate() as any,
     })
   }
 
   const startTimer = (timerDuration?: number) => updateRoom({
     timerState: 'playing',
-    timerStartTime: zonedTimeToUtc(Now() as any, timezone) as any,
+    timerStartTime: serverTime.getServerDate() as any,
     timerDuration
   })
 
   const startDate = utcToZonedTime(new Date(room.timerStartTime), timezone)
-  const now = Now()
+  const now = serverTime.getServerDate()
   const endDate = addSeconds(startDate, room.timerDuration)
   const remainingSeconds = Math.abs(differenceInMilliseconds(
     now,
@@ -158,7 +138,7 @@ export function TimerComponent ({
           {isControllable ? (
             // Member views of timer
             !!isPlaying && !!remainingTime && !!elapsedTime ? ( 
-              <CurrentTime remainingTime={remainingTime} Now={Now} />
+              <CurrentTime remainingTime={remainingTime} />
             ) : !!timerFinishedDate ? (
               <ShowFor seconds={5}
                 // @ts-ignore
@@ -169,7 +149,7 @@ export function TimerComponent ({
                   </div>
                 }
                 then={
-                  <CurrentTime remainingTime={room.timerDuration} Now={Now} />
+                  <CurrentTime remainingTime={room.timerDuration} />
                 }
               />
             ) : null
@@ -178,7 +158,7 @@ export function TimerComponent ({
           <>  
               {isPlaying && !!remainingTime && !!elapsedTime && (
                 <>
-                  <CurrentTime remainingTime={remainingTime} Now={Now}  />
+                  <CurrentTime remainingTime={remainingTime}  />
                   <div data-attr='timer-stop-early' className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
                     Stop early
                   </div>
@@ -201,16 +181,17 @@ export function TimerComponent ({
   )
 }
 
-const CurrentTime = ({ remainingTime, Now = () => new Date(), }:{
-  remainingTime: number, Now?: (date?: string | Date | undefined) => Date
-}) => (
-  <div className='text-4xl' data-attr='timer-seconds-remaining'>
-    {format(
-      addSeconds(
-        startOfDay(Now()),
-        remainingTime
-      ),
-      'm:ss'
-    )}
-  </div>
-)
+const CurrentTime = ({ remainingTime }:{ remainingTime: number }) => {
+  const serverTime = useServerTime()
+  return (
+    <div className='text-4xl' data-attr='timer-seconds-remaining'>
+      {format(
+        addSeconds(
+          startOfDay(serverTime.getServerDate()),
+          remainingTime
+        ),
+        'm:ss'
+      )}
+    </div>
+  )
+}

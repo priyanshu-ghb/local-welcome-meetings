@@ -1,33 +1,55 @@
-import { utcToZonedTime } from 'date-fns-tz';
-import { getTimezone } from '../utils/date';
-import { logToDebug } from './debug';
-import { differenceInMilliseconds } from 'date-fns';
-import { isClient } from '../styles/screens';
+import { isServer } from '../styles/screens';
+import { create } from 'timesync/dist/timesync'
+import { useEffect, useRef, useState, createContext, useContext } from 'react';
 
-let t =0
+const initialContext = {
+  offset: 0,
+  createServerDate: (d: Date) => new Date(d.getTime() + 0),
+  getServerDate: () => new Date(),
+  connectionEstablished: false
+}
 
-export async function getServerTimeOffset() {
-  if (t === 0) logToDebug("client_browser_time", { time: new Date(), oldTime: new Date() });
-  const start = performance.now();
-  const res = await fetch((new URL('/api/time', process.env.NEXT_PUBLIC_BASEURL)).toString())
-  const { time } = await res.json()
-  const serverTime = utcToZonedTime(new Date(time), getTimezone())
-  const requestMilliseconds = performance.now() - start
-  if (t === 0) logToDebug("synchronised_time", { time: new Date(), newTime: new Date() });
-  const offset = differenceInMilliseconds(serverTime, new Date()) - requestMilliseconds
-  if (isClient) {
-    // @ts-ignore
-    window.serverTimeOffset = offset
+export type ITimeContext = typeof initialContext
+
+export const TimeContext = createContext(initialContext)
+
+export const TimeProvider = ({ children }: { children?: any }) => {
+  const ts = useRef<{
+    on(event: string, fn: (offset: number) =>void ): void,
+    now(): number,
+    destroy(): void
+  }>()
+
+  const [offset, setOffset] = useState(0)
+
+  const context: ITimeContext = {
+    offset,
+    getServerDate: () => new Date(ts.current?.now() || new Date()),
+    createServerDate: (date) => new Date(date.getTime() + offset),
+    connectionEstablished: ts.current?.now() !== undefined
   }
-  t++
-  return offset
+
+  useEffect(() => {
+    if (isServer) return
+
+    ts.current = create({
+      server: new URL('/api/time', window.location.toString()),
+      interval: 10000
+    });
+
+    // get notified on changes in the offset
+    ts.current?.on('change', function (offset) {
+      console.debug('offset from system time:', offset, 'ms');
+      console.debug('Current server time', context.getServerDate())
+      setOffset(offset)
+    })
+
+    return () => ts.current?.destroy()
+  }, [])
+
+  return <TimeContext.Provider value={context}>{children}</TimeContext.Provider>
 }
 
-export function getServerTime (date: Date, offset: number) {
-  return new Date(date.getTime() + offset)
-}
-
-if (isClient) {
-  // @ts-ignore
-  window.getServerTime = getServerTime
+export const useServerTime = () => {
+  return useContext(TimeContext)
 }
