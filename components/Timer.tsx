@@ -2,18 +2,46 @@ import { addSeconds, startOfDay, differenceInMilliseconds } from 'date-fns';
 import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { useUser } from '../data/auth';
-import { useRoom } from '../data/room';
+import { useRoom, updateRoom, IRoomContext } from '../data/room';
 import { theme } from 'twin.macro';
 import { useState, useEffect } from 'react';
 import { usePrevious } from '../utils/hooks';
 import { ShowFor } from './Elements';
 import { useMediaQuery, down } from '../styles/screens';
 import { getTimezone } from '../utils/date';
+import { Room } from '../types/app';
 
 export function Timer () {
-  const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
   const { profile } = useUser()
   const { room, updateRoom } = useRoom()
+
+  if (!room) return <div />
+
+  return <TimerComponent
+    room={room}
+    updateRoom={updateRoom}
+    isControllable={!profile?.canLeadSessions}
+    durations={[
+      { duration: 60, label: '1 min', className: 'text-xs text-opacity-80' },
+      { duration: 90, label: '1:30', className: 'text-base font-bold' },
+      { duration: 30, label: '30 secs', className: 'text-xs text-opacity-80' }
+    ]}
+  />
+}
+
+export function TimerComponent ({
+  updateRoom,
+  isControllable,
+  room,
+  durations
+}: {
+  isControllable: boolean,
+  updateRoom: IRoomContext['updateRoom'],
+  room: Room,
+  durations: Array<{ duration: number, label: string, className?: string }>
+}) {
+  const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
+
   const isPlaying = room?.timerState === 'playing'
 
   const previousTimerState = usePrevious(room?.timerState)
@@ -24,8 +52,6 @@ export function Timer () {
   }, [room?.timerState, previousTimerState])
 
   const isMobile = useMediaQuery(down('md'))
-
-  if (!room) return <div />
 
   const toggleTimer = () => {
     if (isPlaying) {
@@ -63,7 +89,7 @@ export function Timer () {
   }
 
   function sd (seconds: number, duration: number) {
-    return seconds / duration
+    return Math.min(1, Math.max(0, Math.abs(Math.min(duration, seconds) / duration)))
   }
 
   return (
@@ -105,10 +131,10 @@ export function Timer () {
         strokeWidth={20}
       >
         {({ remainingTime, elapsedTime }) => <span className='text-center'>
-          {!profile?.canLeadSessions ? (
+          {isControllable ? (
             // Member views of timer
-            !!remainingTime && !!elapsedTime ? ( 
-              <CurrentTime startDate={startOfDay(new Date())} remainingTime={remainingTime} />
+            !!isPlaying && !!remainingTime && !!elapsedTime ? ( 
+              <CurrentTime remainingTime={remainingTime} />
             ) : !!timerFinishedDate ? (
               <ShowFor seconds={5}
                 // @ts-ignore
@@ -119,7 +145,7 @@ export function Timer () {
                   </div>
                 }
                 then={
-                  <CurrentTime startDate={startOfDay(new Date())} remainingTime={room.timerDuration} />
+                  <CurrentTime remainingTime={room.timerDuration} />
                 }
               />
             ) : null
@@ -128,7 +154,7 @@ export function Timer () {
           <>  
               {isPlaying && !!remainingTime && !!elapsedTime && (
                 <>
-                  <CurrentTime startDate={startOfDay(new Date())} remainingTime={remainingTime} />
+                  <CurrentTime remainingTime={remainingTime} />
                   <div data-attr='timer-stop-early' className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
                     Stop early
                   </div>
@@ -136,11 +162,7 @@ export function Timer () {
               )}
               {!isPlaying && (
                 <div className='space-y-1'>
-                {[
-                  { duration: 60, label: '1 min', className: 'text-xs text-opacity-80' },
-                  { duration: 90, label: '1:30', className: 'text-base font-bold' },
-                  { duration: 30, label: '30 secs', className: 'text-xs text-opacity-80' }
-                ].map(({ duration, label, className }) => (
+                {durations.map(({ duration, label, className }) => (
                   <div data-attr={`timer-start-${duration}`} key={label} onClick={() => startTimer(duration)} className={`${className} uppercase font-semibold cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1`}>
                     {label}
                   </div>
@@ -155,8 +177,8 @@ export function Timer () {
   )
 }
 
-const CurrentTime = ({ startDate, remainingTime }: { startDate: Date, remainingTime: number }) => (
-  <div className='text-4xl'>
+const CurrentTime = ({ remainingTime }: { remainingTime: number }) => (
+  <div className='text-4xl' data-attr='timer-seconds-remaining'>
     {format(
       addSeconds(
         startOfDay(new Date()),

@@ -41,7 +41,7 @@ export function updateRoom (roomSlug: string, room: Partial<Room>) {
     .eq('slug', roomSlug)
 }
 
-interface IRoomContext {
+export interface IRoomContext {
   room: Room | null,
   slides: Page[],
   updateRoom: (room: Partial<Room>) => void
