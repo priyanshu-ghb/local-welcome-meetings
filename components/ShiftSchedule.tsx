@@ -13,6 +13,7 @@ import { Dialog } from '@headlessui/react'
 import { useUser } from '../data/auth';
 import copy from 'copy-to-clipboard';
 import qs from 'query-string';
+import { isClient } from '../styles/screens';
 
 export function ShiftSchedule () {
   const rota = useRota()
@@ -58,7 +59,7 @@ export function ShiftSchedule () {
 
 export function SubscribeToCalendarDialog ({ open, onClose }: { open: boolean, onClose: () => void }) {
   const user = useUser()
-  const calendarURL = typeof window !== 'undefined' ? qs.stringifyUrl({
+  const calendarURL = isClient ? qs.stringifyUrl({
     url: (new URL('/api/calendar', window.location.toString())).toString(),
     query: { email: user.profile?.email }
   }) : ''
