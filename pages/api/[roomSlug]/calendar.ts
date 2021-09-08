@@ -28,8 +28,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         end: addHours(new Date(date.date), 2),
         summary: `${room.name} ADHD Together session`,
         description: date.shiftPattern.name,
-        location: `https://session.adhdtogether.org.uk/${room.slug}`,
-        url: `https://session.adhdtogether.org.uk/${room.slug}`
+        location: `${process.env.NEXT_PUBLIC_BASEURL}/${room.slug}`,
+        url: `${process.env.NEXT_PUBLIC_BASEURL}/${room.slug}`
     })
   )
 

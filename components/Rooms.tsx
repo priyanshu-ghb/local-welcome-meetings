@@ -9,7 +9,7 @@ export default function RoomList({ rooms }: { rooms: Room[] }) {
   return (
     <section className="space-y-4 divide-y divide-gray-200">
       {rooms.map((room) => {
-        const baseurl = "https://session.adhdtogether.org.uk"
+        const baseurl = process.env.NEXT_PUBLIC_BASEURL
         const path = `/${room.slug}`
         const url = baseurl+path
         return (

@@ -100,7 +100,7 @@ export function RoomLink ({ room }: { room: Room }) {
     <div className='flex flex-row justify-between text-adhdBlue cursor-pointer bg-adhdPurple hover:bg-adhdDarkPurple transition rounded-lg p-3'>
       <div>
         <div className='text-lg font-semibold'>ADHD Together {room.name}</div>
-        <div className='underline opacity-80 text-sm'>session.adhdtogether.org.uk/{room.slug}</div>
+        <div className='underline opacity-80 text-sm'>{new URL('', process.env.NEXT_PUBLIC_BASEURL).hostname}/{room.slug}</div>
       </div>
       <ExternalLinkIcon className='w-5 h-5' />
     </div>

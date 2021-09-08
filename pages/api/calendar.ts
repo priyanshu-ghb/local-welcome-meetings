@@ -43,8 +43,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         description: date.isFillingIn
           ? `Filling in for someone on the ${date.shiftPattern?.name} rota.`
           : `This is a regularly scheduled date on the ${date.shiftPattern?.name} rota.`,
-        location: `https://session.adhdtogether.org.uk/${room?.slug || ''}`,
-        url: `https://session.adhdtogether.org.uk/${room?.slug || ''}`
+        location: `${process.env.NEXT_PUBLIC_BASEURL}/${room?.slug || ''}`,
+        url: `${process.env.NEXT_PUBLIC_BASEURL}/${room?.slug || ''}`
     })
   })
 
