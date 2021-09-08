@@ -12,8 +12,9 @@ export async function getServerTimeOffset() {
   const res = await fetch((new URL('/api/time', process.env.NEXT_PUBLIC_BASEURL)).toString())
   const { time } = await res.json()
   const serverTime = utcToZonedTime(new Date(time), getTimezone())
+  const requestMilliseconds = performance.now() - start
   if (t === 0) logToDebug("synchronised_time", { time: new Date(), newTime: new Date() });
-  const offset = differenceInMilliseconds(serverTime, new Date()) - ((performance.now() - start))
+  const offset = differenceInMilliseconds(serverTime, new Date()) - requestMilliseconds
   if (isClient) {
     // @ts-ignore
     window.serverTimeOffset = offset
