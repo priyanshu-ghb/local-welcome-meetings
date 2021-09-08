@@ -9,7 +9,7 @@
     "lint": "next lint",
     "start:local": "PORT=4000 node ./server-local-https.js",
     "test": "jest --watch",
-    "test:ci": "jest --ci",
+    "test:ci": "jest --ci"
   },
   "dependencies": {
     "@accessible/use-id": "^1.1.2",
