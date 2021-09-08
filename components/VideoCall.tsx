@@ -9,7 +9,7 @@ enum Options {
 }
 
 export function VideoCall () {
-  const { user, isLoggedIn, profile, session } = useUser()
+  const { profile, session } = useUser()
   const { room } = useRoom()
 
   if (!room) return <div />
