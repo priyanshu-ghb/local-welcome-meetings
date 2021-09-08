@@ -1,14 +1,28 @@
-import MockDate from 'mockdate'
 import { utcToZonedTime } from 'date-fns-tz';
 import { getTimezone } from '../utils/date';
 import { logToDebug } from './debug';
+import { differenceInMilliseconds } from 'date-fns';
+import { isClient } from '../styles/screens';
 
-export async function synchroniseTimeToServer() {
+export async function getServerTimeOffset() {
   logToDebug("client_browser_time", { time: new Date(), oldTime: new Date() });
   const res = await fetch((new URL('/api/time', process.env.NEXT_PUBLIC_BASEURL)).toString())
   const { time } = await res.json()
   const serverTime = utcToZonedTime(new Date(time), getTimezone())
-  MockDate.set(serverTime)
   logToDebug("synchronised_time", { time: new Date(), newTime: new Date() });
-  return new Date()
+  const offset = differenceInMilliseconds(serverTime, new Date())
+  if (isClient) {
+    // @ts-ignore
+    window.serverTimeOffset = offset
+  }
+  return offset
+}
+
+export function getServerTime (date: Date, offset: number) {
+  return new Date(date.getTime() + offset)
+}
+
+if (isClient) {
+  // @ts-ignore
+  window.getServerTime = getServerTime
 }
