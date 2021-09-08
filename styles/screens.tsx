@@ -55,7 +55,7 @@ const parseQueryString = (query: string) => {
 
 export const useMediaQuery = (query: string, defaultState = false) => {
   const parseAndMatch = (s: string) => getMatch(parseQueryString(s));
-  const [state, setState] = useState(isClient ? () => parseAndMatch(query).matches : defaultState);
+  const [state, setState] = useState(isClient ? () => parseAndMatch(query)?.matches ?? [] : defaultState);
 
   useEffect(() => {
     let mounted = true;
@@ -63,24 +63,26 @@ export const useMediaQuery = (query: string, defaultState = false) => {
 
     const onChange = () => {
       if (!mounted) return;
-      setState(!!mql.matches);
+      setState(!!mql?.matches);
     };
 
-    if (mql.addEventListener) {
-      mql.addEventListener("change", onChange);
+    if (mql?.addEventListener) {
+      mql?.addEventListener("change", onChange);
     } else {
-      mql.addListener(onChange); // iOS 13 and below
+      mql?.addListener(onChange); // iOS 13 and below
     }
 
-    setState(mql.matches);
+    if (mql?.matches) {
+      setState(mql.matches);
+    }
 
     return () => {
       mounted = false;
 
-      if (mql.removeEventListener) {
-        mql.removeEventListener("change", onChange);
+      if (mql?.removeEventListener) {
+        mql?.removeEventListener("change", onChange);
       } else {
-        mql.removeListener(onChange); // iOS 13 and below
+        mql?.removeListener(onChange); // iOS 13 and below
       }
     };
   }, [query]);
