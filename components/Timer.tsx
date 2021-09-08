@@ -83,10 +83,9 @@ export function TimerComponent ({
   const startDate = utcToZonedTime(new Date(room.timerStartTime), timezone)
   const now = serverTime.getServerDate()
   const endDate = addSeconds(startDate, room.timerDuration)
-  const remainingSeconds = Math.abs(differenceInMilliseconds(
-    now,
-    endDate,
-  ) / 1000)
+  const remainingSeconds = Math.max(0, differenceInMilliseconds(endDate, now)) / 1000
+
+  console.log({ startDate, now, endDate, remainingSeconds})
 
   function onTimerComplete () {
     resetTimer()
