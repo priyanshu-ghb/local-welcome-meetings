@@ -10,10 +10,25 @@ import { ShowFor } from './Elements';
 import { useMediaQuery, down } from '../styles/screens';
 import { getTimezone } from '../utils/date';
 import { Room } from '../types/app';
+import { synchroniseTimeToServer } from '../data/time';
+
+function useTime () {
+  const [time, setTime] = useState(new Date());
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date())
+    }, 250)
+  }, [])
+  return time
+}
 
 export function Timer () {
   const { profile } = useUser()
   const { room, updateRoom } = useRoom()
+
+  useEffect(() => {
+    synchroniseTimeToServer()
+  }, [])
 
   if (!room) return <div />
 
@@ -39,7 +54,7 @@ export function TimerComponent ({
   updateRoom: IRoomContext['updateRoom'],
   room: Room,
   durations: Array<{ duration: number, label: string, className?: string }>
-}) {
+}) {  
   const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
 
   const isPlaying = room?.timerState === 'playing'

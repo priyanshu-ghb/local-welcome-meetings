@@ -75,4 +75,4 @@ describe('Timer', () => {
     expect(screen.getByTestId('timer-seconds-remaining')).toBeInTheDocument()
     expect(screen.getByTestId('timer-seconds-remaining').textContent).toEqual('0:01')
   })
- })
+})
