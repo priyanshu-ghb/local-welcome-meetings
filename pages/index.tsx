@@ -5,7 +5,7 @@ import { Room, RoomPermissionType } from '../types/app';
 import RoomList from '../components/Rooms';
 import Auth from '../components/Auth';
 import { useUser } from '../data/auth';
-import { Header } from '../components/Layout';
+import { Header, Loading } from '../components/Layout';
 
 type IProps = {
   rooms: Room[]
@@ -26,9 +26,9 @@ const Home: NextPage<IProps> = ({ rooms }) => {
 
       <Header />
 
-      <main className='max-w-lg mx-auto py-5'>
+      <main className='max-w-lg mx-auto py-5 relative'>
         {!user && <Auth key='auth' />}
-        {!!user && !profile && <div className='text-center p-5'>Loading...</div>}
+        {!!user && !profile && <Loading />}
         {!!profile && <RoomList key='rooms' rooms={rooms.filter(r => {
           return profile.canManageShifts || permissions.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
         })} />}

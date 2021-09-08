@@ -10,4 +10,5 @@ export async function synchroniseTimeToServer() {
   const serverTime = utcToZonedTime(new Date(time), getTimezone())
   MockDate.set(serverTime)
   logToDebug("synchronised_time", { time: new Date(), newTime: new Date() });
+  return new Date()
 }

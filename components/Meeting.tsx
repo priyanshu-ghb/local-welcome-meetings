@@ -20,8 +20,8 @@ export const Meeting = () => {
         </section>
         <section className='md:max-h-screen md:flex flex-col justify-start md:overflow-hidden border-l-2 border-l-adhdDarkPurple'>
           <div className='border-b-2 border-b-adhdDarkPurple'>
-            <div className='p-4 flex flex-row items-center align-middle justify-around'>
-              <div className='inline-block'>
+            <div className='p-3 lg:p-4 flex flex-row items-center align-middle justify-around'>
+              <div className='inline-block relative'>
                 <Timer />
               </div>
               <header className='md:flex flex-col'>

@@ -11,26 +11,20 @@ import { useMediaQuery, down } from '../styles/screens';
 import { getTimezone } from '../utils/date';
 import { Room } from '../types/app';
 import { synchroniseTimeToServer } from '../data/time';
-
-function useTime () {
-  const [time, setTime] = useState(new Date());
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(new Date())
-    }, 250)
-  }, [])
-  return time
-}
+import { Loading } from './Layout';
 
 export function Timer () {
   const { profile } = useUser()
   const { room, updateRoom } = useRoom()
+  const [serverTime, setTime] = useState<Date>()
 
   useEffect(() => {
-    synchroniseTimeToServer()
+    (async () => {
+      setTime(await synchroniseTimeToServer())
+    })()
   }, [])
 
-  if (!room) return <div />
+  if (!room || !serverTime) return <Loading />
 
   return <TimerComponent
     room={room}
@@ -66,7 +60,7 @@ export function TimerComponent ({
     }
   }, [room?.timerState, previousTimerState])
 
-  const isMobile = useMediaQuery(down('md'))
+  const isMobile = useMediaQuery(down('lg'))
 
   const toggleTimer = () => {
     if (isPlaying) {

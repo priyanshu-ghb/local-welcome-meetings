@@ -24,3 +24,9 @@ export function Header () {
     </header>
   )
 }
+
+export function Loading () {
+  return <div className='flex flex-col justify-content items-center align-middle content-center text-center w-full absolute top-0 left-0 h-full'>
+    <div className='text-lg font-semibold'>Loading...</div>
+  </div>
+}

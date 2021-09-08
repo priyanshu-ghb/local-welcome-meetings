@@ -67,7 +67,7 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     }
   }
   
-  console.info("Room permissions and profiles updated OK")
+  // console.debug("Room permissions and profiles updated OK")
 
   res.status(200).end()
 }

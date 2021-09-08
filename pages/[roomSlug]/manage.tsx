@@ -7,7 +7,7 @@ import { getUserProfile, useUser } from '../../data/auth';
 import { strict as assert } from 'assert';
 import { CreateShiftPattern, ShiftPatterns } from '../../components/ShiftPatterns';
 import { ExternalLinkIcon } from '@heroicons/react/solid';
-import { Header } from '../../components/Layout';
+import { Header, Loading } from '../../components/Layout';
 import { RotaContextProvider, useRota } from '../../data/rota';
 import { ShiftSchedule, SubscribeToCalendarDialog } from '../../components/ShiftSchedule';
 import { Disclosure, Tab } from '@headlessui/react'
@@ -55,7 +55,7 @@ const Route: NextPage<IProps> = ({ room }) => {
               </>}
             </Disclosure>
           </section>
-          <section>
+          <section className='relative'>
             <RotaContextProvider>
               <ShiftManager />
             </RotaContextProvider>
@@ -71,7 +71,7 @@ function ShiftManager () {
   const { profile } = useUser()
 
   return !rota.roomLeaders.length ? (
-    <div>Loading rota...</div>
+    <Loading />
   ) : (
     <Tab.Group>
       <Tab.List className='w-full flex justify-evenly border-b-2 border-gray-200'>
