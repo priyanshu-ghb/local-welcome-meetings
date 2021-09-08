@@ -59,7 +59,7 @@ export function ShiftSchedule () {
 export function SubscribeToCalendarDialog ({ open, onClose }: { open: boolean, onClose: () => void }) {
   const user = useUser()
   const calendarURL = typeof window !== 'undefined' ? qs.stringifyUrl({
-    url: new URL('/api/calendar', window.location.toString()).toString(),
+    url: (new URL('/api/calendar', window.location.toString())).toString(),
     query: { email: user.profile?.email }
   }) : ''
 
