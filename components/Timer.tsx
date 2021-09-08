@@ -4,7 +4,7 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 import { useUser } from '../data/auth';
 import { useRoom, updateRoom, IRoomContext } from '../data/room';
 import { theme } from 'twin.macro';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { usePrevious } from '../utils/hooks';
 import { ShowFor } from './Elements';
 import { useMediaQuery, down } from '../styles/screens';
@@ -21,8 +21,18 @@ export function Timer () {
   useEffect(() => {
     (async () => {
       setServerTimeOffset(await getServerTimeOffset())
-    })()
+    })();
+
+    const interval = setInterval(async () => {
+      setServerTimeOffset(await getServerTimeOffset())
+    }, 5000)
+
+    return () => clearInterval(interval)
   }, [])
+
+  const Now = useCallback(
+    (date?: Date | string) => getServerTime(new Date(date || new Date()), serverTimeOffset || 0)
+  , [serverTimeOffset])
 
   if (!room || !serverTimeOffset) return <Loading />
 
@@ -30,7 +40,7 @@ export function Timer () {
     room={room}
     updateRoom={updateRoom}
     isControllable={!profile?.canLeadSessions}
-    Now={(date?: Date | string) => getServerTime(new Date(date || new Date()), serverTimeOffset)}
+    Now={Now}
     durations={[
       { duration: 60, label: '1 min', className: 'text-xs text-opacity-80' },
       { duration: 90, label: '1:30', className: 'text-base font-bold' },
@@ -50,7 +60,7 @@ export function TimerComponent ({
   updateRoom: IRoomContext['updateRoom'],
   room: Room,
   durations: Array<{ duration: number, label: string, className?: string }>,
-  Now?: (...args: any) => Date
+  Now?: (date?: string | Date | undefined) => Date
 }) {  
   const [timerFinishedDate, setTimerFinishedDate] = useState<Date | null>(null)
 
@@ -190,7 +200,7 @@ export function TimerComponent ({
 }
 
 const CurrentTime = ({ remainingTime, Now = () => new Date(), }:{
-  remainingTime: number, Now?: (...args: any) => Date
+  remainingTime: number, Now?: (date?: string | Date | undefined) => Date
 }) => (
   <div className='text-4xl' data-attr='timer-seconds-remaining'>
     {format(
