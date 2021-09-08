@@ -26,12 +26,14 @@ const Home: NextPage<IProps> = ({ rooms }) => {
 
       <Header />
 
-      <main className='max-w-lg mx-auto py-5 relative'>
-        {!user && <Auth key='auth' />}
+      <main className='max-w-lg mx-auto py-5 relative space-y-5'>
         {!!user && !profile && <Loading />}
-        {!!profile && <RoomList key='rooms' rooms={rooms.filter(r => {
-          return profile.canManageShifts || permissions.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
-        })} />}
+        <div>
+          {!!profile && <RoomList key='rooms' rooms={rooms.filter(r => {
+            return profile.canManageShifts || permissions.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
+          })} />}
+        </div>
+        <Auth key='auth' />
       </main>
     </div>
   )

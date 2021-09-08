@@ -7,7 +7,7 @@ import { theme } from 'twin.macro';
 import { useState, useEffect, useCallback } from 'react';
 import { usePrevious } from '../utils/hooks';
 import { ShowFor } from './Elements';
-import { useMediaQuery, down } from '../styles/screens';
+import { useMediaQuery, down, isServer } from '../styles/screens';
 import { getTimezone } from '../utils/date';
 import { Room } from '../types/app';
 import { getServerTimeOffset, getServerTime } from '../data/time';
@@ -20,10 +20,12 @@ export function Timer () {
 
   useEffect(() => {
     (async () => {
+      if (isServer) return
       setServerTimeOffset(await getServerTimeOffset())
     })();
 
     const interval = setInterval(async () => {
+      if (isServer) return
       setServerTimeOffset(await getServerTimeOffset())
     }, 5000)
 
