@@ -5,8 +5,8 @@ import { useMemo, useState } from 'react';
 import { ShiftExceptionType } from '../types/app';
 import n from 'pluralize'
 import { Transition } from '@headlessui/react';
-import { CalendarIcon, ArrowCircleDownIcon } from '@heroicons/react/solid';
-import { isSameYear } from 'date-fns/esm';
+import { ArrowCircleDownIcon } from '@heroicons/react/solid';
+import { isSameYear } from 'date-fns';
 import { ClipboardCopyIcon, ExclamationCircleIcon, EmojiSadIcon } from '@heroicons/react/outline';
 import { getTimezone } from '../utils/date';
 import { Dialog } from '@headlessui/react'
