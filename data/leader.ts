@@ -4,7 +4,7 @@ import { supabase } from './supabase';
 import { Profile, ShiftPattern, ShiftAllocation, ShiftException } from '../types/app';
 import { NextApiRequestCookies } from 'next/dist/server/api-utils';
 import { ScheduledDate, nextDateForProfile, calculateSchedule } from './rota';
-import { sortedUniqBy } from 'lodash-es';
+import { sortedUniqBy } from 'lodash';
 import assert from 'assert';
 
 export type UpsertProfile = Pick<Profile, 'email'> & Partial<Profile>

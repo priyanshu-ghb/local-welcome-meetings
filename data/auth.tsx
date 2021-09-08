@@ -2,7 +2,7 @@ import { AuthChangeEvent, Session, User, SupabaseRealtimePayload } from '@supaba
 import { useState, useEffect, useLayoutEffect, createContext } from 'react';
 import { supabase } from './supabase';
 import { Profile, RoomPermission } from '../types/app';
-import { debounce } from 'lodash-es'
+import { debounce } from 'lodash'
 import { useContext } from 'react';
 import { useCookies } from 'react-cookie';
 import { CookieSetOptions } from 'universal-cookie';
