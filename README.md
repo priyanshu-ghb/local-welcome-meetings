@@ -19,7 +19,7 @@ TODO:
 TODO:
 
 ### Ical subscription URL
-TODO:
+TODO:::
 
 ## Getting Started
 
