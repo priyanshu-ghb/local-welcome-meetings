@@ -62,6 +62,7 @@
     "react-hook-form": "^7.14.0",
     "swr": "^0.5.6",
     "tailwindcss": "^2.2.7",
+    "timesync": "^1.0.8",
     "twin.macro": "^2.7.0",
     "zod": "^3.7.3"
   },
