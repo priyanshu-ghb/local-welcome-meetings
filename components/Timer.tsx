@@ -146,7 +146,7 @@ export function TimerComponent ({
           {isControllable ? (
             // Member views of timer
             !!isPlaying && !!remainingTime && !!elapsedTime ? ( 
-              <CurrentTime remainingTime={remainingTime} />
+              <CurrentTime remainingTime={remainingTime} Now={Now} />
             ) : !!timerFinishedDate ? (
               <ShowFor seconds={5}
                 // @ts-ignore
@@ -157,7 +157,7 @@ export function TimerComponent ({
                   </div>
                 }
                 then={
-                  <CurrentTime remainingTime={room.timerDuration} />
+                  <CurrentTime remainingTime={room.timerDuration} Now={Now} />
                 }
               />
             ) : null
@@ -166,7 +166,7 @@ export function TimerComponent ({
           <>  
               {isPlaying && !!remainingTime && !!elapsedTime && (
                 <>
-                  <CurrentTime remainingTime={remainingTime} />
+                  <CurrentTime remainingTime={remainingTime} Now={Now}  />
                   <div data-attr='timer-stop-early' className='uppercase text-sm font-semibold mt-2 cursor-pointer text-adhdBlue hover:text-red-600 bg-adhdDarkPurple rounded-lg p-1' onClick={toggleTimer}>
                     Stop early
                   </div>
