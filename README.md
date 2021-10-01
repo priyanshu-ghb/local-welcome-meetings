@@ -23,7 +23,11 @@ TODO:::
 
 ## Getting Started
 
-First, copy the `.env.template` file to `.env.local`, and fill in the gaps.
+First, you will need to create accounts on hubspot and supabase, and add the relevant API keys / URLs to your project. To do this, copy the `.env.template` file to `.env.local`, and fill in the following fields:
+
+- `NEXT_PUBLIC_SUPABASE_API_KEY`
+- `NEXT_PUBLIC_SUPABASE_API_BASEURL`
+- `HUBSPOT_API_KEY`
 
 Then, run the development server:
 
