@@ -29,6 +29,8 @@ First, you will need to create accounts on hubspot and supabase, and add the rel
 - `NEXT_PUBLIC_SUPABASE_API_BASEURL`
 - `HUBSPOT_API_KEY`
 
+On Supabase, you should set up the database to have the correct tables by running the SQL contained in `tables.sql`.
+
 Then, run the development server:
 
 ```bash
