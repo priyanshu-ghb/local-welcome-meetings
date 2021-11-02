@@ -261,7 +261,7 @@ function ForgottenPassword({
         <h2 className="max-w-sm mx-auto text-2xl font-extrabold text-gray-900 leading-tight">
           Reset your password
         </h2>
-        <p className='text-gray-600'>You'll get an email with a link to reset it.</p>
+        <p className='text-gray-600'>You&apos;ll get an email with a link to reset it.</p>
       </header>
       <input
         type="email"
