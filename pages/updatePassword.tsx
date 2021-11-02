@@ -1,18 +1,19 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { Room } from '../types/app';
 import Auth from '../components/Auth';
 import { Logo } from '../components/Branding';
 import { useRouter } from 'next/dist/client/router';
+import {GetServerSideProps} from 'next';
+import assert from 'assert';
+import { getUserFromHTTPRequest } from '../data/leader-shared';
 
 type IProps = {}
 
-const Home: NextPage<IProps> = () => {
-  const router = useRouter();
+const Page: NextPage<IProps> = () => {
   return (
     <div className='bg-adhdPurple min-h-screen text-adhdBlue'>
       <Head>
-        <title>Leader sign in - ADHD Together</title>
+        <title>Update password - ADHD Together</title>
         <meta name="description" content="Session rooms for ADHD Together" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -21,10 +22,21 @@ const Home: NextPage<IProps> = () => {
         <header className='text-center'>
           <span className='inline-block'><Logo /></span>
         </header>
-        <Auth redirectTo={router.asPath} />
+        <Auth view='update_password' redirectTo={'/'} />
       </main>
     </div>
   )
 }
 
-export default Home
+export const getServerSideProps: GetServerSideProps<IProps, {}> = async ({ req, params }) => {
+  try {
+    const { user } = await getUserFromHTTPRequest(req)
+    assert(!!user, 'No user found in request')
+    return { props: {} }
+  } catch (e) {
+    console.error(e)
+    return { props: {}, redirect: { destination: '/user', permanent: false } }
+  }
+}
+
+export default Page

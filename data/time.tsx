@@ -39,8 +39,6 @@ export const TimeProvider = ({ children }: { children?: any }) => {
 
     // get notified on changes in the offset
     ts.current?.on('change', function (offset) {
-      console.debug('offset from system time:', offset, 'ms');
-      console.debug('Current server time', context.getServerDate())
       setOffset(offset)
     })
 

@@ -185,8 +185,16 @@ export function useUser () {
   return useContext(UserContext)
 }
 
-export async function sendMagicLink (email: string) {
-  return supabase.auth.signIn({ email })
+export async function login (email: string, password: string, redirectTo?: string) {
+  return supabase.auth.signIn({ email, password }, redirectTo ? { redirectTo } : undefined)
+}
+
+export async function resetPassword (email: string, redirectTo?: string) {
+  return supabase.auth.api.resetPasswordForEmail(email, redirectTo ? { redirectTo } : undefined)
+}
+
+export async function updatePassword (password: string) {
+  return supabase.auth.update({ password })
 }
 
 async function _updateUserPermissions () {
