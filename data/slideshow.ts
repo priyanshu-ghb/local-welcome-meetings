@@ -11,6 +11,12 @@ export async function getSlides (slideshowName: string) {
           select: {
             equals: slideshowName
           }
+        },
+        {
+          property: 'Archived',
+          checkbox: {
+            equals: false
+          }
         }
       ]
     },
