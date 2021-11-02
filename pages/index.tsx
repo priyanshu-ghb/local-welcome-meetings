@@ -34,6 +34,7 @@ const Home: NextPage<IProps> = ({ rooms }) => {
           {!!profile && <RoomList key='rooms' rooms={rooms.filter(r => {
             return profile.canManageShifts || permissions.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
           })} />}
+          {!profile && <Auth view='sign_in' redirectTo='/' />}
         </div>
       </main>
     </div>
