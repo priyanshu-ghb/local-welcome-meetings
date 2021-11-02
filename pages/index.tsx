@@ -6,6 +6,7 @@ import RoomList from '../components/Rooms';
 import Auth from '../components/Auth';
 import { useUser } from '../data/auth';
 import { Header, Loading } from '../components/Layout';
+import { useRouter } from 'next/dist/client/router';
 
 type IProps = {
   rooms: Room[]
@@ -15,6 +16,7 @@ type IQuery = {}
 
 const Home: NextPage<IProps> = ({ rooms }) => {
   const { user, profile, permissions } = useUser()
+  const router = useRouter()
 
   return (
     <div className='bg-gray-100 min-h-screen w-screen'>
@@ -33,7 +35,6 @@ const Home: NextPage<IProps> = ({ rooms }) => {
             return profile.canManageShifts || permissions.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
           })} />}
         </div>
-        <Auth key='auth' />
       </main>
     </div>
   )

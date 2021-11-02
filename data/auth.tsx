@@ -6,6 +6,7 @@ import { debounce } from 'lodash'
 import { useContext } from 'react';
 import { useCookies } from 'react-cookie';
 import { CookieSetOptions } from 'universal-cookie';
+import { useRouter } from 'next/dist/client/router';
 
 interface IUserContext {
   user: User | null;
@@ -75,6 +76,7 @@ export function UserContextProvider (props: any) {
   const [userProfile, setUserProfile] = useState<Profile | null>(session?.user ? cookies['lwoProfile'] : null);
   const [user, setUser] = useState<User | null>(supabase.auth.user())
   const [permissions, setRoomPermissions] = useState<RoomPermission[]>(session?.user ? cookies['lwoPermissions'] : null)
+  const router = useRouter()
 
   useEffect(() => {
     const cookieOptions: CookieSetOptions = { path: '/', secure: true, sameSite: 'strict' }
@@ -166,6 +168,7 @@ export function UserContextProvider (props: any) {
     setSession(null)
     setUserProfile(null)
     setRoomPermissions([])
+    router.push('/user')
   }
 
   return <UserContext.Provider
@@ -185,8 +188,16 @@ export function useUser () {
   return useContext(UserContext)
 }
 
-export async function sendMagicLink (email: string) {
-  return supabase.auth.signIn({ email })
+export async function login (email: string, password: string, redirectTo?: string) {
+  return supabase.auth.signIn({ email, password }, redirectTo ? { redirectTo } : undefined)
+}
+
+export async function resetPassword (email: string, redirectTo?: string) {
+  return supabase.auth.api.resetPasswordForEmail(email, redirectTo ? { redirectTo } : undefined)
+}
+
+export async function updatePassword (password: string) {
+  return supabase.auth.update({ password })
 }
 
 async function _updateUserPermissions () {

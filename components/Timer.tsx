@@ -85,8 +85,6 @@ export function TimerComponent ({
   const endDate = addSeconds(startDate, room.timerDuration)
   const remainingSeconds = Math.max(0, differenceInMilliseconds(endDate, now)) / 1000
 
-  console.log({ startDate, now, endDate, remainingSeconds})
-
   function onTimerComplete () {
     resetTimer()
   }
