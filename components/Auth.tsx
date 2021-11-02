@@ -200,7 +200,7 @@ function EmailAuth({
       )} */}
       {authView === VIEWS.SIGN_IN && (
         <button className='' onClick={() => { setAuthView(VIEWS.FORGOTTEN_PASSWORD) }} >
-          Forgot your password, or don't have one yet?
+          Forgot your password, or don&apos;t have one yet?
         </button>
       )}
       {/* {authView === VIEWS.SIGN_IN ? (
