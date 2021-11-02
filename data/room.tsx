@@ -70,7 +70,7 @@ export function RoomContextProvider ({
 
   const _updateRoom = async (room: Partial<Room>) => {
     const res = await updateRoom(slug, room)
-    if (res.body) {
+    if (res.body?.[0]) {
       setRoom(res.body[0])
     }
   }

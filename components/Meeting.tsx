@@ -5,6 +5,8 @@ import { Logo } from '../components/Branding';
 import { useUser } from '../data/auth';
 import { useRoom } from '../data/room';
 import Link from 'next/link';
+import { ErrorBoundary } from 'react-error-boundary'
+import { ErrorModal } from './ErrorModal';
 
 export const Meeting = () => {
   const { profile, isLoggedIn } = useUser()
@@ -15,9 +17,12 @@ export const Meeting = () => {
   return (
     <>
       <main className='md:grid md:grid-cols-3 w-screen md:h-screen md:overflow-hidden bg-adhdPurple text-adhdBlue'>
-        <section className='relative md:col-span-2 bg-adhdDarkPurple h-[550px] max-h-[66vh] md:h-full md:max-h-full'>
-          <VideoCall key={room.wherebyMeetingId} />
-        </section>
+        <ErrorBoundary fallbackRender={() => <div />}>
+          <section className='relative md:col-span-2 bg-adhdDarkPurple h-[550px] max-h-[66vh] md:h-full md:max-h-full'>
+            <VideoCall key={room.wherebyMeetingId} />
+          </section>
+        </ErrorBoundary>
+        <ErrorBoundary fallbackRender={() => <div />}>
         <section className='md:max-h-screen md:flex flex-col justify-start md:overflow-hidden border-l-2 border-l-adhdDarkPurple'>
           <div className='border-b-2 border-b-adhdDarkPurple'>
             <div className='p-3 lg:p-4 flex flex-row items-center align-middle justify-around'>
@@ -35,15 +40,18 @@ export const Meeting = () => {
               </header>
             </div>
           </div>
-          <section className='overflow-y-auto'>
-            {profile?.canLeadSessions && (
-              <div className='px-4 pt-4'>
-                <SlideshowControls />
-              </div>
-            )}
-            <Slideshow />
-          </section>
+          <ErrorBoundary fallbackRender={() => <div />}>
+            <section className='overflow-y-auto'>
+              {profile?.canLeadSessions && (
+                <div className='px-4 pt-4'>
+                  <SlideshowControls />
+                </div>
+              )}
+              <Slideshow />
+            </section>
+          </ErrorBoundary>
         </section>
+        </ErrorBoundary>
       </main>
     </>
   )
