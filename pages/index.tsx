@@ -16,7 +16,6 @@ type IQuery = {}
 
 const Home: NextPage<IProps> = ({ rooms }) => {
   const { user, profile, permissions } = useUser()
-  const router = useRouter()
 
   return (
     <div className='bg-gray-100 min-h-screen w-screen'>
@@ -31,8 +30,8 @@ const Home: NextPage<IProps> = ({ rooms }) => {
       <main className='max-w-lg mx-auto py-5 relative space-y-5'>
         {!!user && !profile && <Loading />}
         <div>
-          {!!profile && <RoomList key='rooms' rooms={rooms.filter(r => {
-            return profile.canManageShifts || permissions.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
+          {!!profile && <RoomList key='rooms' rooms={rooms?.filter(r => {
+            return profile?.canManageShifts || permissions?.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
           })} />}
           {!profile && <Auth view='sign_in' redirectTo='/' />}
         </div>
