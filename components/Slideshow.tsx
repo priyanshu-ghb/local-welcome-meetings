@@ -24,7 +24,7 @@ export function Slideshow() {
   }, [slides, room?.currentSlideIndex, safeSlideIndex])
 
   return (
-    <div className='prose'>
+    <div className='prose pb-4'>
       <section className='p-4'>
         {/* @ts-ignore */}
         <h2 className='!mt-0'>{currentSlide?.properties["Name"].title!.map(fragment => fragment.plain_text).join()}</h2>
@@ -53,7 +53,6 @@ export function Slideshow() {
           </div>}
         </Disclosure>
       </section>}
-      <div className='pt-4' />
     </div>
   )
 }
