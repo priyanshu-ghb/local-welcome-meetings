@@ -10,7 +10,7 @@ type IProps = {}
 const Home: NextPage<IProps> = () => {
   const router = useRouter();
   return (
-    <div className='bg-adhdPurple min-h-screen text-adhdBlue'>
+    <div className='bg-adhdPurple min-h-screen'>
       <Head>
         <title>Leader sign in - ADHD Together</title>
         <meta name="description" content="Session rooms for ADHD Together" />
@@ -21,7 +21,7 @@ const Home: NextPage<IProps> = () => {
         <header className='text-center'>
           <span className='inline-block'><Logo /></span>
         </header>
-        <Auth redirectTo={router.asPath} />
+        <Auth redirectTo={'/'} />
       </main>
     </div>
   )

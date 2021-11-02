@@ -35,7 +35,6 @@ const Home: NextPage<IProps> = ({ rooms }) => {
             return profile.canManageShifts || permissions.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
           })} />}
         </div>
-        <Auth key='auth' redirectTo={router.asPath} />
       </main>
     </div>
   )

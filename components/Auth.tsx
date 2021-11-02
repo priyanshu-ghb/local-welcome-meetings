@@ -1,5 +1,5 @@
 import { ClockIcon, LockClosedIcon } from '@heroicons/react/solid'
-import { login, resetPassword, useUser } from '../data/auth';
+import { login, resetPassword, updatePassword, useUser } from '../data/auth';
 import { useState, useEffect } from 'react';
 import { ShowFor } from './Elements';
 import { useForm } from 'react-hook-form';
@@ -26,24 +26,20 @@ const VIEWS: {
   UPDATE_PASSWORD: 'update_password',
 }
 
-export default function Auth({ view, redirectTo }: { view?: ViewType, redirectTo?: RedirectTo }) {
+export default function Auth({ view, redirectTo = '/' }: { view?: ViewType, redirectTo?: RedirectTo }) {
+  return (
+    <section className="flex items-center justify-center bg-white rounded-lg p-4 sm:p-5">
+      <div className="max-w-md w-full">
+        <AuthView view={view} redirectTo={redirectTo} />
+      </div>
+    </section>
+  )
+}
+
+export function AuthView({ view, redirectTo }: { view?: ViewType, redirectTo?: RedirectTo }) {
   const [authView, setAuthView] = useState<ViewType>(view || 'sign_in')
   const [defaultEmail, setDefaultEmail] = useState('')
   const [defaultPassword, setDefaultPassword] = useState('')
-  const [hasSent, setHasSent] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { isLoggedIn, signOut } = useUser()
-  const router = useRouter()
-
-  if (isLoggedIn) {
-    return (
-      <div className='text-center'>
-        <span data-attr='auth-sign-out' className='text-adhdBlue bg-adhdDarkPurple hover:bg-adhdPurple p-2 px-3 rounded-lg cursor-pointer inline-block' onClick={() => signOut()}>
-          Sign out
-        </span>
-      </div>
-    )
-  }
 
   switch (authView) {
     case 'sign_in':
@@ -58,7 +54,7 @@ export default function Auth({ view, redirectTo }: { view?: ViewType, redirectTo
           setDefaultEmail={setDefaultEmail}
           setDefaultPassword={setDefaultPassword}
           redirectTo={redirectTo}
-          // magicLink={magicLink}
+        // magicLink={magicLink}
         />
       )
     case 'forgotten_password':
@@ -102,6 +98,7 @@ function EmailAuth({
   redirectTo?: RedirectTo
   // magicLink?: boolean
 }) {
+  const router = useRouter()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -124,6 +121,7 @@ function EmailAuth({
             { redirectTo }
           )
           if (signInError) setError(signInError.message)
+          if (redirectTo) router.push(redirectTo)
           break
         case 'sign_up':
           const { error: signUpError, data: signUpData } =
@@ -155,42 +153,65 @@ function EmailAuth({
   }
 
   return (
-    <form id={id} onSubmit={handleSubmit(onSubmit)}>
+    <form id={id} onSubmit={handleSubmit(onSubmit)} className='space-y-2 flex flex-col'>
+      <header className='text-center space-y-2 pb-2'>
+        <h2 className="max-w-sm mx-auto text-2xl font-extrabold text-gray-900 leading-tight">
+          Sign in
+        </h2>
+        <p className='text-gray-600'>Use the same email address you receive ADHD Together reminders from.</p>
+      </header>
+      <label htmlFor="email" className="sr-only">
+        Your ADHD Together email address
+      </label>
       <input
+        type="email"
+        id='email'
+        className='input'
         autoComplete="email"
         defaultValue={email}
+        placeholder='Email address'
         {...register('email', { required: true })}
       />
       <input
+        className='input'
         type="password"
         defaultValue={password}
         autoComplete="current-password"
+        placeholder='Password'
         {...register('password', { required: true })}
       />
-      {authView === VIEWS.SIGN_IN && (
-        <button onClick={() => { setAuthView(VIEWS.FORGOTTEN_PASSWORD) }} >
-          Forgot your password?
-        </button>
-      )}
-      <button type="submit">
+      <button className='submit' type="submit">
         {loading ? "Loading..." : authView === VIEWS.SIGN_IN ? 'Sign in' : 'Sign up'}
       </button>
+      {message && !error &&  <ShowFor seconds={10000000}>
+        <div className='text-center text-adhdPurple bg-green-100 px-4 py-2 mt-2 rounded-lg'>
+          {message}
+        </div>
+      </ShowFor>}
+      {error && <ShowFor seconds={10000000}>
+        <div className='text-center text-adhdPurple bg-red-100 px-4 py-2 mt-2 rounded-lg'>
+          {error}
+        </div>
+      </ShowFor>}
       {/* {authView === VIEWS.SIGN_IN && magicLink && (
-        <button onClick={(e) => { setAuthView(VIEWS.MAGIC_LINK) }}>
+        <button className='button' onClick={(e) => { setAuthView(VIEWS.MAGIC_LINK) }}>
           Sign in with magic link
         </button>
       )} */}
-      {authView === VIEWS.SIGN_IN ? (
-        <button onClick={(e) => { handleViewChange(VIEWS.SIGN_UP) }}>
+      {authView === VIEWS.SIGN_IN && (
+        <button className='' onClick={() => { setAuthView(VIEWS.FORGOTTEN_PASSWORD) }} >
+          Forgot your password, or don't have one yet?
+        </button>
+      )}
+      {/* {authView === VIEWS.SIGN_IN ? (
+        <button className='' onClick={(e) => { handleViewChange(VIEWS.SIGN_UP) }}>
           Don&apos;t have an account? Sign up
         </button>
       ) : (
-        <button onClick={(e) => { handleViewChange(VIEWS.SIGN_IN) }}>
+        <button className='' onClick={(e) => { handleViewChange(VIEWS.SIGN_IN) }}>
           Do you have an account? Sign in
         </button>
-      )}
-      {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
+      )} */}
     </form>
   )
 }
@@ -235,27 +256,44 @@ function ForgottenPassword({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className='space-y-2 flex flex-col'>
+      <header className='text-center space-y-2 pb-2'>
+        <h2 className="max-w-sm mx-auto text-2xl font-extrabold text-gray-900 leading-tight">
+          Reset your password
+        </h2>
+        <p className='text-gray-600'>You'll get an email with a link to reset it.</p>
+      </header>
       <input
+        type="email"
+        className='input'
         autoComplete="email"
         defaultValue={email}
+        placeholder='Email address'
         {...register('email', { required: true })}
       />
-      <button type="submit">
+      <button className='submit' type="submit">
         {loading ? "Loading..." : 'Send reset password instructions'}
       </button>
+      {message && !error &&  <ShowFor seconds={10000000}>
+        <div className='text-center text-adhdPurple bg-green-100 px-4 py-2 mt-2 rounded-lg'>
+          {message}
+        </div>
+      </ShowFor>}
+      {error && <ShowFor seconds={10000000}>
+        <div className='text-center text-adhdPurple bg-red-100 px-4 py-2 mt-2 rounded-lg'>
+          {error}
+        </div>
+      </ShowFor>}
       <button onClick={(e) => { handleViewChange(VIEWS.SIGN_IN) }}>
         Go back to sign in
       </button>
-      {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
     </form>
   )
 }
 
 /////
 
-function UpdatePassword({}: {}) {
+function UpdatePassword({ }: {}) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -269,7 +307,7 @@ function UpdatePassword({}: {}) {
       setError('')
       setMessage('')
       setLoading(true)
-      const { error } = await resetPassword(password)
+      const { error } = await updatePassword(password)
       if (error) setError(error.message)
     } catch (e) {
       setError(String(e))
@@ -281,18 +319,36 @@ function UpdatePassword({}: {}) {
     }
   }
 
+  const user = useUser()
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className='space-y-2 flex flex-col'>
+      <header className='text-center space-y-2 pb-2'>
+        <h2 className="max-w-sm mx-auto text-2xl font-extrabold text-gray-900 leading-tight">
+          Update your password
+        </h2>
+      </header>
       <input
+        type='password'
+        className='input'
         autoComplete="password"
         defaultValue={password}
+        placeholder='Password'
         {...register('password', { required: true })}
       />
-      <button type="submit">
+      <button className='submit' type="submit">
         {loading ? "Loading..." : 'Update password'}
       </button>
-      {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
+      {message && !error && <ShowFor seconds={10000000}>
+        <div className='text-center text-adhdPurple bg-green-100 px-4 py-2 mt-2 rounded-lg'>
+          {message}
+        </div>
+      </ShowFor>}
+      {error && <ShowFor seconds={10000000}>
+        <div className='text-center text-adhdPurple bg-red-100 px-4 py-2 mt-2 rounded-lg'>
+          {error}
+        </div>
+      </ShowFor>}
     </form>
   )
 }
