@@ -42,12 +42,12 @@ export const Meeting = () => {
           </div>
           <ErrorBoundary fallbackRender={() => <div />}>
             <section className='overflow-y-auto'>
-              <div key='controls' className={`p-4 border-b-2 border-b-adhdDarkPurple ${!profile?.canLeadSessions && 'hidden'}`}>
-                <SlideshowControls />
-              </div>
-              <div key='slideshow'>
-                <Slideshow />
-              </div>
+              {profile?.canLeadSessions && (
+                <div className='px-4 pt-4'>
+                  <SlideshowControls />
+                </div>
+              )}
+              <Slideshow />
             </section>
           </ErrorBoundary>
         </section>
