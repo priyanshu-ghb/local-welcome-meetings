@@ -1,8 +1,8 @@
-import useSWR from 'swr';
 import { Menu, Transition } from '@headlessui/react';
 import { Fragment, Suspense } from 'react';
 import { SelectOption } from '@notionhq/client/build/src/api-types';
 import { CheckIcon } from '@heroicons/react/outline';
+import { useSlideshowOptions } from '../data/slideshow-client';
 
 export function SlideshowOptions ({
   menuButton, selectOption, currentOption }: {
@@ -27,7 +27,7 @@ export function SlideshowOptions ({
             <Suspense fallback={
               <Menu.Item>
                 <span
-                  className={`text-gray-900 group flex rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`} onClick={() => signOut(false)}>
+                  className={`text-gray-900 group flex rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`}>
                   Loading options...
                 </span>
               </Menu.Item>
@@ -46,7 +46,7 @@ function SlideshowMenuItems ({
   selectOption, currentOption }: {
   selectOption: (option: SelectOption) => void, currentOption?: string
 }) {
-  const slideshowOptions = useSWR(`/api/slideshowOptions`, { suspense: true })
+  const slideshowOptions = useSlideshowOptions()
 
   return <Fragment>
     {slideshowOptions.data?.slideshowOptions.map((option: any) => (

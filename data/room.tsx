@@ -23,6 +23,10 @@ export async function getRoomBySlug(slug: string) {
   return rooms.body?.[0] || null
 }
 
+export const createRoom = async (sp: Omit<Room, 'id' | 'updatedAt'>) => {
+  return await supabase.from<Room>('room').insert(sp)
+}
+
 /**
  * Trigger the subscription.
  * The returned function can be called to unsubscribe.
@@ -34,6 +38,30 @@ export async function getRoomBySlug(slug: string) {
     .subscribe()
 
   return () => supabase.removeSubscription(subscription)
+}
+
+export function subscribeToRooms (callback: (payload: SupabaseRealtimePayload<Room>) => void) {
+ const subscription = supabase
+   .from<Room>(`room`)
+   .on('*', callback)
+   .subscribe()
+
+ return () => supabase.removeSubscription(subscription)
+}
+
+export const useRooms = (defaultValue: Room[] = []) => {
+  const [rooms, setRooms] = useState<Room[]>(defaultValue)
+  useEffect(() => {
+    async function getRooms() {
+      setRooms(await getAllRooms())
+    }
+    if (!defaultValue) getRooms()
+    const unsubscribe = subscribeToRooms(async function onChange() {
+      setRooms(await getAllRooms())
+    })
+    return () => void unsubscribe()
+  }, [defaultValue])
+  return rooms
 }
 
 export function updateRoom (roomSlug: string, room: Partial<Room>) {

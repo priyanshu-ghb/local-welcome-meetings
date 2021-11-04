@@ -49,9 +49,7 @@ export default function Modal({ children, isOpen, setIsOpen }: { children: any, 
               leaveTo="opacity-0 scale-95"
             >
               <div className="inline-block w-full max-w-md my-4 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                <Suspense fallback={<div>Loading...</div>}>
-                  {children}
-                </Suspense>
+                {children}
               </div>
             </Transition.Child>
           </div>
