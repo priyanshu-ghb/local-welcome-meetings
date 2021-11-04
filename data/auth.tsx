@@ -1,5 +1,5 @@
 import { AuthChangeEvent, Session, User, SupabaseRealtimePayload } from '@supabase/supabase-js';
-import { useState, useEffect, useLayoutEffect, createContext } from 'react';
+import { useState, useEffect, createContext } from 'react';
 import { supabase } from './supabase';
 import { Profile, RoomPermission } from '../types/app';
 import { debounce } from 'lodash'
@@ -130,7 +130,7 @@ export function UserContextProvider ({ children, ...props }: any) {
     return () => unsubPermissions?.()
   }, [userProfile?.id])
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     (async function getUserSessionData() {
       const session = supabase.auth.session()
       setSession(session)
