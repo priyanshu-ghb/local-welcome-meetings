@@ -1,5 +1,5 @@
 export function logToDebug(eventName: string, data?: any) {
   console.debug(eventName, data)
   // @ts-ignore
-  posthog?.capture?.(eventName, data)
+  window?.posthog?.capture?.(eventName, data)
 }

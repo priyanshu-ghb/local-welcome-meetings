@@ -154,9 +154,9 @@ export function UserContextProvider ({ children, ...props }: any) {
   useEffect(() => {
     if (user?.email) {
       // @ts-ignore
-      posthog?.identify?.(user.id)
+      window?.posthog?.identify?.(user.id)
       // @ts-ignore
-      posthog?.people?.set?.({
+      window?.posthog?.people?.set?.({
         supabase_user_id: user.id,
         email: user.email,
         $email: user.email,
