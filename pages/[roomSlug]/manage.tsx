@@ -14,6 +14,7 @@ import { Disclosure, Tab } from '@headlessui/react'
 import { getUserFromHTTPRequest } from '../../data/leader-shared';
 import { CalendarIcon } from '@heroicons/react/outline';
 import { useState } from 'react';
+import Modal from '../../components/Modal';
 
 type IProps = {
   room: Room
@@ -69,6 +70,7 @@ const Route: NextPage<IProps> = ({ room }) => {
 function ShiftManager () {
   const rota = useRota()
   const { profile } = useUser()
+  const [modal, setModal] = useState(false)
 
   return !rota.roomLeaders.length ? (
     <Loading />
@@ -85,7 +87,12 @@ function ShiftManager () {
       <Tab.Panels>
         <Tab.Panel className='space-y-5 py-5'>
           <ShiftPatterns />
-          {profile?.canManageShifts && <CreateShiftPattern />}
+          {profile?.canManageShifts && (
+            <button className='button' onClick={() => setModal(true)}>Add shift pattern</button>
+          )}
+          <Modal isOpen={modal} setIsOpen={setModal}>
+            <CreateShiftPattern />
+          </Modal>
         </Tab.Panel>
         <Tab.Panel className='space-y-5 py-5'>
           <ShiftSchedule />
