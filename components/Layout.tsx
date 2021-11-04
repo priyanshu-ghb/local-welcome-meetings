@@ -10,13 +10,13 @@ import { LogoutIcon, PencilIcon } from '@heroicons/react/outline'
 
 export function Header() {
   const { room } = useRoom()
-  const { isLoggedIn, signOut } = useUser()
+  const { isLoggedIn, signOut, signIn } = useUser()
   const router = useRouter()
 
   return (
     <header className='bg-adhdPurple p-3 sm:p-4 text-adhdBlue'>
       <div className={`flex flex-row justify-between items-center max-w-md mx-auto`}>
-        <Link href='/' passHref>
+        <Link href='/'>
           <span className='inline-block cursor-pointer'><Logo /></span>
         </Link>
         <div className='space-x-4 text-right'>
@@ -48,7 +48,7 @@ export function Header() {
                           <span 
                           className={`${
                             active ? 'bg-adhdPurple text-white' : 'text-gray-900'
-                          } group flex rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`} onClick={signOut}>
+                          } group flex rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`} onClick={() => signOut(false)}>
                             <LogoutIcon className='w-4 mr-2' />
                             Sign out
                           </span>
@@ -56,13 +56,13 @@ export function Header() {
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          <Link href='/update-password' passHref><span 
+                          <MenuLink href='/update-password'><span 
                           className={`${
                             active ? 'bg-adhdPurple text-white' : 'text-gray-900'
                           }  group flex rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`}>
                             <PencilIcon className='w-4 mr-2' />
                             Change password
-                          </span></Link>
+                          </span></MenuLink>
                         )}
                       </Menu.Item>
                     </div>
@@ -71,7 +71,7 @@ export function Header() {
               </Fragment>
             )}</Menu>
           )}
-          {!isLoggedIn && <span className='cursor-pointer opacity-80 bg-adhdDarkPurple rounded-lg p-2' onClick={() => router.push('/user')}>Sign in</span>}
+          {!isLoggedIn && <span className='cursor-pointer opacity-80 bg-adhdDarkPurple rounded-lg p-2' onClick={signIn}>Sign in</span>}
         </div>
       </div>
     </header>
@@ -82,4 +82,13 @@ export function Loading() {
   return <div className='flex flex-col justify-content items-center align-middle content-center text-center w-full absolute top-0 left-0 h-full'>
     <div className='text-lg font-semibold'>Loading...</div>
   </div>
+}
+
+export function MenuLink(props: any) {
+  let { href, children, ...rest } = props
+  return (
+    <Link href={href}>
+      <a {...rest}>{children}</a>
+    </Link>
+  )
 }

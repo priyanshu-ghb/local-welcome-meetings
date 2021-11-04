@@ -7,13 +7,15 @@ import { useContext } from 'react';
 import { useCookies } from 'react-cookie';
 import { CookieSetOptions } from 'universal-cookie';
 import { useRouter } from 'next/dist/client/router';
+import AuthModal from '../components/AuthModal';
 
 interface IUserContext {
   user: User | null;
   isLoggedIn: boolean;
   session: Session | null;
   profile: Profile | null;
-  signOut: () => void;
+  signOut: (routing?: boolean) => void;
+  signIn: () => void;
   permissions: RoomPermission[]
 }
 
@@ -23,6 +25,7 @@ export const UserContext = createContext<IUserContext>({
   session: null,
   profile: null,
   signOut: () => {},
+  signIn: () => {},
   permissions: []
 })
 
@@ -70,7 +73,7 @@ export function getRoomPermissions (profileId: string) {
     .eq('profileId', profileId)
 }
 
-export function UserContextProvider (props: any) {
+export function UserContextProvider ({ children, ...props }: any) {
   const [session, setSession] = useState<Session | null>(supabase.auth.session())
   const [cookies, setCookies, deleteCookies] = useCookies(['lwoProfile', 'lwoPermissions']);
   const [userProfile, setUserProfile] = useState<Profile | null>(session?.user ? cookies['lwoProfile'] : null);
@@ -162,26 +165,37 @@ export function UserContextProvider (props: any) {
     }
   }, [user, userProfile])
 
-  function signOut () {
+  function signOut (routing = true) {
     supabase.auth.signOut()
     setUser(null)
     setSession(null)
     setUserProfile(null)
     setRoomPermissions([])
-    router.push('/user')
+    if (routing) router.push('/user')
   }
+
+  const isLoggedIn = !!user && !!session
+  const [isOpen, setIsOpen] = useState(false)
+  const signIn = () => setIsOpen(true)
+  useEffect(() => {
+    setIsOpen(false)
+  }, [isLoggedIn])
 
   return <UserContext.Provider
     value={{
       user,
-      isLoggedIn: !!user && !!session,
+      isLoggedIn,
       profile: userProfile,
       session,
       signOut,
+      signIn,
       permissions
     }}
     {...props}
-  />
+  >
+    {children}
+    <AuthModal {...{ isOpen, setIsOpen }} />
+  </UserContext.Provider>
 }
 
 export function useUser () {

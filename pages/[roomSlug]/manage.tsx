@@ -96,7 +96,7 @@ function ShiftManager () {
 }
 
 export function RoomLink ({ room }: { room: Room }) {
-  return <Link href={`/${room.slug}`} passHref>
+  return <Link href={`/${room.slug}`}>
     <div className='flex flex-row justify-between text-adhdBlue cursor-pointer bg-adhdPurple hover:bg-adhdDarkPurple transition rounded-lg p-3'>
       <div>
         <div className='text-lg font-semibold'>ADHD Together {room.name}</div>
