@@ -13,7 +13,7 @@ import { ShiftSchedule, SubscribeToCalendarDialog } from '../../components/Shift
 import { Disclosure, Tab } from '@headlessui/react'
 import { getUserFromHTTPRequest } from '../../data/leader-shared';
 import { CalendarIcon } from '@heroicons/react/outline';
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
 import Modal from '../../components/Modal';
 
 type IProps = {
@@ -87,12 +87,12 @@ function ShiftManager () {
       <Tab.Panels>
         <Tab.Panel className='space-y-5 py-5'>
           <ShiftPatterns />
-          {profile?.canManageShifts && (
+          {profile?.canManageShifts && <Fragment>
             <button className='button' onClick={() => setModal(true)}>Add shift pattern</button>
-          )}
-          <Modal isOpen={modal} setIsOpen={setModal}>
-            <CreateShiftPattern />
-          </Modal>
+            <Modal isOpen={modal} setIsOpen={setModal}>
+              <CreateShiftPattern />
+            </Modal>
+          </Fragment>}
         </Tab.Panel>
         <Tab.Panel className='space-y-5 py-5'>
           <ShiftSchedule />

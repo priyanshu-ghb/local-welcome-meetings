@@ -71,6 +71,13 @@ export function updateRoom (roomSlug: string, room: Partial<Room>) {
     .eq('slug', roomSlug)
 }
 
+export async function deleteRoom (id: string) {
+  return supabase
+    .from<Room>('room')
+    .delete()
+    .match({ id })
+}
+
 export interface IRoomContext {
   room: Room | null,
   slides: Page[],

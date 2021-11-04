@@ -6,8 +6,9 @@ import RoomList from '../components/Rooms';
 import Auth from '../components/Auth';
 import { useUser } from '../data/auth';
 import { Header, Loading } from '../components/Layout';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import CreateRoomModal from '../components/CreateRoom';
+import Link from 'next/link';
 
 type IProps = {
   rooms: Room[]
@@ -16,7 +17,7 @@ type IProps = {
 type IQuery = {}
 
 const Home: NextPage<IProps> = ({ rooms }) => {
-  const { user, isLoggedIn, profile, permissions } = useUser()
+  const { user, isLoggedIn, profile, permissions, signIn } = useUser()
   const [roomOpen, setRoomOpen] = useState(false)
   const _rooms = useRooms(rooms)
 
@@ -32,14 +33,16 @@ const Home: NextPage<IProps> = ({ rooms }) => {
 
       <main className='max-w-lg mx-auto py-5 relative space-y-5'>
         {!!user && !profile && <Loading />}
-        <div>
-          {!!(isLoggedIn && !!profile) && <RoomList key='rooms' rooms={_rooms?.filter(r => {
-            return profile?.canManageShifts || permissions?.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
-          })} />}
+        {isLoggedIn && profile?.canManageShifts && <Fragment>
           <button className='button' onClick={() => setRoomOpen(true)}>Create room</button>
           <CreateRoomModal isOpen={roomOpen} setIsOpen={setRoomOpen} />
-          {!isLoggedIn && <Auth view='sign_in' redirectTo='/' />}
-        </div>
+        </Fragment>}
+        {!!(isLoggedIn && !!profile) && <RoomList key='rooms' rooms={_rooms?.filter(r => {
+          return profile?.canManageShifts || permissions?.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
+        })} />}
+        {!isLoggedIn && <button onClick={signIn} className='button'>
+          Sign in to manage rooms
+        </button>}
       </main>
     </div>
   )
