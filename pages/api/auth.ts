@@ -9,4 +9,5 @@ function handler(req: NextApiRequest, res: NextApiResponse) {
   supabase.auth.api.setAuthCookie(req, res)
 }
 
+// @ts-ignore
 export default withSentry(handler)

@@ -37,4 +37,5 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   return calendar.serve(res, 'adhdtogether.ics')
 }
 
+// @ts-ignore
 export default withSentry(handler)
