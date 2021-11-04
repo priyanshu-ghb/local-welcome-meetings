@@ -84,22 +84,23 @@ function RoomOptions() {
         <Menu.Items className="min-w-[200px] text-black z-50 absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="px-1 py-1 ">
             {profile?.canLeadSessions && (
-              <Menu.Item>
-                {({ active }) => (
-                  <ErrorBoundary fallbackRender={() => <div>Error</div>}>
+              <ErrorBoundary fallbackRender={() => <div>Error</div>}>
+                <Menu.Item>
+                  {({ active }) => (
                     <SlideshowOptions
                       currentOption={room?.slideshowName}
                       selectOption={option => updateRoom({ slideshowName: option.name })}
                       menuButton={
-                        <Menu.Button className={`${active ? 'bg-adhdPurple text-white' : 'text-gray-900'} group flex w-full rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`}>
+                        <Menu.Button className={`${active ? 'bg-adhdPurple text-white' : 'text-gray-900'} hover:bg-adhdPurple hover:text-white group flex rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`}>
                           <CogIcon className='w-4 mr-2' />
-                          Change slideshow
+                          Choose slideshow
+                          {active}
                         </Menu.Button>
                       }
                     />
-                  </ErrorBoundary>
-                )}
-              </Menu.Item>
+                  )}
+                </Menu.Item>
+              </ErrorBoundary>
             )}
             {isLoggedIn ? <Fragment>
               <Menu.Item>
