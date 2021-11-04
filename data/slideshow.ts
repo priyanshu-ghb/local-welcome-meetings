@@ -30,3 +30,10 @@ export async function getSlides (slideshowName: string) {
 
   return slideshows.results || null
 }
+
+export async function getSlideshowOptions(): Promise<{ id: string, name: string }[]> {
+  const database_id = env.get('NOTION_SLIDESHOW_DATABASE_ID').required().asString()
+  const result = await notion.databases.retrieve({ database_id })
+  // @ts-ignore
+  return result.properties?.Slideshow?.select?.options
+}
