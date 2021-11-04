@@ -20,27 +20,27 @@ export const Meeting = () => {
   return (
     <>
       <main className='md:grid md:grid-cols-3 w-screen md:h-screen md:overflow-hidden bg-adhdPurple text-adhdBlue'>
-          <section className='relative md:col-span-2 bg-adhdDarkPurple h-[550px] max-h-[66vh] md:h-full md:max-h-full'>
-            <ErrorBoundary fallbackRender={() => <div>Error</div>}>
-              <VideoCall key={room.wherebyMeetingId} />
-            </ErrorBoundary>
-          </section>
+        <section className='relative md:col-span-2 bg-adhdDarkPurple h-[550px] max-h-[66vh] md:h-full md:max-h-full'>
+          <ErrorBoundary fallbackRender={() => <div>Error</div>}>
+            <VideoCall key={room.wherebyMeetingId} />
+          </ErrorBoundary>
+        </section>
         <ErrorBoundary fallbackRender={() => <div>Error</div>}>
-        <section className='md:max-h-screen md:flex flex-col justify-start md:overflow-hidden border-l-2 border-l-adhdDarkPurple'>
-          <div className='border-b-2 border-b-adhdDarkPurple'>
-            <div className='p-3 lg:p-4 flex flex-row items-center align-middle justify-around'>
-              <div className='inline-block relative'>
-                <Timer />
+          <section className='md:max-h-screen md:flex flex-col justify-start md:overflow-hidden border-l-2 border-l-adhdDarkPurple'>
+            <div className='border-b-2 border-b-adhdDarkPurple'>
+              <div className='p-3 lg:p-4 flex flex-row items-center align-middle justify-around'>
+                <div className='inline-block relative'>
+                  <Timer />
+                </div>
+                <header className='md:flex flex-col'>
+                  <span className='mx-[-6px]'><Logo /></span>
+                  <h1 className='text-lg'>{room.name}</h1>
+                </header>
               </div>
-              <header className='md:flex flex-col'>
-                <span className='mx-[-6px]'><Logo /></span>
-                <h1 className='text-lg'>{room.name}</h1>
-              </header>
             </div>
-          </div>
             <section className='overflow-y-auto'>
               <div key='controls' className={`flex flex-row justify-end p-4 space-x-2 border-b-2 border-b-adhdDarkPurple text-center`}>
-                <ErrorBoundary fallbackRender={() => <div>Error</div>}>
+                <ErrorBoundary fallbackRender={() => <div>Error</div>} onError={console.error}>
                   <SlideshowControls />
                   <RoomOptions />
                 </ErrorBoundary>
@@ -51,14 +51,14 @@ export const Meeting = () => {
                 </ErrorBoundary>
               </div>
             </section>
-        </section>
+          </section>
         </ErrorBoundary>
       </main>
     </>
   )
 }
 
-function RoomOptions () {
+function RoomOptions() {
   const { profile, isLoggedIn, signOut, signIn } = useUser()
   const { room, updateRoom } = useRoom()
 
@@ -86,24 +86,26 @@ function RoomOptions () {
             {profile?.canLeadSessions && (
               <Menu.Item>
                 {({ active }) => (
-                  <SlideshowOptions
-                    currentOption={room?.slideshowName}
-                    selectOption={option => updateRoom({ slideshowName: option.name })}
-                    menuButton={
-                      <Menu.Button className={`${active ? 'bg-adhdPurple text-white' : 'text-gray-900'} group flex w-full rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`}>
-                        <CogIcon className='w-4 mr-2' />
-                        Change slideshow
-                      </Menu.Button>
-                    }
-                  />
+                  <ErrorBoundary fallbackRender={() => <div>Error</div>}>
+                    <SlideshowOptions
+                      currentOption={room?.slideshowName}
+                      selectOption={option => updateRoom({ slideshowName: option.name })}
+                      menuButton={
+                        <Menu.Button className={`${active ? 'bg-adhdPurple text-white' : 'text-gray-900'} group flex w-full rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`}>
+                          <CogIcon className='w-4 mr-2' />
+                          Change slideshow
+                        </Menu.Button>
+                      }
+                    />
+                  </ErrorBoundary>
                 )}
               </Menu.Item>
             )}
             {isLoggedIn ? <Fragment>
               <Menu.Item>
                 {({ active }) => (
-                  <span 
-                  className={`${active ? 'bg-adhdPurple text-white' : 'text-gray-900'} group flex rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`} onClick={() => signOut(false)}>
+                  <span
+                    className={`${active ? 'bg-adhdPurple text-white' : 'text-gray-900'} group flex rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`} onClick={() => signOut(false)}>
                     <LogoutIcon className='w-4 mr-2' />
                     Sign out
                   </span>
@@ -111,8 +113,8 @@ function RoomOptions () {
               </Menu.Item>
               <Menu.Item>
                 {({ active }) => (
-                  <MenuLink href='/update-password'><span 
-                  className={`${active ? 'bg-adhdPurple text-white' : 'text-gray-900'}  group flex rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`}>
+                  <MenuLink href='/update-password'><span
+                    className={`${active ? 'bg-adhdPurple text-white' : 'text-gray-900'}  group flex rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`}>
                     <PencilIcon className='w-4 mr-2' />
                     Change password
                   </span></MenuLink>
@@ -121,7 +123,7 @@ function RoomOptions () {
             </Fragment> : (
               <Menu.Item>
                 {({ active }) => (
-                  <span 
+                  <span
                     onClick={signIn}
                     className={`${active ? 'bg-adhdPurple text-white' : 'text-gray-900'} group flex rounded-md cursor-pointer items-center w-full px-2 py-2 text-sm`}>
                     <LoginIcon className='w-4 mr-2' />
