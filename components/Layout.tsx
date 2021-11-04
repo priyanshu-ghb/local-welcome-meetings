@@ -22,7 +22,7 @@ export function Header() {
         <div className='space-x-4 text-right'>
           {room && <span className='font-semibold text-lg'>{room.name}</span>}
           {isLoggedIn && (
-            <Menu as="div" className="relative inline-block text-left">{({ open }) => (
+            <Menu as="div" className="whitespace-nowrap relative inline-block text-left">{({ open }) => (
               <Fragment>
                 <div>
                   <Menu.Button className='cursor-pointer opacity-80 bg-adhdDarkPurple rounded-lg p-2'>
