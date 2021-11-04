@@ -4,8 +4,9 @@ import { strict as assert } from 'assert';
 import { supabase } from '../../data/supabase';
 import { Room, RoomPermission, RoomPermissionType } from '../../types/app';
 import { getHubspotContactsInList, getDetailsForContact } from '../../data/hubspot';
+import { withSentry } from '@sentry/nextjs';
 
-export default async function handler (req: NextApiRequest, res: NextApiResponse) {
+async function handler (req: NextApiRequest, res: NextApiResponse) {
   const rooms = await supabase.from<Room>('room').select('*')
   assert(Array.isArray(rooms.data), 'Couldnt fetch rooms')
 
@@ -71,3 +72,6 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
 
   res.status(200).end()
 }
+
+// @ts-ignore
+export default withSentry(handler)

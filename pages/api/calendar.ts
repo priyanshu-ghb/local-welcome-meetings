@@ -8,8 +8,9 @@ import { supabase } from '../../data/supabase';
 import { ShiftPattern, ShiftAllocation, ShiftException } from '../../types/app';
 import isEmail from 'is-email';
 import { getAllRooms } from '../../data/room';
+import { withSentry } from '@sentry/nextjs';
  
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { email } = req.query
   assert(email, 'email is required')
   assert(isEmail(email), 'email is invalid')
@@ -50,3 +51,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   return calendar.serve(res, `adhdtogether-${profile.id}--${daysAhead}--${Date.now()}.ics`)
 }
+
+// @ts-ignore
+export default withSentry(handler)

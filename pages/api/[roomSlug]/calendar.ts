@@ -4,8 +4,9 @@ import { getRoomBySlug } from '../../../data/room';
 import assert from 'assert';
 import { calculateSchedule, getShiftAllocations, getShiftExceptions, getShiftPatterns } from '../../../data/rota';
 import { addHours } from 'date-fns';
+import { withSentry } from '@sentry/nextjs';
  
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const room = await getRoomBySlug(req.query.roomSlug.toString())
   assert(room, 'Room not found');
   const calendar = ical({ name: room.name });
@@ -35,3 +36,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   return calendar.serve(res, 'adhdtogether.ics')
 }
+
+export default withSentry(handler)

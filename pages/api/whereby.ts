@@ -1,8 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getUserFromSessionToken } from '../../data/leader';
 import { addWherebyCallToRoom } from '../../data/whereby'
+import { withSentry } from '@sentry/nextjs';
 
-export default async function handler (req: NextApiRequest, res: NextApiResponse<{ status: string }>) {
+async function handler (req: NextApiRequest, res: NextApiResponse<{ status: string }>) {
   const { roomSlug, token } = JSON.parse(req.body || {})
   const { data: user } = await getUserFromSessionToken(token)
   if (!user || req.method !== 'POST' || !roomSlug.length) {
@@ -17,3 +18,6 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     return res.status(500).end({ status: "Couldn't create room" })
   }
 }
+
+// @ts-ignore
+export default withSentry(handler)

@@ -2,8 +2,9 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import assert from 'assert';
 import { getSlides } from '../../data/slideshow';
 import { Page } from '@notionhq/client/build/src/api-types';
+import { withSentry } from '@sentry/nextjs';
 
-export default async function handler (req: NextApiRequest, res: NextApiResponse<{ slides?: Page[], error?: any }>) {
+async function handler (req: NextApiRequest, res: NextApiResponse<{ slides?: Page[], error?: any }>) {
   try {
     const { slideshowName } = req.query;
     const slides = await getSlides(slideshowName.toString())
@@ -14,3 +15,6 @@ export default async function handler (req: NextApiRequest, res: NextApiResponse
     return res.status(500).json({ error: String(e) })
   }
 }
+
+// @ts-ignore
+export default withSentry(handler)

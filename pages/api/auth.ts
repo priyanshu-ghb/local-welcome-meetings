@@ -3,7 +3,10 @@
  */
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '../../data/supabase';
+import { withSentry } from '@sentry/nextjs';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+function handler(req: NextApiRequest, res: NextApiResponse) {
   supabase.auth.api.setAuthCookie(req, res)
 }
+
+export default withSentry(handler)
