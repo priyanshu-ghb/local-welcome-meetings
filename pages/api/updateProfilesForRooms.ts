@@ -5,6 +5,7 @@ import { supabase } from '../../data/supabase';
 import { Room, RoomPermission, RoomPermissionType } from '../../types/app';
 import { getHubspotContactsInList, getDetailsForContact } from '../../data/hubspot';
 import { withSentry } from '@sentry/nextjs';
+import env from 'env-var';
 
 async function handler (req: NextApiRequest, res: NextApiResponse) {
   const rooms = await supabase.from<Room>('room').select('*')
@@ -13,17 +14,20 @@ async function handler (req: NextApiRequest, res: NextApiResponse) {
   const oldPermissions = await supabase.from<RoomPermission>('roompermission').select('*')
   assert(Array.isArray(oldPermissions.data), 'Couldnt fetch permissions')
 
+  const defaultHubspotLeaderListId = env.get('HUBSPOT_LEADER_LIST_ID').required().asInt()
+
   for (const room of rooms.data) {
     if (room.hubspotLeaderListId) {
       /** Upsert room leader's profiles from Hubspot */
 
-      const { contacts } = await getHubspotContactsInList(room.hubspotLeaderListId)
+      const { contacts } = await getHubspotContactsInList(room.hubspotLeaderListId || defaultHubspotLeaderListId)
 
       let roomLeaderProfiles = await upsertUserProfile(contacts.map(contact => ({
         email: getDetailsForContact(contact).EMAIL?.[0].value,
         hubspotContactId: contact.vid as any,
         firstName: contact.properties.firstname.value,
         lastName: contact.properties.lastname.value,
+        canLeadSessions: true
       })))
 
       assert(roomLeaderProfiles.body?.length, 'Couldnt upsert roomLeaderProfiles')
