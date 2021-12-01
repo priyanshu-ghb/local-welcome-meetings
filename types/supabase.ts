@@ -681,11 +681,13 @@ export interface paths {
       };
     };
   };
-  "/rpc/http_delete": {
+  "/rpc/http_put": {
     post: {
       parameters: {
         body: {
           args: {
+            content: string;
+            content_type: string;
             uri: string;
           };
         };
@@ -705,8 +707,8 @@ export interface paths {
       parameters: {
         body: {
           args: {
-            value: string;
             field: string;
+            value: string;
           };
         };
         header: {
@@ -720,12 +722,14 @@ export interface paths {
       };
     };
   };
-  "/rpc/http": {
+  "/rpc/http_patch": {
     post: {
       parameters: {
         body: {
           args: {
-            request: string;
+            content: string;
+            content_type: string;
+            uri: string;
           };
         };
         header: {
@@ -759,14 +763,12 @@ export interface paths {
       };
     };
   };
-  "/rpc/http_put": {
+  "/rpc/http_get": {
     post: {
       parameters: {
         body: {
           args: {
             uri: string;
-            content: string;
-            content_type: string;
           };
         };
         header: {
@@ -780,11 +782,13 @@ export interface paths {
       };
     };
   };
-  "/rpc/http_reset_curlopt": {
+  "/rpc/http": {
     post: {
       parameters: {
         body: {
-          args: { [key: string]: unknown };
+          args: {
+            request: string;
+          };
         };
         header: {
           /** Preference */
@@ -797,12 +801,12 @@ export interface paths {
       };
     };
   };
-  "/rpc/urlencode": {
+  "/rpc/http_delete": {
     post: {
       parameters: {
         body: {
           args: {
-            string: string;
+            uri: string;
           };
         };
         header: {
@@ -835,32 +839,30 @@ export interface paths {
       };
     };
   };
+  "/rpc/http_reset_curlopt": {
+    post: {
+      parameters: {
+        body: {
+          args: { [key: string]: unknown };
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferParams"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: unknown;
+      };
+    };
+  };
   "/rpc/http_post": {
     post: {
       parameters: {
         body: {
           args: {
-            uri: string;
             content: string;
             content_type: string;
-          };
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferParams"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: unknown;
-      };
-    };
-  };
-  "/rpc/http_get": {
-    post: {
-      parameters: {
-        body: {
-          args: {
             uri: string;
           };
         };
@@ -875,14 +877,12 @@ export interface paths {
       };
     };
   };
-  "/rpc/http_patch": {
+  "/rpc/urlencode": {
     post: {
       parameters: {
         body: {
           args: {
-            uri: string;
-            content: string;
-            content_type: string;
+            string: string;
           };
         };
         header: {
