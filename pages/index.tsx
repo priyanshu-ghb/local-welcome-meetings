@@ -31,18 +31,37 @@ const Home: NextPage<IProps> = ({ rooms }) => {
 
       <Header />
 
-      <main className='max-w-lg mx-auto py-5 relative space-y-5'>
-        {!!user && !profile && <Loading />}
-        {isLoggedIn && profile?.canManageShifts && <Fragment>
-          <button className='button' onClick={() => setRoomOpen(true)}>Create room</button>
-          <CreateRoomModal isOpen={roomOpen} setIsOpen={setRoomOpen} />
-        </Fragment>}
-        {!!(isLoggedIn && !!profile) && <RoomList key='rooms' rooms={_rooms?.filter(r => {
-          return profile?.canManageShifts || permissions?.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
-        })} />}
-        {!isLoggedIn && <button onClick={signIn} className='button'>
-          Sign in to manage rooms
-        </button>}
+      <main className=''>
+      <div className="pt-6 pb-6 flex items-center	content-center height-vh-without-header hero-section relative bg-center	bg-no-repeat bg-cover" style={{ backgroundImage:'url(https://images.pexels.com/photos/8378728/pexels-photo-8378728.jpeg?cs=srgb&dl=pexels-tara-winstead-8378728.jpg&fm=jpg)' }}>
+            <div className="max-w-5xl mx-auto ">
+                <div className="text-center">
+                    <div className="">
+                        <h1 className="mb-4 text-6xl font-bold">Donec hendrerit nunc et porttitor tincidunt.</h1>
+                            <div className="mb-4">
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod, voluptas inventore vel repudiandae quam nesciunt officia, rerum officiis eligendi sint dolorum nemo saepe porro laboriosam vero molestias error, omnis nostrum. 
+                            </div>
+                            <div className="btn-wrapper">
+                              <a className="button m-1" target="_blank" href="https://brandonjackson.typeform.com/to/JFz8XJjf?typeform-source=www.google.com" rel="noopener noreferrer">
+                                      Register Interest
+                              </a>
+                              {!!user && !profile && <Loading />}
+                              {isLoggedIn && profile?.canManageShifts && <Fragment>
+                                <button className='button' onClick={() => setRoomOpen(true)}>Create room</button>
+                                <CreateRoomModal isOpen={roomOpen} setIsOpen={setRoomOpen} />
+                              </Fragment>}
+                              {!!(isLoggedIn && !!profile) && <RoomList key='rooms' rooms={_rooms?.filter(r => {
+                                return profile?.canManageShifts || permissions?.some(p => p.type === RoomPermissionType.Lead && p.roomId === r.id)
+                              })} />}
+                              {!isLoggedIn && <button onClick={signIn} className='button m-1'>
+                                Sign in to manage rooms
+                              </button>}
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
       </main>
     </div>
   )

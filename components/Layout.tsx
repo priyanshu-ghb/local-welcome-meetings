@@ -15,7 +15,7 @@ export function Header() {
 
   return (
     <header className='bg-adhdPurple p-3 sm:p-4 text-adhdBlue'>
-      <div className={`flex flex-row justify-between items-center max-w-md mx-auto`}>
+      <div className={`flex flex-row justify-between items-center max-w-5xl mx-auto`}>
         <Link href='/'>
           <span className='inline-block cursor-pointer'><Logo /></span>
         </Link>
@@ -71,6 +71,12 @@ export function Header() {
               </Fragment>
             )}</Menu>
           )}
+          <Link href='/our-courses'>
+            <span className='cursor-pointer opacity-80  p-2'>Our Courses</span>
+          </Link>
+          <Link href='/pricing'>
+            <span className='cursor-pointer opacity-80  p-2'>Pricing</span>
+          </Link>
           {!isLoggedIn && <span className='cursor-pointer opacity-80 bg-adhdDarkPurple rounded-lg p-2' onClick={signIn}>Sign in</span>}
         </div>
       </div>
